@@ -7,13 +7,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 part 'theme_state.dart';
 
 class ThemeCubit extends Cubit<ThemeState> {
-  ThemeCubit(BuildContext context) : super(ThemeState(themeChoice))
-  {
+  ThemeCubit(BuildContext context)
+    : super(ThemeState(themeChoice, Icon(Icons.brightness_5_outlined))) {
     loadTheme();
   }
   final themeSP = ThemeSP();
-//   Color mmm = themeChoice.onSecondary;
-// Theme.of(context).colorScheme.onSecondary,
+  //   Color mmm = themeChoice.onSecondary;
+  // Theme.of(context).colorScheme.onSecondary,
   // Future<void> setThemeBrightness() async {
   //   // final prefs = await SharedPreferences.getInstance();
   //   // prefs.setString('theme', theme);
@@ -28,16 +28,31 @@ class ThemeCubit extends Cubit<ThemeState> {
   Future<void> loadTheme() async {
     final loadTheme = themeSP.loadValue();
     themeChoice = await loadTheme;
-    emit(ThemeState(themeChoice));
+    if (themeChoice == 'light') {
+      emit(ThemeState(themeChoice, Icon(Icons.brightness_5_outlined)));
+    } else {
+      emit(ThemeState(themeChoice, Icon(Icons.brightness_2)));
+    }
+    // emit(ThemeState(themeChoice, Icon(Icons.brightness_5_outlined)));
   }
 
   Future<void> saveTheme(newThemeChoice) async {
     themeChoice = newThemeChoice;
+    // if(themeChoice == 'light') {
+    //   emit(ThemeState(themeChoice, Icon(Icons.brightness_5_outlined)));
+    // } else {
+    //   emit(ThemeState(themeChoice, Icon(Icons.brightness_2)));
+    // }
     await themeSP.saveValue(themeChoice);
   }
 
   void updateTheme(String newTheme, BuildContext context) {
     saveTheme(newTheme);
-    emit(ThemeState(themeChoice));
+    if (themeChoice == 'light') {
+      emit(ThemeState(themeChoice, Icon(Icons.brightness_5_outlined)));
+    } else {
+      emit(ThemeState(themeChoice, Icon(Icons.brightness_2)));
+      // emit(ThemeState(themeChoice, Icon(Icons.brightness_5_outlined)));
+    }
   }
 }

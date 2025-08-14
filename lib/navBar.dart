@@ -1,14 +1,33 @@
+import 'package:fastfood/bloc/theme/theme_cubit.dart';
+import 'package:fastfood/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-class Navbar extends StatelessWidget {
-  const Navbar({super.key});
+class Navbar extends StatefulWidget {
+  // late bool themeLight;
+
+  Navbar({super.key});
+
+  @override
+  State<Navbar> createState() => _NavbarState();
+}
+
+class _NavbarState extends State<Navbar> {
+  late ThemeCubit themeCubit;
+  Map choiceTheme = {'light': lightTheme, 'dark': darkTheme};
+  bool onPress = themeChoice == 'light' ? true : false;
+  @override
+  void initState() {
+    themeCubit = context.read<ThemeCubit>();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     new Future.delayed(const Duration(seconds: 8), () {
       // deleayed code here
-      print('delayed execution');
+      // print('delayed execution');
     });
     // if (Scaffold.of(context).isDrawerOpen) {
     //   Scaffold.of(context).closeDrawer();
@@ -17,95 +36,226 @@ class Navbar extends StatelessWidget {
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
-          // const UserAccountsDrawerHeader(
-          //   accountName: Text(''),
-          //   accountEmail: Text(
-          //     'Bionica',
-          //     style: TextStyle(
-          //         color: Colors.white,
-          //         fontStyle: FontStyle.italic,
-          //         fontSize: 25),
-          //   ),
-          //   currentAccountPicture: CircleAvatar(
-          //     child: ClipOval(
-          //       child: Icon(Icons.account_circle, size: 90),
-          //       //  child: Image.asset(name,
-          //       //  width: 90,
-          //       //  height: 90,
-          //       //  fit: BoxFit.cover,
-          //     ),
-          //   ),
-          //   decoration:
-          //       BoxDecoration(color: const Color.fromARGB(255, 3, 119, 51)),
-          // ),
+          ListTile(
+            leading: const Icon(
+              Icons.assignment_outlined,
+            ), // analytics_outlined
+            title: const Text('Заказы'),
+            onTap: () {
+              context.go('/home');
+            },
+          ),
           ListTile(
             leading: const Icon(Icons.balance), // arrow_circle_up
-            title: const Text('Продажи'),
+            title: const Text('Оплата'),
             onTap: () {
-              // Scaffold.of(context).closeDrawer();
-              // Navigator.pop(context, true);
-              // context.pop();
-              // ScaffoldMessenger.of(context).closeDrawer();
-              context.pop();
-              context.go('/');
-              // if (Scaffold.of(context).isDrawerOpen) {
-              //   Scaffold.of(context).closeDrawer();
-              // }
-
-              // Navigator.pop(context);
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.add_shopping_cart),
-            title: const Text('Закупки'),
-            onTap: () {
-              context.pop();
-              context.go('/purchases');
-            },
-          ),
-          ListTile(
-            leading:
-                const Icon(Icons.auto_stories_outlined), // analytics_outlined
-            title: const Text('Учет'),
-            onTap: () {
-              context.pop();
-              context.go('/calculation');
+              context.go('/Payment');
             },
           ),
           ListTile(
             leading: const Icon(
-                Icons.assessment_outlined), //app_registration architecture
-            title: const Text('Отчет'),
+              Icons.delete,
+            ), //app_registration architecture create
+            title: const Text('Утилизация'),
             onTap: () {
-              context.pop();
-              context.go('/report');
+              context.go('/Disposal');
+            },
+          ),
+          ListTile(
+            leading: const Icon(
+              Icons.exposure_rounded,
+            ), //app_registration architecture
+            title: const Text('Корректировка'),
+            onTap: () {
+              context.go('/AdjustmentPage');
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.add_shopping_cart),
+            title: const Text('Закуп'),
+            onTap: () {
+              context.go('/Purchases');
+            },
+          ),
+          ListTile(
+            leading: const Icon(
+              Icons.assignment_ind,
+            ), //app_registration architecture
+            title: const Text('Персонал'),
+            onTap: () {
+              context.go('/Staff');
             },
           ),
           ListTile(
             leading: const Icon(Icons.apps_sharp),
             title: const Text('Таблицы'),
             onTap: () {
-              context.pop();
-              context.go('/tables');
+              context.go('/Tables');
             },
           ),
           ListTile(
-            leading: const Icon(Icons.amp_stories_outlined),
-            title: const Text('Прочее'),
+            leading: const Icon(Icons.create), //app_registration architecture
+            title: const Text('Создание блюда'),
             onTap: () {
-              context.pop();
-              context.go('/other');
+              context.go('/CreateDishesPage');
             },
           ),
+          ListTile(
+            leading: const Icon(Icons.settings),
+            title: const Text('Настройки'),
+            onTap: () {
+              context.go('/Setting');
+            },
+          ),
+          ListTile(
+            leading: themeCubit.state.themeIcon, // brightness_2
+            // leading: themeCubit.state.theme == 'light'? Icon(Icons.brightness_5_outlined): Icon(Icons.brightness_2), // brightness_2
+            title: const Text('Тема'),
+            onTap: () {
+              //   themeChoice = onPress ? 'dark' : 'light';
+              // setTheme(context, onPress);
+              setState(() {
+                if (themeCubit.state.theme == 'light') {
+                  themeCubit.updateTheme('dark', context);
+                } else {
+                  themeCubit.updateTheme('light', context);
+                }
+              });
+            },
+          ),
+          // ListTile(
+          //   leading: const Icon(
+          //     Icons.assessment_outlined,
+          //   ), //app_registration architecture
+          //   title: const Text('Отчет'),
+          //   onTap: () {
+          //     context.pop();
+          //     context.go('/report');
+          //   },
+          // ),
+          // ListTile(
+          //   leading: const Icon(Icons.amp_stories_outlined),
+          //   title: const Text('Прочее'),
+          //   onTap: () {
+          //     context.pop();
+          //     context.go('/other');
+          //   },
+          // ),
+          SizedBox(height: 60),
           const Divider(),
           ListTile(
-            leading: const Icon(Icons.exit_to_app),
+            // leading: const Icon(Icons.exit_to_app),
+            leading: const Icon(Icons.subdirectory_arrow_left),
             title: const Text('Выход'),
             onTap: () {
-              context.pop();
+              context.go('/');
+              // context.pop();
               // Navigator.pop(context);
             },
-          )
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class NavBarWidget extends StatefulWidget {
+  final Widget child;
+  const NavBarWidget({required this.child, super.key});
+
+  @override
+  State<NavBarWidget> createState() => _NavBarWidgetState();
+}
+
+class _NavBarWidgetState extends State<NavBarWidget>
+    with SingleTickerProviderStateMixin {
+  // late Widget child;
+  late AnimationController _controller;
+  late Animation<Offset> _animation;
+
+  bool _onPressed = false;
+
+  // void _onPress() {
+  //   _onPressed = !_onPressed;
+  //   _startAnimation();
+  //   setState(() {});
+  // }
+  void _toggleContainer() {
+    if (_onPressed) {
+      _controller.reverse(); // уезжает обратно
+    } else {
+      _controller.forward(); // выезжает вперед
+    }
+    setState(() {
+      _onPressed = !_onPressed; // меняем состояние
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // child = widget.child;
+    _controller = AnimationController(
+      duration: Duration(seconds: 1),
+      vsync: this,
+    );
+
+    // Анимация сдвига слева направо
+    _animation = Tween<Offset>(
+      begin: Offset(-1.0, 0.0), // полностью слева за границей экрана
+      end: Offset(0.0, 0.0), // на месте
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+
+    // // Запускаем анимацию при инициализации
+    // _controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Column(
+        children: [
+          Container(
+            color: Colors.grey,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                IconButton(
+                  onPressed:
+                      _toggleContainer, //_onPress, keyboard_backspace_outlined
+                  icon: _onPressed == true
+                      ? Icon(Icons.keyboard_backspace_outlined)
+                      : Icon(Icons.menu),
+                ),
+                // Navbar(),
+                TextButton(onPressed: () {
+                  context.pop();
+                  context.go('/home');
+                }, child: Text('Заказы'),),
+                SizedBox(width: 50),
+              ],
+            ),
+          ),
+          SizedBox(
+            // color: Colors.blue,
+            width: double.infinity,
+            height: 700,
+            child: Stack(
+              children: [
+                widget.child,
+                SlideTransition(
+                  position: _animation,
+                  child: SizedBox(width: 300, height: 610, child: Navbar()),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );

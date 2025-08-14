@@ -2,8 +2,9 @@ part of 'theme_cubit.dart';
 
 class ThemeState extends Equatable {
   final String theme;
+  final Icon themeIcon;
 
-  ThemeState(this.theme);
+  ThemeState(this.theme, this.themeIcon);
 
   // Future<void> getCounter() async {
   // final prefs = await SharedPreferences.getInstance();
@@ -13,7 +14,7 @@ class ThemeState extends Equatable {
   // }
 // }
   @override
-  List<Object> get props => [theme];
+  List<Object> get props => [theme, themeIcon];
 }
 // class ThemeState {
 //   const ThemeState(this.brightness);
