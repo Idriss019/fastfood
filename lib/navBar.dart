@@ -17,27 +17,27 @@ class Navbar extends StatelessWidget {
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
-          const UserAccountsDrawerHeader(
-            accountName: Text(''),
-            accountEmail: Text(
-              'Bionica',
-              style: TextStyle(
-                  color: Colors.white,
-                  fontStyle: FontStyle.italic,
-                  fontSize: 25),
-            ),
-            currentAccountPicture: CircleAvatar(
-              child: ClipOval(
-                child: Icon(Icons.account_circle, size: 90),
-                //  child: Image.asset(name,
-                //  width: 90,
-                //  height: 90,
-                //  fit: BoxFit.cover,
-              ),
-            ),
-            decoration:
-                BoxDecoration(color: const Color.fromARGB(255, 3, 119, 51)),
-          ),
+          // const UserAccountsDrawerHeader(
+          //   accountName: Text(''),
+          //   accountEmail: Text(
+          //     'Bionica',
+          //     style: TextStyle(
+          //         color: Colors.white,
+          //         fontStyle: FontStyle.italic,
+          //         fontSize: 25),
+          //   ),
+          //   currentAccountPicture: CircleAvatar(
+          //     child: ClipOval(
+          //       child: Icon(Icons.account_circle, size: 90),
+          //       //  child: Image.asset(name,
+          //       //  width: 90,
+          //       //  height: 90,
+          //       //  fit: BoxFit.cover,
+          //     ),
+          //   ),
+          //   decoration:
+          //       BoxDecoration(color: const Color.fromARGB(255, 3, 119, 51)),
+          // ),
           ListTile(
             leading: const Icon(Icons.balance), // arrow_circle_up
             title: const Text('Продажи'),
