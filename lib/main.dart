@@ -2,7 +2,7 @@ import 'package:fastfood/bloc/password/password_cubit.dart';
 import 'package:fastfood/bloc/theme/theme_cubit.dart';
 import 'package:fastfood/pages/adjustment/page.dart';
 import 'package:fastfood/pages/creatingDishes/page.dart';
-import 'package:fastfood/pages/disposal/page.dart';
+import 'package:fastfood/pages/cleanForStorage/page.dart';
 import 'package:fastfood/pages/orderHome/page.dart';
 import 'package:fastfood/pages/password/passwordPage.dart';
 import 'package:fastfood/pages/payment/page.dart';
@@ -12,6 +12,7 @@ import 'package:fastfood/pages/staff/page.dart';
 import 'package:fastfood/pages/tables/historyTable.dart';
 import 'package:fastfood/pages/tables/page.dart';
 import 'package:fastfood/pages/tables/purchasesTable.dart';
+import 'package:fastfood/pages/tables/recalculation.dart';
 import 'package:fastfood/pages/tables/salesTable.dart';
 import 'package:fastfood/pages/tables/staffTable.dart';
 import 'package:fastfood/pages/tables/storageTable.dart';
@@ -167,6 +168,16 @@ final _router = GoRouter(
             );
           },
         ),
+        GoRoute(
+          path: 'Recalculation',
+          pageBuilder: (context, state) {
+            return buildPageWithDefaultTransition<void>(
+              context: context,
+              state: state,
+              child: Recalculation(),
+            );
+          },
+        ),
         ]),
         GoRoute(
           path: 'CreateDishesPage',
@@ -181,7 +192,7 @@ final _router = GoRouter(
           pageBuilder: (context, state) => buildPageWithDefaultTransition<void>(
             context: context,
             state: state,
-            child: Disposal(),
+            child: CleanForStorage(),
           ),
         ),
         GoRoute(

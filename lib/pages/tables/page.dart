@@ -22,6 +22,9 @@ class Tables extends StatelessWidget {
           TextButton(child: Text('Персонал'), onPressed: () {
             context.go('/Tables/StaffTable');
           },),
+          TextButton(child: Text('Перерасчет'), onPressed: () {
+            context.go('/Tables/Recalculation');
+          },),
           TextButton(child: Text('Журнал действий'), onPressed: () {
             context.go('/Tables/HistoryTable');
           },),

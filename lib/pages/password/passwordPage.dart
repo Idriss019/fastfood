@@ -99,55 +99,6 @@ class _PasswordPageState extends State<PasswordPage> {
                           ),
                         ),
                       ),
-                      // SizedBox(
-                      //   width: 270,
-                      //   height: 100,
-                      //   /* Строка для ввода пароля */
-                      //   child: TextField(
-                      //     cursorColor: Theme.of(
-                      //       context,
-                      //     ).colorScheme.onSecondary,
-                      //     autofocus: true,
-                      //     style: TextStyle(
-                      //       // fontFamily: 'Verdana',
-                      //       // fontStyle: FontStyle.italic,
-                      //       fontWeight: FontWeight.w600,
-                      //       fontSize: 35,
-                      //     ),
-                      //     decoration: InputDecoration(
-                      //       focusedBorder: OutlineInputBorder(
-                      //         borderSide: BorderSide(
-                      //           color: Theme.of(
-                      //             context,
-                      //           ).colorScheme.onSecondary,
-                      //           width: 1.5,
-                      //         ),
-                      //       ),
-                      //       // border: OutlineInputBorder(
-                      //       //     borderSide:
-                      //       //         BorderSide(color: Colors.black, width: 1.5)),
-                      //       // suffixIcon: IconButton(
-                      //       //   onPressed: () {
-                      //       //     setState(() {
-                      //       //       _isObscured = !_isObscured;
-                      //       //     });
-                      //       //   },
-                      //       //   icon: Icon(Icons.visibility),
-                      //       // ),
-                      //     ),
-                      //     onChanged: (value) {
-                      //       if (bloc.changePasswordToStart(value)) {
-                      //         context.go('/home');
-                      //       }
-                      //     },
-                      //     // controller: passwordController,
-                      //     // obscureText: false,
-                      //     inputFormatters: <TextInputFormatter>[
-                      //       FilteringTextInputFormatter
-                      //           .digitsOnly, // С таким фильтром могут быть введены только числа
-                      //     ],
-                      //   ),
-                      // ),
                     ],
                   ),
                   SizedBox(height: 15),
@@ -300,6 +251,9 @@ class _PasswordPageState extends State<PasswordPage> {
                     ),
                     resultFunction: (value) {
                       // print(value);
+                      if (bloc.changePasswordToStart(value)) {
+                              context.go('/home');
+                            }
                       passwordController.text = value;
                     },
                     obscureResult: false,

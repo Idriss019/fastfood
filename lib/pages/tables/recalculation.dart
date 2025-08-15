@@ -1,11 +1,11 @@
 import 'package:fastfood/navBar.dart';
 import 'package:flutter/material.dart';
 
-class Disposal extends StatelessWidget {
-  const Disposal({super.key});
+class Recalculation extends StatelessWidget {
+  const Recalculation({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return NavBarWidget(child: Text('Утилизация'));
+    return NavBarWidget(child: Text('Recalculation'));
   }
 }
