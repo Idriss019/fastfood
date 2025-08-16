@@ -6,6 +6,6 @@ class Purchases extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return NavBarWidget(child: Text('Закуп'));
+    return NavBarWidget(child: Text('Purchases'));
   }
 }

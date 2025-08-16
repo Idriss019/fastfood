@@ -1,4 +1,4 @@
-import 'package:fastfood/bloc/password/password_cubit.dart';
+import 'package:fastfood/names/password/cubit/password_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

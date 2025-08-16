@@ -1,4 +1,4 @@
-import 'package:fastfood/bloc/theme/theme_cubit.dart';
+import 'package:fastfood/names/theme/cubit/theme_cubit.dart';
 import 'package:fastfood/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -211,20 +211,9 @@ class _NavbarState extends State<Navbar> {
             ), //app_registration architecture
             title: const Text('Отчет'),
             onTap: () {
-              context.pop();
-              context.go('/report');
+              context.go('/Report');
             },
           ),
-          // ListTile(
-          //   leading: const Icon(
-          //     Icons.assessment_outlined,
-          //   ), //app_registration architecture
-          //   title: const Text('Отчет'),
-          //   onTap: () {
-          //     context.pop();
-          //     context.go('/report');
-          //   },
-          // ),
           ListTile(
             leading: const Icon(Icons.settings),
             title: const Text('Настройки'),
