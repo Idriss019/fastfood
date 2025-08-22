@@ -61,72 +61,73 @@ final router = GoRouter(
           ),
         ),
         GoRoute(
-            path: 'Tables',
-            pageBuilder: (context, state) => buildPageWithDefaultTransition<void>(
+          path: 'Tables',
+          pageBuilder: (context, state) => buildPageWithDefaultTransition<void>(
+            context: context,
+            state: state,
+            child: Tables(),
+          ),
+          routes: [
+            GoRoute(
+              path: 'StorageTable',
+              pageBuilder: (context, state) =>
+                  buildPageWithDefaultTransition<void>(
+                    context: context,
+                    state: state,
+                    child: StorageTable(),
+                  ),
+            ),
+            GoRoute(
+              path: 'SalesTable',
+              pageBuilder: (context, state) =>
+                  buildPageWithDefaultTransition<void>(
+                    context: context,
+                    state: state,
+                    child: SalesTable(),
+                  ),
+            ),
+            GoRoute(
+              path: 'PurchasesTable',
+              pageBuilder: (context, state) {
+                return buildPageWithDefaultTransition<void>(
                   context: context,
                   state: state,
-                  child: Tables(),
-                ),
-            routes: [
-        GoRoute(
-          path: 'StorageTable',
-          pageBuilder: (context, state) =>
-              buildPageWithDefaultTransition<void>(
-            context: context,
-            state: state,
-            child: StorageTable(),
-          ),
+                  child: PurchasesTable(),
+                );
+              },
+            ),
+            GoRoute(
+              path: 'HistoryTable',
+              pageBuilder: (context, state) {
+                return buildPageWithDefaultTransition<void>(
+                  context: context,
+                  state: state,
+                  child: HistoryTable(),
+                );
+              },
+            ),
+            GoRoute(
+              path: 'StaffTable',
+              pageBuilder: (context, state) {
+                return buildPageWithDefaultTransition<void>(
+                  context: context,
+                  state: state,
+                  child: StaffTable(),
+                );
+              },
+            ),
+            GoRoute(
+              path: 'Recalculation',
+              pageBuilder: (context, state) {
+                return buildPageWithDefaultTransition<void>(
+                  context: context,
+                  state: state,
+                  child: Recalculation(),
+                );
+              },
+            ),
+          ],
         ),
-        GoRoute(
-          path: 'SalesTable',
-          pageBuilder: (context, state) =>
-              buildPageWithDefaultTransition<void>(
-            context: context,
-            state: state,
-            child: SalesTable(),
-          ),
-        ),
-        GoRoute(
-          path: 'PurchasesTable',
-          pageBuilder: (context, state) {
-            return buildPageWithDefaultTransition<void>(
-              context: context,
-              state: state,
-              child: PurchasesTable(),
-            );
-          },
-        ),
-        GoRoute(
-          path: 'HistoryTable',
-          pageBuilder: (context, state) {
-            return buildPageWithDefaultTransition<void>(
-              context: context,
-              state: state,
-              child: HistoryTable(),
-            );
-          },
-        ),
-        GoRoute(
-          path: 'StaffTable',
-          pageBuilder: (context, state) {
-            return buildPageWithDefaultTransition<void>(
-              context: context,
-              state: state,
-              child: StaffTable(),
-            );
-          },
-        ),
-        GoRoute(
-          path: 'Recalculation',
-          pageBuilder: (context, state) {
-            return buildPageWithDefaultTransition<void>(
-              context: context,
-              state: state,
-              child: Recalculation(),
-            );
-          },
-        ),
-        ]),
         GoRoute(
           path: 'CreateDishesPage',
           pageBuilder: (context, state) => buildPageWithDefaultTransition<void>(
@@ -148,7 +149,7 @@ final router = GoRouter(
           pageBuilder: (context, state) => buildPageWithDefaultTransition<void>(
             context: context,
             state: state,
-            child: Payment(),
+            child: PaymentPage(),
           ),
         ),
         GoRoute(

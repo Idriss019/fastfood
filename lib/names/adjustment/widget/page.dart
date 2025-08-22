@@ -1,8 +1,8 @@
 import 'package:fastfood/navBar.dart';
 import 'package:flutter/material.dart';
 
-class Payment extends StatelessWidget {
-  const Payment({super.key});
+class AdjustmentPage extends StatelessWidget {
+  const AdjustmentPage({super.key});
 
   @override
   Widget build(BuildContext context) {

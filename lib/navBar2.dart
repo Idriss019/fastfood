@@ -98,7 +98,7 @@ class _NavBarWidgetState extends State<NavBarWidget>
                 widget.child,
                 SlideTransition(
                   position: _animation,
-                  // child: SizedBox(width: 300, height: 610, child: Navbar()),
+                  child: SizedBox(width: 300, height: 610, child: Navbar()),
                 ),
               ],
             ),
@@ -111,9 +111,8 @@ class _NavBarWidgetState extends State<NavBarWidget>
 
 class Navbar extends StatefulWidget {
   // late bool themeLight;
-  late Widget child;
 
-  Navbar({super.key, required this.child});
+  Navbar({super.key});
 
   @override
   State<Navbar> createState() => _NavbarState();
@@ -140,62 +139,47 @@ class _NavbarState extends State<Navbar> {
     // }
     return Scaffold(
       appBar: AppBar(
-        toolbarHeight: 50,
-        backgroundColor: Colors.grey,
-        shadowColor: Colors.orange,
         title: Column(
-          children: [
-            Container(
-              // color: Colors.grey,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // IconButton(
-                  //   onPressed:
-                  //       _toggleContainer, //_onPress, keyboard_backspace_outlined
-                  //   icon: _onPressed == true
-                  //       ? Icon(Icons.keyboard_backspace_outlined)
-                  //       : Icon(Icons.menu),
-                  // ),
-                  // Navbar(),
-                  TextButton(
-                    onPressed: () {
-                      context.go('/home');
-                    },
-                    child: Text('Заказы'),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      context.go('/Payment');
-                    },
-                    child: Text('Оплата'),
-                  ),
-                  IconButton(
-                    onPressed: () {},
-                    icon: Icon(
-                      // size: 50,
-                      Icons.lock_outline,
-                    ),
-                  ),
-                ],
-              ),
+        children: [
+          Container(
+            color: Colors.grey,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                // IconButton(
+                //   onPressed:
+                //       _toggleContainer, //_onPress, keyboard_backspace_outlined
+                //   icon: _onPressed == true
+                //       ? Icon(Icons.keyboard_backspace_outlined)
+                //       : Icon(Icons.menu),
+                // ),
+                // Navbar(),
+                TextButton(
+                  onPressed: () {
+                    context.go('/home');
+                  },
+                  child: Text('Заказы'),
+                ),
+                SizedBox(width: 50),
+              ],
             ),
-            // SizedBox(
-            //   // color: Colors.blue,
-            //   width: double.infinity,
-            //   height: 700,
-            //   child: Stack(
-            //     children: [
-            //       widget.child,
-            //       SlideTransition(
-            //         position: _animation,
-            //         child: SizedBox(width: 300, height: 610, child: Navbar()),
-            //       ),
-            //     ],
-            //   ),
-            // ),
-          ],
-        ),
+          ),
+          // SizedBox(
+          //   // color: Colors.blue,
+          //   width: double.infinity,
+          //   height: 700,
+          //   child: Stack(
+          //     children: [
+          //       widget.child,
+          //       SlideTransition(
+          //         position: _animation,
+          //         child: SizedBox(width: 300, height: 610, child: Navbar()),
+          //       ),
+          //     ],
+          //   ),
+          // ),
+        ],
+      ),
       ),
       drawer: Drawer(
         child: ListView(
@@ -330,49 +314,6 @@ class _NavbarState extends State<Navbar> {
           ],
         ),
       ),
-      body: widget.child,
-
-      // Column(
-      //   children: [
-      //     // Container(
-      //     //   color: Colors.grey,
-      //     //   child: Row(
-      //     //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      //     //     children: [
-      //     //       IconButton(
-      //     //         onPressed:
-      //     //             _toggleContainer, //_onPress, keyboard_backspace_outlined
-      //     //         icon: _onPressed == true
-      //     //             ? Icon(Icons.keyboard_backspace_outlined)
-      //     //             : Icon(Icons.menu),
-      //     //       ),
-      //     //       // Navbar(),
-      //     //       TextButton(
-      //     //         onPressed: () {
-      //     //           context.go('/home');
-      //     //         },
-      //     //         child: Text('Заказы'),
-      //     //       ),
-      //     //       SizedBox(width: 50),
-      //     //     ],
-      //     //   ),
-      //     // ),
-      //     SizedBox(
-      //       // color: Colors.blue,
-      //       width: double.infinity,
-      //       height: 700,
-      //       child: Stack(
-      //         children: [
-      //           widget.child,
-      //           // SlideTransition(
-      //           //   position: _animation,
-      //           //   child: SizedBox(width: 300, height: 610, child: Navbar()),
-      //           // ),
-      //         ],
-      //       ),
-      //     ),
-      //   ],
-      // ),
     );
   }
 }
