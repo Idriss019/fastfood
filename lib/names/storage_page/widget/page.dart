@@ -3,8 +3,8 @@ import 'package:fastfood/global_function.dart';
 import 'package:fastfood/navBar.dart';
 import 'package:flutter/material.dart';
 
-class CleanForStorage extends StatelessWidget {
-  const CleanForStorage({super.key});
+class StoragePage extends StatelessWidget {
+  const StoragePage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -75,6 +75,13 @@ class CleanForStorage extends StatelessWidget {
                     headingRowColor: WidgetStateProperty.all(Colors.blueGrey),
                     dataRowHeight: 40,
                     columns: [
+                      // customDataColumn(
+                      //   'В блюде',
+                      //   TextAlign.center,
+                      //   18,
+                      //   180,
+                      //   maxLine: 2,
+                      // ),
                       customDataColumn(
                         'Штрих-код',
                         TextAlign.center,
@@ -101,8 +108,9 @@ class CleanForStorage extends StatelessWidget {
                       //   18,
                       //   100,
                       // ),
+                      customDataColumn('Цена', TextAlign.center, 18, 100),
+                      customDataColumn('Подсчет', TextAlign.center, 18, 100),
                       customDataColumn('Количество', TextAlign.center, 18, 100),
-
                       // customDataColumn('Удалить', TextAlign.center, 13, 50),
                       // customDataColumn('Кол', TextAlign.center, 15, 90),
                       // customDataColumn(

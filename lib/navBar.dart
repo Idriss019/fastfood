@@ -227,12 +227,10 @@ class _NavbarState extends State<Navbar> {
               },
             ),
             ListTile(
-              leading: const Icon(
-                Icons.exposure_rounded,
-              ), //app_registration architecture
-              title: const Text('Корректировка'),
+              leading: const Icon(Icons.store), //app_registration architecture
+              title: const Text('Склад'),
               onTap: () {
-                context.go('/AdjustmentPage');
+                context.go('/StoragePage');
               },
             ),
             ListTile(
@@ -244,7 +242,7 @@ class _NavbarState extends State<Navbar> {
             ),
             ListTile(
               leading: const Icon(
-                Icons.assignment_ind,
+                Icons.person, // assignment_ind,
               ), //app_registration architecture
               title: const Text('Персонал'),
               onTap: () {

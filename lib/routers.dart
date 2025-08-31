@@ -1,5 +1,5 @@
 import 'package:fastfood/main.dart';
-import 'package:fastfood/names/adjustment/widget/page.dart';
+import 'package:fastfood/names/storage_page/widget/page.dart';
 import 'package:fastfood/names/cleanForStorage/widget/page.dart';
 import 'package:fastfood/names/creatingDishes/widget/page.dart';
 import 'package:fastfood/names/orderHome/widget/page.dart';
@@ -53,11 +53,11 @@ final router = GoRouter(
           ),
         ),
         GoRoute(
-          path: 'AdjustmentPage',
+          path: 'StoragePage',
           pageBuilder: (context, state) => buildPageWithDefaultTransition<void>(
             context: context,
             state: state,
-            child: AdjustmentPage(),
+            child: StoragePage(),
           ),
         ),
         GoRoute(
