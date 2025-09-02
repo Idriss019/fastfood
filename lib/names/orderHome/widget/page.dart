@@ -1,6 +1,6 @@
 // import 'package:fastfood/navBar.dart';
-import 'package:data_table_2/data_table_2.dart';
-import 'package:fastfood/global_function.dart';
+// import 'package:data_table_2/data_table_2.dart';
+// import 'package:fastfood/global_function.dart';
 import 'package:fastfood/names/orderHome/widget/menu_screen.dart';
 import 'package:fastfood/names/orderHome/widget/order_screen.dart';
 import 'package:fastfood/navBar.dart';

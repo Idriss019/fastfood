@@ -45,6 +45,22 @@ class CleanForStorage extends StatelessWidget {
                         ),
                       ),
                     ),
+                    // Container(
+                    //   height: 68,
+                    //   margin: EdgeInsets.only(left: 10.0),
+                    //   decoration: BoxDecoration(
+                    //     border: Border.all(width: 2, color: Colors.white),
+                    //     borderRadius: BorderRadius.circular(10),
+                    //   ),
+                    //   // height: double.infinity,
+                    //   child: TextButton(
+                    //     onPressed: () {},
+                    //     child: Text(
+                    //       'Подтвердить',
+                    //       style: TextStyle(fontSize: 30),
+                    //     ),
+                    //   ),
+                    // ),
                   ],
                 ),
               ),
@@ -101,7 +117,9 @@ class CleanForStorage extends StatelessWidget {
                       //   18,
                       //   100,
                       // ),
-                      customDataColumn('Количество', TextAlign.center, 18, 100),
+                      customDataColumn('шт/г/мл', TextAlign.center, 13, 80),
+                      customDataColumn('измерение ', TextAlign.center, 13, 80),
+                      // customDataColumn('Количество', TextAlign.center, 18, 100),
 
                       // customDataColumn('Удалить', TextAlign.center, 13, 50),
                       // customDataColumn('Кол', TextAlign.center, 15, 90),
@@ -133,6 +151,7 @@ class CleanForStorage extends StatelessWidget {
                   ),
                 ),
               ),
+              Text('Только то что не в ходит в блюдо'),
             ],
           ),
         ),

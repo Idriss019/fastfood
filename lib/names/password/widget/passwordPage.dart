@@ -154,11 +154,11 @@ class _PasswordPageState extends State<PasswordPage> {
                             //   icon: Icon(Icons.visibility),
                             // ),
                           ),
-                          onChanged: (value) {
-                            if (bloc.changePasswordToStart(value)) {
-                              context.go('/home');
-                            }
-                          },
+                          // onChanged: (value) {
+                          //   if (bloc.changePasswordToStart(value)) {
+                          //     context.go('/home');
+                          //   }
+                          // },
                           // controller: passwordController,
                           // obscureText: _isObscured,
                           inputFormatters: <TextInputFormatter>[
@@ -222,11 +222,13 @@ class _PasswordPageState extends State<PasswordPage> {
                               icon: Icon(Icons.visibility),
                             ),
                           ),
-                          onChanged: (value) {
-                            if (bloc.changePasswordToStart(value)) {
-                              context.go('/home');
-                            }
-                          },
+                          onChanged: (value) {},
+                          // onChanged: (value) {
+                          //   if (bloc.changePasswordToStart(value)) {
+                          //     context.go('/home');
+                          //     value = '';
+                          //   }
+                          // },
                           // keyboardType: TextInputType.numberWithOptions(),
                           controller: passwordController,
                           obscureText: _isObscured,
@@ -250,10 +252,10 @@ class _PasswordPageState extends State<PasswordPage> {
                       fontWeight: FontWeight.bold,
                     ),
                     resultFunction: (value) {
-                      // print(value);
                       if (bloc.changePasswordToStart(value)) {
-                              context.go('/home');
-                            }
+                        value = '';
+                        context.go('/home');
+                      }
                       passwordController.text = value;
                     },
                     obscureResult: false,

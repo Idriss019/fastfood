@@ -3,9 +3,7 @@ import 'package:fastfood/global_function.dart';
 import 'package:flutter/material.dart';
 
 class OrderScreen extends StatelessWidget {
-  const OrderScreen({
-    super.key,
-  });
+  const OrderScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -20,10 +18,7 @@ class OrderScreen extends StatelessWidget {
             Flexible(
               flex: 3,
               child: Padding(
-                padding: const EdgeInsets.only(
-                  left: 10.0,
-                  right: 10.0,
-                ),
+                padding: const EdgeInsets.only(left: 10.0, right: 10.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -64,9 +59,7 @@ class OrderScreen extends StatelessWidget {
                   //     //     bottomLeft: Radius.circular(20),
                   //     //     bottomRight: Radius.circular(20))
                   //     ),
-                  headingRowColor: WidgetStateProperty.all(
-                    Colors.blueGrey,
-                  ),
+                  headingRowColor: WidgetStateProperty.all(Colors.blueGrey),
                   dataRowHeight: 40,
                   columns: [
                     // customDataColumn(
@@ -75,36 +68,11 @@ class OrderScreen extends StatelessWidget {
                     //   13,
                     //   50,
                     // ),
-                    customDataColumn(
-                      'Кол.',
-                      TextAlign.center,
-                      13,
-                      80,
-                    ),
-                    customDataColumn(
-                      'Продукт',
-                      TextAlign.center,
-                      null,
-                      null,
-                    ),
-                    customDataColumn(
-                      'масса мл/г',
-                      TextAlign.center,
-                      13,
-                      80,
-                    ),
-                    customDataColumn(
-                      'Цена',
-                      TextAlign.center,
-                      18,
-                      100,
-                    ),
-                    customDataColumn(
-                      'Сумма',
-                      TextAlign.center,
-                      18,
-                      100,
-                    ),
+                    customDataColumn('Кол.', TextAlign.center, 13, 80),
+                    customDataColumn('Продукт', TextAlign.center, null, null),
+                    customDataColumn('масса/объем', TextAlign.center, 13, 80),
+                    customDataColumn('Цена', TextAlign.center, 18, 100),
+                    customDataColumn('Сумма', TextAlign.center, 18, 100),
                     // customDataColumn('Кол', TextAlign.center, 15, 90),
                     // customDataColumn(
                     //   'Цена в с',
@@ -126,7 +94,7 @@ class OrderScreen extends StatelessWidget {
                   //     // state.purchasesListSQL,
                   //     // _bloc.switchableList.listPosition(),
                   //     // _bloc.state.listPosition(),
-    
+
                   //     swichList.listPosition(),
                   //     context,
                   //     _bloc,
@@ -186,8 +154,7 @@ class OrderScreen extends StatelessWidget {
                                       onPressed: () {},
                                       icon: Icon(
                                         size: 50,
-                                        Icons
-                                            .exposure_minus_1_outlined,
+                                        Icons.exposure_minus_1_outlined,
                                       ),
                                     ),
                                   ), // onetwothree_outlined  lock_outline remove_circle
@@ -202,10 +169,7 @@ class OrderScreen extends StatelessWidget {
                                   Expanded(
                                     child: IconButton(
                                       onPressed: () {},
-                                      icon: Icon(
-                                        size: 50,
-                                        Icons.delete,
-                                      ),
+                                      icon: Icon(size: 50, Icons.delete),
                                     ),
                                   ), // onetwothree_outlined  lock_outline remove_circle
                                   Expanded(
@@ -217,9 +181,7 @@ class OrderScreen extends StatelessWidget {
                                         child: Text(
                                           '123',
                                           textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            fontSize: 50,
-                                          ),
+                                          style: TextStyle(fontSize: 50),
                                         ),
                                       ),
                                     ),
