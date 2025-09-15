@@ -1,3 +1,4 @@
+import 'package:fastfood/names/creatingDishes/bloc/creating_dishes_bloc.dart';
 import 'package:fastfood/names/password/cubit/password_cubit.dart';
 import 'package:fastfood/names/purchases/bloc/purchases_bloc.dart';
 import 'package:fastfood/names/theme/cubit/theme_cubit.dart';
@@ -22,6 +23,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => ThemeCubit(context)),
         BlocProvider(create: (context) => PasswordCubit('')),
         BlocProvider(create: (context) => PurchasesBloc()),
+        BlocProvider(create: (context) => CreatingDishesBloc()),
       ],
       child: BlocBuilder<ThemeCubit, ThemeState>(
         builder: (context, state) {
