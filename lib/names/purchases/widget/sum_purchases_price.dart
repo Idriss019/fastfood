@@ -20,7 +20,47 @@ class SumPurchasePrice extends StatefulWidget {
 }
 
 class _PriceOfSomWidgetState extends State<SumPurchasePrice> {
-  TextEditingController somController = TextEditingController();
+  final TextEditingController _purchasesSumCont = TextEditingController();
+  final TextEditingController _priceSumCont = TextEditingController();
+  late PurchasesBloc purchasesBloc;
+
+  @override
+  void initState() {
+    super.initState();
+    purchasesBloc = context.read<PurchasesBloc>();
+    // _barcodeCont.addListener(() {});
+    // _courseCont.addListener(() {});
+    // blocPurchases = context.read<PurchasesCubit>();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final purchasesBlocWatch = context.watch<PurchasesBloc>();
+    // Обновляем контроллер при изменении состояния
+    final String purchasesSum = purchasesBlocWatch.state.purchasesSum;
+    if (_purchasesSumCont.text != purchasesSum) {
+      _purchasesSumCont.value = TextEditingValue(
+        text: purchasesSum,
+        selection: TextSelection.collapsed(offset: purchasesSum.length),
+      );
+    }
+    final String priceSum = purchasesBlocWatch.state.priceSum;
+    if (_priceSumCont.text != priceSum) {
+      _priceSumCont.value = TextEditingValue(
+        text: priceSum,
+        selection: TextSelection.collapsed(offset: priceSum.length),
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    _purchasesSumCont.dispose();
+    _priceSumCont.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     // final bloc = context.watch<PurchasesCubit>();
@@ -53,11 +93,21 @@ class _PriceOfSomWidgetState extends State<SumPurchasePrice> {
                   child: BlocBuilder<PurchasesBloc, PurchasesState>(
                     builder: (context, state) {
                       return TextField(
-                        onChanged: (value) {},
-                        // controller: TextEditingController.fromValue(
-                        //   TextEditingValue(text: state.purchases),
-                        // )..selection = TextSelection.collapsed(
-                        //     offset: state.purchases.length),
+                        onChanged: (value) {
+                          purchasesBloc.add(PurchasesSumInput(value));
+                          if (state.quantity.isNotEmpty && value.isNotEmpty) {
+                            double result =
+                                double.parse(value) /
+                                double.parse(state.quantity);
+                            // print(result);
+                            purchasesBloc.add(
+                              PurchasesInput(result.toString()),
+                            );
+                          }
+
+                          
+                        },
+                        controller: _purchasesSumCont,
                         cursorColor: widget.invertColor,
                         style: TextStyle(
                           fontWeight: FontWeight.w600,
@@ -106,12 +156,11 @@ class _PriceOfSomWidgetState extends State<SumPurchasePrice> {
                   child: BlocBuilder<PurchasesBloc, PurchasesState>(
                     builder: (context, state) {
                       return TextField(
-                        onChanged: (value) {},
-                        // controller: somController,
-                        // controller: TextEditingController.fromValue(
-                        //   TextEditingValue(text: state.price),
-                        // )..selection =
-                        //     TextSelection.collapsed(offset: state.price.length),
+                        enabled: false,
+                        onChanged: (value) {
+                          // purchasesBloc.add(PriceSumInput(value));
+                        },
+                        controller: _priceSumCont,
                         cursorColor: widget.invertColor,
                         style: TextStyle(
                           fontWeight: FontWeight.w600,

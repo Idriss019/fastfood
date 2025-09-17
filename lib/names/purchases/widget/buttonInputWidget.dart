@@ -33,25 +33,23 @@ class ButtonInputWidget extends StatelessWidget {
         //     border: Border.all(color: lineBorderColor)),
         height: heightRow - 12,
         width: withSizedBox + 100,
-        child: BlocBuilder<PurchasesBloc, PurchasesState>(
-            builder: (context, state) {
-          return TextButton(
-              style: ButtonStyle(
-                shape: WidgetStateProperty.all(RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10))),
-                backgroundColor: myButtonColor,
+        child: TextButton(
+            style: ButtonStyle(
+              shape: WidgetStateProperty.all(RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10))),
+              backgroundColor: myButtonColor,
+            ),
+            onPressed: () {
+              context.read<PurchasesBloc>().add(ButtonInput());
+            },
+            child: Text(
+              'Добавить',
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 25,
+                color: onPrimaryColor,
               ),
-              onPressed: () {
-              },
-              child: Text(
-                'Добавить',
-                style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 25,
-                  color: onPrimaryColor,
-                ),
-              ));
-        }),
+            )),
       ),
     );
   }

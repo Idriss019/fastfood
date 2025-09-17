@@ -43,3 +43,39 @@ class ProductInput extends PurchasesEvent {
   // list
   ];
 }
+/* Purchases Line */
+class PurchasesInput extends PurchasesEvent {
+  final String purchases;
+  const PurchasesInput(this.purchases);
+
+  @override
+  List<Object> get props => [purchases];
+}
+
+class PriceInput extends PurchasesEvent {
+  final String price;
+  const PriceInput(this.price);
+
+  @override
+  List<Object> get props => [price];
+}
+
+/* PurchasesSum Line */
+class PurchasesSumInput extends PurchasesEvent {
+  final String purchasesSum;
+  const PurchasesSumInput(this.purchasesSum);
+
+  @override
+  List<Object> get props => [purchasesSum];
+}
+
+class PriceSumInput extends PurchasesEvent {
+  final String priceSum;
+  const PriceSumInput(this.priceSum);
+
+  @override
+  List<Object> get props => [priceSum];
+}
+
+/* ButtonInput Line */
+class ButtonInput extends PurchasesEvent {}

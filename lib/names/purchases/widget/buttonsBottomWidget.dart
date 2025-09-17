@@ -1,5 +1,7 @@
 import 'package:fastfood/global_function.dart';
+import 'package:fastfood/names/purchases/bloc/purchases_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ButtonsBottomWidget extends StatefulWidget {
   const ButtonsBottomWidget({
@@ -51,7 +53,8 @@ class _ButtonsBottomWidgetState extends State<ButtonsBottomWidget> {
         child: Row(
           // mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Expanded(
+            Flexible(
+              flex: 6,
               child: Padding(
                 padding: const EdgeInsets.only(left: 50.0, right: 50),
                 child: Container(
@@ -79,7 +82,8 @@ class _ButtonsBottomWidgetState extends State<ButtonsBottomWidget> {
                 ),
               ),
             ),
-            Expanded(
+            Flexible(
+              flex: 6,
               child: Padding(
                 padding: const EdgeInsets.only(left: 50.0, right: 50),
                 child: Container(
@@ -108,11 +112,12 @@ class _ButtonsBottomWidgetState extends State<ButtonsBottomWidget> {
               ),
             ),
             /* Итого */
-            Expanded(
+            Flexible(
+              flex: 7,
               child: Padding(
                 padding: const EdgeInsets.only(top: 2),
                 child: SizedBox(
-                  width: 400,
+                  // width: 400,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -131,10 +136,9 @@ class _ButtonsBottomWidgetState extends State<ButtonsBottomWidget> {
                         ),
                       ),
                       SizedBox(
-                        width: 230,
-                        child:
-                            // BlocBuilder<SalesBloc, SalesState>(
-                            //     builder: (context, state) {
+                        // width: 225,
+                        child: BlocBuilder<PurchasesBloc, PurchasesState>(
+                          builder: (context, state) {
                             // double sum = 0;
                             // for (var i in state.salesList) {
                             //   sum += i.sumOfRubles;
@@ -142,21 +146,32 @@ class _ButtonsBottomWidgetState extends State<ButtonsBottomWidget> {
                             // }
                             // state.salesList.reduce((total, element) =>
                             //     total += element.sumOfRubles);
-                            // if (state.salesList.isNotEmpty) {
-                            //   double totalRub = state.salesList
+                            // if (state.purchasesList.isNotEmpty) {
+                            //   double totalRub = state.purchasesList
                             //       .map((item) => item.sumOfRubles)
                             //       .reduce((a, b) => a + b);
                             //   blocSales.updateStateText(state.copyWith(
                             //       totalOfRubles: totalRub.toString()));
                             // }
-                            // return
-                            Text(
-                              '12 345',
+                            return Text(
+                              state.total,
                               style: TextStyle(
                                 fontWeight: FontWeight.w600,
                                 fontSize: 35,
                               ),
-                            ),
+                            );
+                          },
+                        ),
+                      ),
+                      SizedBox(
+                        // width: 225,
+                        child: Text(
+                          'P',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 35,
+                          ),
+                        ),
                       ),
                     ],
                   ),

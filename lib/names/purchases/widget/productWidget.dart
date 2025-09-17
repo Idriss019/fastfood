@@ -35,7 +35,7 @@ class _ProductWidgetState extends State<ProductWidget> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // final purchasesBloc = context.watch<PurchasesBloc>();
+    final purchasesBloc = context.watch<PurchasesBloc>();
     // Обновляем контроллер при изменении состояния
     final String product = purchasesBloc.state.product;
     if (_productCont.text != product) {

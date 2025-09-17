@@ -1,4 +1,4 @@
-import 'dart:math';
+// import 'dart:math';
 
 import 'package:fastfood/names/purchases/bloc/purchases_bloc.dart';
 import 'package:flutter/material.dart';
@@ -28,6 +28,7 @@ class _BarcodeWidgetState extends State<BarcodeWidget> {
   final TextEditingController _quantityCont = TextEditingController();
   final TextEditingController _measuringCont = TextEditingController();
   late PurchasesBloc purchasesBloc;
+
   @override
   void initState() {
     super.initState();
@@ -40,7 +41,7 @@ class _BarcodeWidgetState extends State<BarcodeWidget> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // final purchasesBloc = context.watch<PurchasesBloc>();
+    final purchasesBloc = context.watch<PurchasesBloc>();
     // Обновляем контроллер при изменении состояния
     final String barcode = purchasesBloc.state.barcode;
     if (_barcodeCont.text != barcode) {
@@ -50,15 +51,21 @@ class _BarcodeWidgetState extends State<BarcodeWidget> {
       );
     }
     final String quantity = purchasesBloc.state.quantity;
-    if (_barcodeCont.text != quantity) {
-      _barcodeCont.value = TextEditingValue(
+    if (_quantityCont.text != quantity) {
+      _quantityCont.value = TextEditingValue(
         text: quantity,
         selection: TextSelection.collapsed(offset: quantity.length),
       );
     }
     final String measuring = purchasesBloc.state.measuring;
-    if (_barcodeCont.text != measuring) {
-      _barcodeCont.value = TextEditingValue(
+    if (_measuringCont.text == '') {
+      _measuringCont.value = TextEditingValue(
+        text: 'шт',
+        selection: TextSelection.collapsed(offset: measuring.length),
+      );
+    }
+    if (_measuringCont.text != measuring) {
+      _measuringCont.value = TextEditingValue(
         text: measuring,
         selection: TextSelection.collapsed(offset: measuring.length),
       );
@@ -173,8 +180,32 @@ class _BarcodeWidgetState extends State<BarcodeWidget> {
                       builder: (context, state) {
                         return TextField(
                           onChanged: (value) {
-                            purchasesBloc.add(QuantityInput(value));
+                            if (value.isNotEmpty) {
+                              purchasesBloc.add(QuantityInput(value));
+
+                              if (state.purchases.isNotEmpty &&
+                                  double.parse(value) > 0) {
+                                double result =
+                                    double.parse(value) *
+                                    double.parse(state.purchases);
+
+                                purchasesBloc.add(
+                                  PurchasesSumInput(result.toString()),
+                                );
+                              }
+                              if (state.purchasesSum.isNotEmpty &&
+                                  double.parse(value) > 0) {
+                                double result =
+                                    double.parse(state.purchasesSum) /
+                                    double.parse(value);
+
+                                purchasesBloc.add(
+                                  PurchasesInput(result.toString()),
+                                );
+                              }
+                            }
                           },
+
                           controller: _quantityCont,
                           cursorColor: widget.invertColor,
                           style: TextStyle(
@@ -243,7 +274,7 @@ class _BarcodeWidgetState extends State<BarcodeWidget> {
                       DropdownMenuEntry(value: 'шт', label: 'шт'),
                       DropdownMenuEntry(value: 'г', label: 'г'),
                       DropdownMenuEntry(value: 'мл', label: 'мл'),
-                      // DropdownMenuEntry(value: 'кг', label: 'кг'),
+                      DropdownMenuEntry(value: 'кг', label: 'кг'),
                       DropdownMenuEntry(value: 'л', label: 'л'),
                     ],
                     inputFormatters: <TextInputFormatter>[

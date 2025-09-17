@@ -1,6 +1,8 @@
 import 'package:data_table_2/data_table_2.dart';
+import 'package:fastfood/data_class/purchases_data.dart';
 import 'package:fastfood/global_function.dart';
 import 'package:fastfood/names/purchases/bloc/purchases_bloc.dart';
+import 'package:fastfood/widgetMetod.dart' hide customDataColumn;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:string_capitalize/string_capitalize.dart';
@@ -59,20 +61,23 @@ class TableWidget extends StatelessWidget {
               headingRowHeight: 45,
               dataRowHeight: 40,
               columns: [
+                // customDataColumn('Цена в с.', TextAlign.center, 15, 140),
                 customDataColumn('№', TextAlign.center, null, 50),
-                customDataColumn('Удалить', TextAlign.center, 13, 100),
                 customDataColumn('Название', TextAlign.center, null, null),
                 customDataColumn('Цена зак.', TextAlign.center, 15, 140),
-                // customDataColumn('Цена в с.', TextAlign.center, 15, 140),
                 customDataColumn('Кол', TextAlign.center, 13, 110),
                 customDataColumn('Измер.', TextAlign.center, 13, 90),
                 customDataColumn('Сумма', TextAlign.center, 17, 140),
-                customDataColumn('Штрих-код', TextAlign.center, null, 160),
+                customDataColumn('Удалить', TextAlign.center, 13, 100),
+                // customDataColumn('Штрих-код', TextAlign.center, null, 160),
               ], // 7
-              rows: [],
+              rows: _createRows(
+                state.purchasesList,
+                context,
+                context.read<PurchasesBloc>(),
+                invertColor,
+              ),
             );
-            // _createRows(state.purchasesList, context,
-            //     context.read<PurchasesBloc>(), invertColor));
           },
         ),
       ),
@@ -80,90 +85,130 @@ class TableWidget extends StatelessWidget {
   }
 
   /* Функция для создание строк */
-  // List<DataRow> _createRows(
-  //     List<PurchasesData> dataClass, context, bloc, colorText) {
-  //   // final bloc = context.read<PurchasesCubit>();
-  //   List<DataRow> dataR = [];
-  //   // int number = 0;
+  List<DataRow> _createRows(
+    List<PurchasesData> dataClass,
+    context,
+    bloc,
+    colorText,
+  ) {
+    // final bloc = context.read<PurchasesCubit>();
+    List<DataRow> dataR = [];
+    // int number = 0;
 
-  //   for (var i in dataClass) {
-  //     // double sum = i.priceOfSom! * i.quantity!.toDouble();
-  //     // number++;
-  //     List<DataCell> dataC = [
-  //       /// Num
-  //       DataCell(Text((dataClass.indexOf(i) + 1).toString())),
+    for (PurchasesData i in dataClass) {
+      // double sum = i.priceOfSom! * i.quantity!.toDouble();
+      // number++;
+      List<DataCell> dataC = [
+        /// Num
+        DataCell(Text((dataClass.indexOf(i) + 1).toString())),
 
-  //       /// Удалить
-  //       DataCell(deleteCell(
-  //         context, i.product,
-  //         () => bloc.add(RemoveFromList(data: i)),
-  //         // () => bloc.removePurchasesList(i)
-  //       )),
+        /// Название
+        DataCell(textCell(i.product, TextAlign.center)),
 
-  //       /// Название
-  //       DataCell(textCell(
-  //         i.product,
-  //         // context,
-  //         // bloc,
-  //         TextAlign.center,
-  //         // (title) => bloc.updatePurchasesList(i, i.copyWith(product: title)),
-  //         // colorText,
-  //         // null,
-  //         // null
-  //         //formatInput: FilteringTextInputFormatter.digitsOnly,
-  //       )),
+        /// Цена в закупки
+        DataCell(
+          textCell(
+            i.priceOfPurchases.toString(),
+            TextAlign.center,
+            separator: true,
+            maxLine: 1,
+          ),
+        ),
+        // DataCell(
+        //   textFieldCellWithReg(
+        //     context,
+        //     i.priceOfPurchases.toString(),
+        //     TextAlign.center,
+        //     (newPurchases) {
+        //       double parsedPurchases;
 
-  //       /// Цена в закупки
-  //       DataCell(textFieldCellWithReg(
-  //            context, i.priceOfPurchases.toString(), TextAlign.center,
-  //           (newPurchases) {
-  //         double parsedPurchases;
+        //       try {
+        //         parsedPurchases = double.parse(newPurchases);
+        //         bloc.add(
+        //           UpdatePurchasesFromList(
+        //             data: i,
+        //             newData: i.copyWith(priceOfPurchases: parsedPurchases),
+        //           ),
+        //         );
+        //         Navigator.pop(context);
+        //       } catch (e) {
+        //         print('Не корректное число!');
+        //         // emit(state.copyWith(errorTitle: 'Некорректное числовое значение!'));
+        //         return;
+        //       }
+        //     },
+        //     // (title) {
+        //     // bloc.updatePurchasesList(
+        //     //     i, i.copyWith(priceOfPurchases: double.parse(title)));
+        //     // Navigator.pop(context);
+        //     // }
+        //     DoubleTextInputFormatter(),
+        //     1,
+        //     colorText,
+        //     separator: true,
+        //   ),
+        // ),
 
-  //         try {
-  //           parsedPurchases = double.parse(newPurchases);
-  //           bloc.add(UpdatePurchasesFromList(
-  //               data: i,
-  //               newData: i.copyWith(priceOfPurchases: parsedPurchases)));
-  //             Navigator.pop(context);
-  //         } catch (e) {
-  //           print('Не корректное число!');
-  //           // emit(state.copyWith(errorTitle: 'Некорректное числовое значение!'));
-  //           return;
-  //         }
-  //       },
-  //           // (title) {
-  //           // bloc.updatePurchasesList(
-  //           //     i, i.copyWith(priceOfPurchases: double.parse(title)));
-  //           // Navigator.pop(context);
-  //           // }
-  //           DoubleTextInputFormatter(),
-  //           1,
-  //           colorText,
-  //           separator: true)),
+        /// Количество
+        DataCell(
+          textCell(
+            i.quantity.toString(),
+            TextAlign.center,
+            separator: true,
+            maxLine: 1,
+          ),
+        ),
 
-  //       /// Количество
-  //       DataCell(textFieldCellWithReg(
-  //           context, i.quantity.toString(), TextAlign.center, (title) {
-  //         // bloc.updatePurchasesList(i, i.copyWith(quantity: int.parse(title)));
-  //         // Navigator.pop(context);
-  //       }, FilteringTextInputFormatter.allow(RegExp(r'\b[1-9][0-9]{0,4}')), 1,
-  //           colorText,
-  //           separator: true)),
+        /// Измеритель
+        DataCell(
+          textCell(
+            i.measuring ?? 'шт',
+            TextAlign.center,
+            separator: true,
+            maxLine: 1,
+          ),
+        ),
+        // DataCell(
+        //   textFieldCellWithReg(
+        //     context,
+        //     i.quantity.toString(),
+        //     TextAlign.center,
+        //     (title) {
+        //       // bloc.updatePurchasesList(i, i.copyWith(quantity: int.parse(title)));
+        //       // Navigator.pop(context);
+        //     },
+        //     FilteringTextInputFormatter.allow(RegExp(r'\b[1-9][0-9]{0,4}')),
+        //     1,
+        //     colorText,
+        //     separator: true,
+        //   ),
+        // ),
 
-  //       /// Сумма
-  //       DataCell(textCell(
-  //           (i.priceOfPurchases! * i.quantity!.toDouble()).toString(),
-  //           TextAlign.center,
-  //           separator: true)),
+        /// Сумма
+        DataCell(
+          textCell(
+            (i.priceOfPurchases! * i.quantity!.toDouble()).toString(),
+            TextAlign.center,
+            separator: true,
+            maxLine: 1,
+          ),
+        ),
 
-  //       /// Штрих-код
-  //       DataCell(textCell(
-  //         (i.barcode ?? ''),
-  //         TextAlign.center,
-  //       )),
-  //     ];
-  //     dataR.add(DataRow(cells: dataC));
-  //   }
-  //   return dataR;
-  // }
+        /// Удалить
+        DataCell(
+          deleteCell(
+            context,
+            i.product,
+            () {},
+            // () => bloc.add(RemoveFromList(data: i)),
+            // () => bloc.removePurchasesList(i)
+          ),
+        ),
+        // /// Штрих-код
+        // DataCell(textCell((i.barcode ?? ''), TextAlign.center)),
+      ];
+      dataR.add(DataRow(cells: dataC));
+    }
+    return dataR;
+  }
 }

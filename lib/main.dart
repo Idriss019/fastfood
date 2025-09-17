@@ -15,10 +15,19 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 // import 'package:dartpy/dartpy.dart';
 // import 'package:network_info_plus/network_info_plus.dart';
+import 'package:window_size/window_size.dart';
 
 void main() async {
   runApp(const MyApp());
   String mac = '';
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+    setWindowTitle('My App');
+    setWindowMinSize(const Size(1024, 768));
+    setWindowMaxSize(const Size(1024, 768));
+    setWindowFrame(const Rect.fromLTWH(100, 100, 1024, 768));
+  }
   Future<String?> getMacAddressLinux() async {
   try {
     // Запуск команды ip link show
