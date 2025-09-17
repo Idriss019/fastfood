@@ -103,7 +103,7 @@ class OrderScreen extends StatelessWidget {
               ),
             ),
             Flexible(
-              flex: 2,
+              flex: 3,
               child: SizedBox(
                 // height: 100,
                 child: Row(
@@ -118,7 +118,7 @@ class OrderScreen extends StatelessWidget {
                     Expanded(
                       // height: 70,
                       // width: 100,
-                      child: TextField(),
+                      child: TextField(style: TextStyle(fontSize: 16)),
                     ),
                   ],
                 ),

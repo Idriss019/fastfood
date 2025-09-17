@@ -12,7 +12,7 @@ import 'package:fastfood/names/staff/widget/page.dart';
 import 'package:fastfood/names/tables/widget/historyTable.dart';
 import 'package:fastfood/names/tables/widget/page.dart';
 import 'package:fastfood/names/tables/widget/purchasesTable.dart';
-import 'package:fastfood/names/tables/widget/recalculation.dart';
+import 'package:fastfood/names/recalculation/widget/page.dart';
 import 'package:fastfood/names/tables/widget/salesTable.dart';
 import 'package:fastfood/names/tables/widget/staffTable.dart';
 import 'package:fastfood/names/tables/widget/storageTable.dart';
