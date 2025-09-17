@@ -74,6 +74,36 @@ class $StorageTableDBTable extends StorageTableDB
     type: DriftSqlType.int,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _measuringMeta = const VerificationMeta(
+    'measuring',
+  );
+  @override
+  late final GeneratedColumn<String> measuring = GeneratedColumn<String>(
+    'measuring',
+    aliasedName,
+    false,
+    additionalChecks: GeneratedColumn.checkTextLength(
+      minTextLength: 1,
+      maxTextLength: 5,
+    ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _visibilityMeta = const VerificationMeta(
+    'visibility',
+  );
+  @override
+  late final GeneratedColumn<bool> visibility = GeneratedColumn<bool>(
+    'visibility',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("visibility" IN (0, 1))',
+    ),
+    clientDefault: () => true,
+  );
   static const VerificationMeta _priceMeta = const VerificationMeta('price');
   @override
   late final GeneratedColumn<double> price = GeneratedColumn<double>(
@@ -100,6 +130,8 @@ class $StorageTableDBTable extends StorageTableDB
     barcode,
     product,
     quantity,
+    measuring,
+    visibility,
     price,
     found,
   ];
@@ -146,6 +178,20 @@ class $StorageTableDBTable extends StorageTableDB
     } else if (isInserting) {
       context.missing(_quantityMeta);
     }
+    if (data.containsKey('measuring')) {
+      context.handle(
+        _measuringMeta,
+        measuring.isAcceptableOrUnknown(data['measuring']!, _measuringMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_measuringMeta);
+    }
+    if (data.containsKey('visibility')) {
+      context.handle(
+        _visibilityMeta,
+        visibility.isAcceptableOrUnknown(data['visibility']!, _visibilityMeta),
+      );
+    }
     if (data.containsKey('price')) {
       context.handle(
         _priceMeta,
@@ -187,6 +233,14 @@ class $StorageTableDBTable extends StorageTableDB
         DriftSqlType.int,
         data['${effectivePrefix}quantity'],
       )!,
+      measuring: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}measuring'],
+      )!,
+      visibility: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}visibility'],
+      )!,
       price: attachedDatabase.typeMapping.read(
         DriftSqlType.double,
         data['${effectivePrefix}price'],
@@ -211,6 +265,8 @@ class StorageTableDBData extends DataClass
   final String? barcode;
   final String product;
   final int quantity;
+  final String measuring;
+  final bool visibility;
   final double? price;
   final int? found;
   const StorageTableDBData({
@@ -219,6 +275,8 @@ class StorageTableDBData extends DataClass
     this.barcode,
     required this.product,
     required this.quantity,
+    required this.measuring,
+    required this.visibility,
     this.price,
     this.found,
   });
@@ -232,6 +290,8 @@ class StorageTableDBData extends DataClass
     }
     map['product'] = Variable<String>(product);
     map['quantity'] = Variable<int>(quantity);
+    map['measuring'] = Variable<String>(measuring);
+    map['visibility'] = Variable<bool>(visibility);
     if (!nullToAbsent || price != null) {
       map['price'] = Variable<double>(price);
     }
@@ -250,6 +310,8 @@ class StorageTableDBData extends DataClass
           : Value(barcode),
       product: Value(product),
       quantity: Value(quantity),
+      measuring: Value(measuring),
+      visibility: Value(visibility),
       price: price == null && nullToAbsent
           ? const Value.absent()
           : Value(price),
@@ -270,6 +332,8 @@ class StorageTableDBData extends DataClass
       barcode: serializer.fromJson<String?>(json['barcode']),
       product: serializer.fromJson<String>(json['product']),
       quantity: serializer.fromJson<int>(json['quantity']),
+      measuring: serializer.fromJson<String>(json['measuring']),
+      visibility: serializer.fromJson<bool>(json['visibility']),
       price: serializer.fromJson<double?>(json['price']),
       found: serializer.fromJson<int?>(json['found']),
     );
@@ -283,6 +347,8 @@ class StorageTableDBData extends DataClass
       'barcode': serializer.toJson<String?>(barcode),
       'product': serializer.toJson<String>(product),
       'quantity': serializer.toJson<int>(quantity),
+      'measuring': serializer.toJson<String>(measuring),
+      'visibility': serializer.toJson<bool>(visibility),
       'price': serializer.toJson<double?>(price),
       'found': serializer.toJson<int?>(found),
     };
@@ -294,6 +360,8 @@ class StorageTableDBData extends DataClass
     Value<String?> barcode = const Value.absent(),
     String? product,
     int? quantity,
+    String? measuring,
+    bool? visibility,
     Value<double?> price = const Value.absent(),
     Value<int?> found = const Value.absent(),
   }) => StorageTableDBData(
@@ -302,6 +370,8 @@ class StorageTableDBData extends DataClass
     barcode: barcode.present ? barcode.value : this.barcode,
     product: product ?? this.product,
     quantity: quantity ?? this.quantity,
+    measuring: measuring ?? this.measuring,
+    visibility: visibility ?? this.visibility,
     price: price.present ? price.value : this.price,
     found: found.present ? found.value : this.found,
   );
@@ -312,6 +382,10 @@ class StorageTableDBData extends DataClass
       barcode: data.barcode.present ? data.barcode.value : this.barcode,
       product: data.product.present ? data.product.value : this.product,
       quantity: data.quantity.present ? data.quantity.value : this.quantity,
+      measuring: data.measuring.present ? data.measuring.value : this.measuring,
+      visibility: data.visibility.present
+          ? data.visibility.value
+          : this.visibility,
       price: data.price.present ? data.price.value : this.price,
       found: data.found.present ? data.found.value : this.found,
     );
@@ -325,6 +399,8 @@ class StorageTableDBData extends DataClass
           ..write('barcode: $barcode, ')
           ..write('product: $product, ')
           ..write('quantity: $quantity, ')
+          ..write('measuring: $measuring, ')
+          ..write('visibility: $visibility, ')
           ..write('price: $price, ')
           ..write('found: $found')
           ..write(')'))
@@ -332,8 +408,17 @@ class StorageTableDBData extends DataClass
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, inDishes, barcode, product, quantity, price, found);
+  int get hashCode => Object.hash(
+    id,
+    inDishes,
+    barcode,
+    product,
+    quantity,
+    measuring,
+    visibility,
+    price,
+    found,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -343,6 +428,8 @@ class StorageTableDBData extends DataClass
           other.barcode == this.barcode &&
           other.product == this.product &&
           other.quantity == this.quantity &&
+          other.measuring == this.measuring &&
+          other.visibility == this.visibility &&
           other.price == this.price &&
           other.found == this.found);
 }
@@ -353,6 +440,8 @@ class StorageTableDBCompanion extends UpdateCompanion<StorageTableDBData> {
   final Value<String?> barcode;
   final Value<String> product;
   final Value<int> quantity;
+  final Value<String> measuring;
+  final Value<bool> visibility;
   final Value<double?> price;
   final Value<int?> found;
   const StorageTableDBCompanion({
@@ -361,6 +450,8 @@ class StorageTableDBCompanion extends UpdateCompanion<StorageTableDBData> {
     this.barcode = const Value.absent(),
     this.product = const Value.absent(),
     this.quantity = const Value.absent(),
+    this.measuring = const Value.absent(),
+    this.visibility = const Value.absent(),
     this.price = const Value.absent(),
     this.found = const Value.absent(),
   });
@@ -370,16 +461,21 @@ class StorageTableDBCompanion extends UpdateCompanion<StorageTableDBData> {
     this.barcode = const Value.absent(),
     required String product,
     required int quantity,
+    required String measuring,
+    this.visibility = const Value.absent(),
     this.price = const Value.absent(),
     this.found = const Value.absent(),
   }) : product = Value(product),
-       quantity = Value(quantity);
+       quantity = Value(quantity),
+       measuring = Value(measuring);
   static Insertable<StorageTableDBData> custom({
     Expression<int>? id,
     Expression<bool>? inDishes,
     Expression<String>? barcode,
     Expression<String>? product,
     Expression<int>? quantity,
+    Expression<String>? measuring,
+    Expression<bool>? visibility,
     Expression<double>? price,
     Expression<int>? found,
   }) {
@@ -389,6 +485,8 @@ class StorageTableDBCompanion extends UpdateCompanion<StorageTableDBData> {
       if (barcode != null) 'barcode': barcode,
       if (product != null) 'product': product,
       if (quantity != null) 'quantity': quantity,
+      if (measuring != null) 'measuring': measuring,
+      if (visibility != null) 'visibility': visibility,
       if (price != null) 'price': price,
       if (found != null) 'found': found,
     });
@@ -400,6 +498,8 @@ class StorageTableDBCompanion extends UpdateCompanion<StorageTableDBData> {
     Value<String?>? barcode,
     Value<String>? product,
     Value<int>? quantity,
+    Value<String>? measuring,
+    Value<bool>? visibility,
     Value<double?>? price,
     Value<int?>? found,
   }) {
@@ -409,6 +509,8 @@ class StorageTableDBCompanion extends UpdateCompanion<StorageTableDBData> {
       barcode: barcode ?? this.barcode,
       product: product ?? this.product,
       quantity: quantity ?? this.quantity,
+      measuring: measuring ?? this.measuring,
+      visibility: visibility ?? this.visibility,
       price: price ?? this.price,
       found: found ?? this.found,
     );
@@ -432,6 +534,12 @@ class StorageTableDBCompanion extends UpdateCompanion<StorageTableDBData> {
     if (quantity.present) {
       map['quantity'] = Variable<int>(quantity.value);
     }
+    if (measuring.present) {
+      map['measuring'] = Variable<String>(measuring.value);
+    }
+    if (visibility.present) {
+      map['visibility'] = Variable<bool>(visibility.value);
+    }
     if (price.present) {
       map['price'] = Variable<double>(price.value);
     }
@@ -449,6 +557,8 @@ class StorageTableDBCompanion extends UpdateCompanion<StorageTableDBData> {
           ..write('barcode: $barcode, ')
           ..write('product: $product, ')
           ..write('quantity: $quantity, ')
+          ..write('measuring: $measuring, ')
+          ..write('visibility: $visibility, ')
           ..write('price: $price, ')
           ..write('found: $found')
           ..write(')'))
@@ -1162,10 +1272,27 @@ class $PurchasesTableDBTable extends PurchasesTableDB
     type: DriftSqlType.int,
     requiredDuringInsert: true,
   );
-  static const VerificationMeta _costMeta = const VerificationMeta('cost');
+  static const VerificationMeta _measuringMeta = const VerificationMeta(
+    'measuring',
+  );
   @override
-  late final GeneratedColumn<double> cost = GeneratedColumn<double>(
-    'cost',
+  late final GeneratedColumn<String> measuring = GeneratedColumn<String>(
+    'measuring',
+    aliasedName,
+    false,
+    additionalChecks: GeneratedColumn.checkTextLength(
+      minTextLength: 1,
+      maxTextLength: 5,
+    ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _priceOfPurchasesMeta = const VerificationMeta(
+    'priceOfPurchases',
+  );
+  @override
+  late final GeneratedColumn<double> priceOfPurchases = GeneratedColumn<double>(
+    'price_of_purchases',
     aliasedName,
     false,
     type: DriftSqlType.double,
@@ -1178,7 +1305,8 @@ class $PurchasesTableDBTable extends PurchasesTableDB
     barcode,
     product,
     quantity,
-    cost,
+    measuring,
+    priceOfPurchases,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -1223,13 +1351,24 @@ class $PurchasesTableDBTable extends PurchasesTableDB
     } else if (isInserting) {
       context.missing(_quantityMeta);
     }
-    if (data.containsKey('cost')) {
+    if (data.containsKey('measuring')) {
       context.handle(
-        _costMeta,
-        cost.isAcceptableOrUnknown(data['cost']!, _costMeta),
+        _measuringMeta,
+        measuring.isAcceptableOrUnknown(data['measuring']!, _measuringMeta),
       );
     } else if (isInserting) {
-      context.missing(_costMeta);
+      context.missing(_measuringMeta);
+    }
+    if (data.containsKey('price_of_purchases')) {
+      context.handle(
+        _priceOfPurchasesMeta,
+        priceOfPurchases.isAcceptableOrUnknown(
+          data['price_of_purchases']!,
+          _priceOfPurchasesMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_priceOfPurchasesMeta);
     }
     return context;
   }
@@ -1260,9 +1399,13 @@ class $PurchasesTableDBTable extends PurchasesTableDB
         DriftSqlType.int,
         data['${effectivePrefix}quantity'],
       )!,
-      cost: attachedDatabase.typeMapping.read(
+      measuring: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}measuring'],
+      )!,
+      priceOfPurchases: attachedDatabase.typeMapping.read(
         DriftSqlType.double,
-        data['${effectivePrefix}cost'],
+        data['${effectivePrefix}price_of_purchases'],
       )!,
     );
   }
@@ -1280,14 +1423,16 @@ class PurchasesTableDBData extends DataClass
   final String? barcode;
   final String product;
   final int quantity;
-  final double cost;
+  final String measuring;
+  final double priceOfPurchases;
   const PurchasesTableDBData({
     required this.id,
     this.date,
     this.barcode,
     required this.product,
     required this.quantity,
-    required this.cost,
+    required this.measuring,
+    required this.priceOfPurchases,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -1301,7 +1446,8 @@ class PurchasesTableDBData extends DataClass
     }
     map['product'] = Variable<String>(product);
     map['quantity'] = Variable<int>(quantity);
-    map['cost'] = Variable<double>(cost);
+    map['measuring'] = Variable<String>(measuring);
+    map['price_of_purchases'] = Variable<double>(priceOfPurchases);
     return map;
   }
 
@@ -1314,7 +1460,8 @@ class PurchasesTableDBData extends DataClass
           : Value(barcode),
       product: Value(product),
       quantity: Value(quantity),
-      cost: Value(cost),
+      measuring: Value(measuring),
+      priceOfPurchases: Value(priceOfPurchases),
     );
   }
 
@@ -1329,7 +1476,8 @@ class PurchasesTableDBData extends DataClass
       barcode: serializer.fromJson<String?>(json['barcode']),
       product: serializer.fromJson<String>(json['product']),
       quantity: serializer.fromJson<int>(json['quantity']),
-      cost: serializer.fromJson<double>(json['cost']),
+      measuring: serializer.fromJson<String>(json['measuring']),
+      priceOfPurchases: serializer.fromJson<double>(json['priceOfPurchases']),
     );
   }
   @override
@@ -1341,7 +1489,8 @@ class PurchasesTableDBData extends DataClass
       'barcode': serializer.toJson<String?>(barcode),
       'product': serializer.toJson<String>(product),
       'quantity': serializer.toJson<int>(quantity),
-      'cost': serializer.toJson<double>(cost),
+      'measuring': serializer.toJson<String>(measuring),
+      'priceOfPurchases': serializer.toJson<double>(priceOfPurchases),
     };
   }
 
@@ -1351,14 +1500,16 @@ class PurchasesTableDBData extends DataClass
     Value<String?> barcode = const Value.absent(),
     String? product,
     int? quantity,
-    double? cost,
+    String? measuring,
+    double? priceOfPurchases,
   }) => PurchasesTableDBData(
     id: id ?? this.id,
     date: date.present ? date.value : this.date,
     barcode: barcode.present ? barcode.value : this.barcode,
     product: product ?? this.product,
     quantity: quantity ?? this.quantity,
-    cost: cost ?? this.cost,
+    measuring: measuring ?? this.measuring,
+    priceOfPurchases: priceOfPurchases ?? this.priceOfPurchases,
   );
   PurchasesTableDBData copyWithCompanion(PurchasesTableDBCompanion data) {
     return PurchasesTableDBData(
@@ -1367,7 +1518,10 @@ class PurchasesTableDBData extends DataClass
       barcode: data.barcode.present ? data.barcode.value : this.barcode,
       product: data.product.present ? data.product.value : this.product,
       quantity: data.quantity.present ? data.quantity.value : this.quantity,
-      cost: data.cost.present ? data.cost.value : this.cost,
+      measuring: data.measuring.present ? data.measuring.value : this.measuring,
+      priceOfPurchases: data.priceOfPurchases.present
+          ? data.priceOfPurchases.value
+          : this.priceOfPurchases,
     );
   }
 
@@ -1379,13 +1533,22 @@ class PurchasesTableDBData extends DataClass
           ..write('barcode: $barcode, ')
           ..write('product: $product, ')
           ..write('quantity: $quantity, ')
-          ..write('cost: $cost')
+          ..write('measuring: $measuring, ')
+          ..write('priceOfPurchases: $priceOfPurchases')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, date, barcode, product, quantity, cost);
+  int get hashCode => Object.hash(
+    id,
+    date,
+    barcode,
+    product,
+    quantity,
+    measuring,
+    priceOfPurchases,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -1395,7 +1558,8 @@ class PurchasesTableDBData extends DataClass
           other.barcode == this.barcode &&
           other.product == this.product &&
           other.quantity == this.quantity &&
-          other.cost == this.cost);
+          other.measuring == this.measuring &&
+          other.priceOfPurchases == this.priceOfPurchases);
 }
 
 class PurchasesTableDBCompanion extends UpdateCompanion<PurchasesTableDBData> {
@@ -1404,14 +1568,16 @@ class PurchasesTableDBCompanion extends UpdateCompanion<PurchasesTableDBData> {
   final Value<String?> barcode;
   final Value<String> product;
   final Value<int> quantity;
-  final Value<double> cost;
+  final Value<String> measuring;
+  final Value<double> priceOfPurchases;
   const PurchasesTableDBCompanion({
     this.id = const Value.absent(),
     this.date = const Value.absent(),
     this.barcode = const Value.absent(),
     this.product = const Value.absent(),
     this.quantity = const Value.absent(),
-    this.cost = const Value.absent(),
+    this.measuring = const Value.absent(),
+    this.priceOfPurchases = const Value.absent(),
   });
   PurchasesTableDBCompanion.insert({
     this.id = const Value.absent(),
@@ -1419,17 +1585,20 @@ class PurchasesTableDBCompanion extends UpdateCompanion<PurchasesTableDBData> {
     this.barcode = const Value.absent(),
     required String product,
     required int quantity,
-    required double cost,
+    required String measuring,
+    required double priceOfPurchases,
   }) : product = Value(product),
        quantity = Value(quantity),
-       cost = Value(cost);
+       measuring = Value(measuring),
+       priceOfPurchases = Value(priceOfPurchases);
   static Insertable<PurchasesTableDBData> custom({
     Expression<int>? id,
     Expression<int>? date,
     Expression<String>? barcode,
     Expression<String>? product,
     Expression<int>? quantity,
-    Expression<double>? cost,
+    Expression<String>? measuring,
+    Expression<double>? priceOfPurchases,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -1437,7 +1606,8 @@ class PurchasesTableDBCompanion extends UpdateCompanion<PurchasesTableDBData> {
       if (barcode != null) 'barcode': barcode,
       if (product != null) 'product': product,
       if (quantity != null) 'quantity': quantity,
-      if (cost != null) 'cost': cost,
+      if (measuring != null) 'measuring': measuring,
+      if (priceOfPurchases != null) 'price_of_purchases': priceOfPurchases,
     });
   }
 
@@ -1447,7 +1617,8 @@ class PurchasesTableDBCompanion extends UpdateCompanion<PurchasesTableDBData> {
     Value<String?>? barcode,
     Value<String>? product,
     Value<int>? quantity,
-    Value<double>? cost,
+    Value<String>? measuring,
+    Value<double>? priceOfPurchases,
   }) {
     return PurchasesTableDBCompanion(
       id: id ?? this.id,
@@ -1455,7 +1626,8 @@ class PurchasesTableDBCompanion extends UpdateCompanion<PurchasesTableDBData> {
       barcode: barcode ?? this.barcode,
       product: product ?? this.product,
       quantity: quantity ?? this.quantity,
-      cost: cost ?? this.cost,
+      measuring: measuring ?? this.measuring,
+      priceOfPurchases: priceOfPurchases ?? this.priceOfPurchases,
     );
   }
 
@@ -1477,8 +1649,11 @@ class PurchasesTableDBCompanion extends UpdateCompanion<PurchasesTableDBData> {
     if (quantity.present) {
       map['quantity'] = Variable<int>(quantity.value);
     }
-    if (cost.present) {
-      map['cost'] = Variable<double>(cost.value);
+    if (measuring.present) {
+      map['measuring'] = Variable<String>(measuring.value);
+    }
+    if (priceOfPurchases.present) {
+      map['price_of_purchases'] = Variable<double>(priceOfPurchases.value);
     }
     return map;
   }
@@ -1491,7 +1666,8 @@ class PurchasesTableDBCompanion extends UpdateCompanion<PurchasesTableDBData> {
           ..write('barcode: $barcode, ')
           ..write('product: $product, ')
           ..write('quantity: $quantity, ')
-          ..write('cost: $cost')
+          ..write('measuring: $measuring, ')
+          ..write('priceOfPurchases: $priceOfPurchases')
           ..write(')'))
         .toString();
   }
@@ -2326,8 +2502,21 @@ class $StaffTableDBTable extends StaffTableDB
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _powersMeta = const VerificationMeta('powers');
   @override
-  List<GeneratedColumn> get $columns => [id, login, password, position];
+  late final GeneratedColumn<String> powers = GeneratedColumn<String>(
+    'powers',
+    aliasedName,
+    true,
+    additionalChecks: GeneratedColumn.checkTextLength(
+      minTextLength: 1,
+      maxTextLength: 40,
+    ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [id, login, password, position, powers];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -2361,6 +2550,12 @@ class $StaffTableDBTable extends StaffTableDB
         position.isAcceptableOrUnknown(data['position']!, _positionMeta),
       );
     }
+    if (data.containsKey('powers')) {
+      context.handle(
+        _powersMeta,
+        powers.isAcceptableOrUnknown(data['powers']!, _powersMeta),
+      );
+    }
     return context;
   }
 
@@ -2386,6 +2581,10 @@ class $StaffTableDBTable extends StaffTableDB
         DriftSqlType.string,
         data['${effectivePrefix}position'],
       ),
+      powers: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}powers'],
+      ),
     );
   }
 
@@ -2401,11 +2600,13 @@ class StaffTableDBData extends DataClass
   final String? login;
   final String? password;
   final String? position;
+  final String? powers;
   const StaffTableDBData({
     required this.id,
     this.login,
     this.password,
     this.position,
+    this.powers,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -2419,6 +2620,9 @@ class StaffTableDBData extends DataClass
     }
     if (!nullToAbsent || position != null) {
       map['position'] = Variable<String>(position);
+    }
+    if (!nullToAbsent || powers != null) {
+      map['powers'] = Variable<String>(powers);
     }
     return map;
   }
@@ -2435,6 +2639,9 @@ class StaffTableDBData extends DataClass
       position: position == null && nullToAbsent
           ? const Value.absent()
           : Value(position),
+      powers: powers == null && nullToAbsent
+          ? const Value.absent()
+          : Value(powers),
     );
   }
 
@@ -2448,6 +2655,7 @@ class StaffTableDBData extends DataClass
       login: serializer.fromJson<String?>(json['login']),
       password: serializer.fromJson<String?>(json['password']),
       position: serializer.fromJson<String?>(json['position']),
+      powers: serializer.fromJson<String?>(json['powers']),
     );
   }
   @override
@@ -2458,6 +2666,7 @@ class StaffTableDBData extends DataClass
       'login': serializer.toJson<String?>(login),
       'password': serializer.toJson<String?>(password),
       'position': serializer.toJson<String?>(position),
+      'powers': serializer.toJson<String?>(powers),
     };
   }
 
@@ -2466,11 +2675,13 @@ class StaffTableDBData extends DataClass
     Value<String?> login = const Value.absent(),
     Value<String?> password = const Value.absent(),
     Value<String?> position = const Value.absent(),
+    Value<String?> powers = const Value.absent(),
   }) => StaffTableDBData(
     id: id ?? this.id,
     login: login.present ? login.value : this.login,
     password: password.present ? password.value : this.password,
     position: position.present ? position.value : this.position,
+    powers: powers.present ? powers.value : this.powers,
   );
   StaffTableDBData copyWithCompanion(StaffTableDBCompanion data) {
     return StaffTableDBData(
@@ -2478,6 +2689,7 @@ class StaffTableDBData extends DataClass
       login: data.login.present ? data.login.value : this.login,
       password: data.password.present ? data.password.value : this.password,
       position: data.position.present ? data.position.value : this.position,
+      powers: data.powers.present ? data.powers.value : this.powers,
     );
   }
 
@@ -2487,13 +2699,14 @@ class StaffTableDBData extends DataClass
           ..write('id: $id, ')
           ..write('login: $login, ')
           ..write('password: $password, ')
-          ..write('position: $position')
+          ..write('position: $position, ')
+          ..write('powers: $powers')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, login, password, position);
+  int get hashCode => Object.hash(id, login, password, position, powers);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -2501,7 +2714,8 @@ class StaffTableDBData extends DataClass
           other.id == this.id &&
           other.login == this.login &&
           other.password == this.password &&
-          other.position == this.position);
+          other.position == this.position &&
+          other.powers == this.powers);
 }
 
 class StaffTableDBCompanion extends UpdateCompanion<StaffTableDBData> {
@@ -2509,29 +2723,34 @@ class StaffTableDBCompanion extends UpdateCompanion<StaffTableDBData> {
   final Value<String?> login;
   final Value<String?> password;
   final Value<String?> position;
+  final Value<String?> powers;
   const StaffTableDBCompanion({
     this.id = const Value.absent(),
     this.login = const Value.absent(),
     this.password = const Value.absent(),
     this.position = const Value.absent(),
+    this.powers = const Value.absent(),
   });
   StaffTableDBCompanion.insert({
     this.id = const Value.absent(),
     this.login = const Value.absent(),
     this.password = const Value.absent(),
     this.position = const Value.absent(),
+    this.powers = const Value.absent(),
   });
   static Insertable<StaffTableDBData> custom({
     Expression<int>? id,
     Expression<String>? login,
     Expression<String>? password,
     Expression<String>? position,
+    Expression<String>? powers,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (login != null) 'login': login,
       if (password != null) 'password': password,
       if (position != null) 'position': position,
+      if (powers != null) 'powers': powers,
     });
   }
 
@@ -2540,12 +2759,14 @@ class StaffTableDBCompanion extends UpdateCompanion<StaffTableDBData> {
     Value<String?>? login,
     Value<String?>? password,
     Value<String?>? position,
+    Value<String?>? powers,
   }) {
     return StaffTableDBCompanion(
       id: id ?? this.id,
       login: login ?? this.login,
       password: password ?? this.password,
       position: position ?? this.position,
+      powers: powers ?? this.powers,
     );
   }
 
@@ -2564,6 +2785,9 @@ class StaffTableDBCompanion extends UpdateCompanion<StaffTableDBData> {
     if (position.present) {
       map['position'] = Variable<String>(position.value);
     }
+    if (powers.present) {
+      map['powers'] = Variable<String>(powers.value);
+    }
     return map;
   }
 
@@ -2573,7 +2797,8 @@ class StaffTableDBCompanion extends UpdateCompanion<StaffTableDBData> {
           ..write('id: $id, ')
           ..write('login: $login, ')
           ..write('password: $password, ')
-          ..write('position: $position')
+          ..write('position: $position, ')
+          ..write('powers: $powers')
           ..write(')'))
         .toString();
   }
@@ -2611,6 +2836,8 @@ typedef $$StorageTableDBTableCreateCompanionBuilder =
       Value<String?> barcode,
       required String product,
       required int quantity,
+      required String measuring,
+      Value<bool> visibility,
       Value<double?> price,
       Value<int?> found,
     });
@@ -2621,6 +2848,8 @@ typedef $$StorageTableDBTableUpdateCompanionBuilder =
       Value<String?> barcode,
       Value<String> product,
       Value<int> quantity,
+      Value<String> measuring,
+      Value<bool> visibility,
       Value<double?> price,
       Value<int?> found,
     });
@@ -2656,6 +2885,16 @@ class $$StorageTableDBTableFilterComposer
 
   ColumnFilters<int> get quantity => $composableBuilder(
     column: $table.quantity,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get measuring => $composableBuilder(
+    column: $table.measuring,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get visibility => $composableBuilder(
+    column: $table.visibility,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -2704,6 +2943,16 @@ class $$StorageTableDBTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get measuring => $composableBuilder(
+    column: $table.measuring,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get visibility => $composableBuilder(
+    column: $table.visibility,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<double> get price => $composableBuilder(
     column: $table.price,
     builder: (column) => ColumnOrderings(column),
@@ -2738,6 +2987,14 @@ class $$StorageTableDBTableAnnotationComposer
 
   GeneratedColumn<int> get quantity =>
       $composableBuilder(column: $table.quantity, builder: (column) => column);
+
+  GeneratedColumn<String> get measuring =>
+      $composableBuilder(column: $table.measuring, builder: (column) => column);
+
+  GeneratedColumn<bool> get visibility => $composableBuilder(
+    column: $table.visibility,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<double> get price =>
       $composableBuilder(column: $table.price, builder: (column) => column);
@@ -2788,6 +3045,8 @@ class $$StorageTableDBTableTableManager
                 Value<String?> barcode = const Value.absent(),
                 Value<String> product = const Value.absent(),
                 Value<int> quantity = const Value.absent(),
+                Value<String> measuring = const Value.absent(),
+                Value<bool> visibility = const Value.absent(),
                 Value<double?> price = const Value.absent(),
                 Value<int?> found = const Value.absent(),
               }) => StorageTableDBCompanion(
@@ -2796,6 +3055,8 @@ class $$StorageTableDBTableTableManager
                 barcode: barcode,
                 product: product,
                 quantity: quantity,
+                measuring: measuring,
+                visibility: visibility,
                 price: price,
                 found: found,
               ),
@@ -2806,6 +3067,8 @@ class $$StorageTableDBTableTableManager
                 Value<String?> barcode = const Value.absent(),
                 required String product,
                 required int quantity,
+                required String measuring,
+                Value<bool> visibility = const Value.absent(),
                 Value<double?> price = const Value.absent(),
                 Value<int?> found = const Value.absent(),
               }) => StorageTableDBCompanion.insert(
@@ -2814,6 +3077,8 @@ class $$StorageTableDBTableTableManager
                 barcode: barcode,
                 product: product,
                 quantity: quantity,
+                measuring: measuring,
+                visibility: visibility,
                 price: price,
                 found: found,
               ),
@@ -3157,7 +3422,8 @@ typedef $$PurchasesTableDBTableCreateCompanionBuilder =
       Value<String?> barcode,
       required String product,
       required int quantity,
-      required double cost,
+      required String measuring,
+      required double priceOfPurchases,
     });
 typedef $$PurchasesTableDBTableUpdateCompanionBuilder =
     PurchasesTableDBCompanion Function({
@@ -3166,7 +3432,8 @@ typedef $$PurchasesTableDBTableUpdateCompanionBuilder =
       Value<String?> barcode,
       Value<String> product,
       Value<int> quantity,
-      Value<double> cost,
+      Value<String> measuring,
+      Value<double> priceOfPurchases,
     });
 
 class $$PurchasesTableDBTableFilterComposer
@@ -3203,8 +3470,13 @@ class $$PurchasesTableDBTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<double> get cost => $composableBuilder(
-    column: $table.cost,
+  ColumnFilters<String> get measuring => $composableBuilder(
+    column: $table.measuring,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get priceOfPurchases => $composableBuilder(
+    column: $table.priceOfPurchases,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -3243,8 +3515,13 @@ class $$PurchasesTableDBTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<double> get cost => $composableBuilder(
-    column: $table.cost,
+  ColumnOrderings<String> get measuring => $composableBuilder(
+    column: $table.measuring,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get priceOfPurchases => $composableBuilder(
+    column: $table.priceOfPurchases,
     builder: (column) => ColumnOrderings(column),
   );
 }
@@ -3273,8 +3550,13 @@ class $$PurchasesTableDBTableAnnotationComposer
   GeneratedColumn<int> get quantity =>
       $composableBuilder(column: $table.quantity, builder: (column) => column);
 
-  GeneratedColumn<double> get cost =>
-      $composableBuilder(column: $table.cost, builder: (column) => column);
+  GeneratedColumn<String> get measuring =>
+      $composableBuilder(column: $table.measuring, builder: (column) => column);
+
+  GeneratedColumn<double> get priceOfPurchases => $composableBuilder(
+    column: $table.priceOfPurchases,
+    builder: (column) => column,
+  );
 }
 
 class $$PurchasesTableDBTableTableManager
@@ -3319,14 +3601,16 @@ class $$PurchasesTableDBTableTableManager
                 Value<String?> barcode = const Value.absent(),
                 Value<String> product = const Value.absent(),
                 Value<int> quantity = const Value.absent(),
-                Value<double> cost = const Value.absent(),
+                Value<String> measuring = const Value.absent(),
+                Value<double> priceOfPurchases = const Value.absent(),
               }) => PurchasesTableDBCompanion(
                 id: id,
                 date: date,
                 barcode: barcode,
                 product: product,
                 quantity: quantity,
-                cost: cost,
+                measuring: measuring,
+                priceOfPurchases: priceOfPurchases,
               ),
           createCompanionCallback:
               ({
@@ -3335,14 +3619,16 @@ class $$PurchasesTableDBTableTableManager
                 Value<String?> barcode = const Value.absent(),
                 required String product,
                 required int quantity,
-                required double cost,
+                required String measuring,
+                required double priceOfPurchases,
               }) => PurchasesTableDBCompanion.insert(
                 id: id,
                 date: date,
                 barcode: barcode,
                 product: product,
                 quantity: quantity,
-                cost: cost,
+                measuring: measuring,
+                priceOfPurchases: priceOfPurchases,
               ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
@@ -3800,6 +4086,7 @@ typedef $$StaffTableDBTableCreateCompanionBuilder =
       Value<String?> login,
       Value<String?> password,
       Value<String?> position,
+      Value<String?> powers,
     });
 typedef $$StaffTableDBTableUpdateCompanionBuilder =
     StaffTableDBCompanion Function({
@@ -3807,6 +4094,7 @@ typedef $$StaffTableDBTableUpdateCompanionBuilder =
       Value<String?> login,
       Value<String?> password,
       Value<String?> position,
+      Value<String?> powers,
     });
 
 class $$StaffTableDBTableFilterComposer
@@ -3835,6 +4123,11 @@ class $$StaffTableDBTableFilterComposer
 
   ColumnFilters<String> get position => $composableBuilder(
     column: $table.position,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get powers => $composableBuilder(
+    column: $table.powers,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -3867,6 +4160,11 @@ class $$StaffTableDBTableOrderingComposer
     column: $table.position,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get powers => $composableBuilder(
+    column: $table.powers,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$StaffTableDBTableAnnotationComposer
@@ -3889,6 +4187,9 @@ class $$StaffTableDBTableAnnotationComposer
 
   GeneratedColumn<String> get position =>
       $composableBuilder(column: $table.position, builder: (column) => column);
+
+  GeneratedColumn<String> get powers =>
+      $composableBuilder(column: $table.powers, builder: (column) => column);
 }
 
 class $$StaffTableDBTableTableManager
@@ -3926,11 +4227,13 @@ class $$StaffTableDBTableTableManager
                 Value<String?> login = const Value.absent(),
                 Value<String?> password = const Value.absent(),
                 Value<String?> position = const Value.absent(),
+                Value<String?> powers = const Value.absent(),
               }) => StaffTableDBCompanion(
                 id: id,
                 login: login,
                 password: password,
                 position: position,
+                powers: powers,
               ),
           createCompanionCallback:
               ({
@@ -3938,11 +4241,13 @@ class $$StaffTableDBTableTableManager
                 Value<String?> login = const Value.absent(),
                 Value<String?> password = const Value.absent(),
                 Value<String?> position = const Value.absent(),
+                Value<String?> powers = const Value.absent(),
               }) => StaffTableDBCompanion.insert(
                 id: id,
                 login: login,
                 password: password,
                 position: position,
+                powers: powers,
               ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))

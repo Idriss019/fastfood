@@ -19,7 +19,8 @@ class ProductWidget extends StatefulWidget {
 }
 
 class _ProductWidgetState extends State<ProductWidget> {
-  // late PurchasesCubit blocPurchases;
+  late PurchasesBloc purchasesBloc;
+  final TextEditingController _productCont = TextEditingController();
   // double searchHeight = 0;
   // double heightBorder = 30;
   // List foundList = [];
@@ -28,12 +29,31 @@ class _ProductWidgetState extends State<ProductWidget> {
   @override
   void initState() {
     super.initState();
-    // blocPurchases = context.read<PurchasesCubit>();
+    purchasesBloc = context.read<PurchasesBloc>();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // final purchasesBloc = context.watch<PurchasesBloc>();
+    // Обновляем контроллер при изменении состояния
+    final String product = purchasesBloc.state.product;
+    if (_productCont.text != product) {
+      _productCont.value = TextEditingValue(
+        text: product,
+        selection: TextSelection.collapsed(offset: product.length),
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    _productCont.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    // final blocPurchases = context.watch<PurchasesCubit>();
     // final blocStorage = context.watch<StorageCubit>();
     final myColor = CustomTheme(context: context);
     // List storageList = blocStorage.state.storageList
@@ -53,15 +73,12 @@ class _ProductWidgetState extends State<ProductWidget> {
                 child: Container(
                   // margin: const EdgeInsets.only(top: 8),
                   decoration: BoxDecoration(
-                      // border:
-                      //     Border.all(color: Colors.black)
-                      ),
+                    // border:
+                    //     Border.all(color: Colors.black)
+                  ),
                   child: Text(
                     'Название',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      fontSize: 25,
-                    ),
+                    style: TextStyle(fontWeight: FontWeight.w500, fontSize: 25),
                   ),
                 ),
               ),
@@ -72,33 +89,39 @@ class _ProductWidgetState extends State<ProductWidget> {
                   // height: 200,
                   child: Center(
                     child: BlocBuilder<PurchasesBloc, PurchasesState>(
-                        builder: (context, state) {
-                      return TextField(
-                        // controller: tc,
-                        onChanged: (value) {},
-                        // controller: TextEditingController.fromValue(
-                        //   TextEditingValue(text: state.product.toLowerCase()),
-                        // )..selection = TextSelection.collapsed(
-                        //     offset: state.product.length),
-                        cursorColor: widget.invertColor,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 20,
-                        ),
-                        decoration: InputDecoration(
-                          enabledBorder: OutlineInputBorder(
+                      builder: (context, state) {
+                        return TextField(
+                          controller: _productCont,
+                          onChanged: (value) {
+                            purchasesBloc.add(ProductInput(value));
+                          },
+                          cursorColor: widget.invertColor,
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 20,
+                          ),
+                          decoration: InputDecoration(
+                            enabledBorder: OutlineInputBorder(
                               borderSide: BorderSide(
-                                  color: widget.invertColor, width: 1.5)),
-                          focusedBorder: OutlineInputBorder(
+                                color: widget.invertColor,
+                                width: 1.5,
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
                               borderSide: BorderSide(
-                                  color: widget.invertColor, width: 1.5)),
-                        ),
-                        inputFormatters: <TextInputFormatter>[
-                          FilteringTextInputFormatter.allow(RegExp(
-                              r'[^A-Z]')), // С таким фильтром могут быть введены только числа
-                        ],
-                      );
-                    }),
+                                color: widget.invertColor,
+                                width: 1.5,
+                              ),
+                            ),
+                          ),
+                          inputFormatters: <TextInputFormatter>[
+                            FilteringTextInputFormatter.allow(
+                              RegExp(r'[^A-ZА-Я]'),
+                            ), // С таким фильтром могут быть введены только строчные буквы
+                          ],
+                        );
+                      },
+                    ),
                   ),
                 ),
               ),
@@ -153,9 +176,7 @@ class _ProductWidgetState extends State<ProductWidget> {
         //     ),
         //   );
         // }),
-        SizedBox(
-          height: 8,
-        )
+        SizedBox(height: 8),
       ],
     );
     // );

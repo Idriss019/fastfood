@@ -7,7 +7,8 @@ class PurchasesTableDB extends Table {
   TextColumn get barcode => text().withLength(min: 1, max: 20).nullable()();
   TextColumn get product => text()();
   IntColumn get quantity => integer()(); // Количество
-  RealColumn get cost => real()();
+  TextColumn get measuring => text().withLength(min: 1, max: 5)();  // Изм
+  RealColumn get priceOfPurchases => real()(); // Одного
 }
 
 class PurchasesSql {

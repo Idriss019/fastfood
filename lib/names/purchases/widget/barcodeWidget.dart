@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class BarcodeWidget extends StatelessWidget {
+class BarcodeWidget extends StatefulWidget {
   const BarcodeWidget({
     super.key,
     // required this.visibilityError,
@@ -20,16 +20,70 @@ class BarcodeWidget extends StatelessWidget {
   final Color invertColor;
 
   @override
+  State<BarcodeWidget> createState() => _BarcodeWidgetState();
+}
+
+class _BarcodeWidgetState extends State<BarcodeWidget> {
+  final TextEditingController _barcodeCont = TextEditingController();
+  final TextEditingController _quantityCont = TextEditingController();
+  final TextEditingController _measuringCont = TextEditingController();
+  late PurchasesBloc purchasesBloc;
+  @override
+  void initState() {
+    super.initState();
+    purchasesBloc = context.read<PurchasesBloc>();
+    // _barcodeCont.addListener(() {});
+    // _courseCont.addListener(() {});
+    // blocPurchases = context.read<PurchasesCubit>();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // final purchasesBloc = context.watch<PurchasesBloc>();
+    // Обновляем контроллер при изменении состояния
+    final String barcode = purchasesBloc.state.barcode;
+    if (_barcodeCont.text != barcode) {
+      _barcodeCont.value = TextEditingValue(
+        text: barcode,
+        selection: TextSelection.collapsed(offset: barcode.length),
+      );
+    }
+    final String quantity = purchasesBloc.state.quantity;
+    if (_barcodeCont.text != quantity) {
+      _barcodeCont.value = TextEditingValue(
+        text: quantity,
+        selection: TextSelection.collapsed(offset: quantity.length),
+      );
+    }
+    final String measuring = purchasesBloc.state.measuring;
+    if (_barcodeCont.text != measuring) {
+      _barcodeCont.value = TextEditingValue(
+        text: measuring,
+        selection: TextSelection.collapsed(offset: measuring.length),
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    _barcodeCont.dispose();
+    _quantityCont.dispose();
+    _measuringCont.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final bool visibilityError = false;
+    // final bool visibilityError = false;
     return Column(
       children: [
-        Visibility(
-          visible: visibilityError,
-          child: Column(children: [SizedBox(height: 15)]),
-        ),
+        // Visibility(
+        //   visible: visibilityError,
+        //   child: Column(children: [SizedBox(height: 15)]),
+        // ),
         SizedBox(
-          height: heightRow,
+          height: widget.heightRow,
           child: Padding(
             padding: const EdgeInsets.only(left: 45, right: 45),
             child: Row(
@@ -62,12 +116,11 @@ class BarcodeWidget extends StatelessWidget {
                           // }
                           // if (state.searchByBarcode) {}
                           return TextField(
-                            onChanged: (value) {},
-                            cursorColor: invertColor,
-                            // controller: TextEditingController.fromValue(
-                            //   TextEditingValue(text: state.barcode),
-                            // )..selection = TextSelection.collapsed(
-                            //     offset: state.barcode.length),
+                            onChanged: (value) {
+                              purchasesBloc.add(BarcodeInput(value));
+                            },
+                            cursorColor: widget.invertColor,
+                            controller: _barcodeCont,
                             style: TextStyle(
                               fontWeight: FontWeight.w600,
                               fontSize: 20,
@@ -75,13 +128,13 @@ class BarcodeWidget extends StatelessWidget {
                             decoration: InputDecoration(
                               enabledBorder: OutlineInputBorder(
                                 borderSide: BorderSide(
-                                  color: invertColor,
+                                  color: widget.invertColor,
                                   width: 1.5,
                                 ),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderSide: BorderSide(
-                                  color: invertColor,
+                                  color: widget.invertColor,
                                   width: 1.5,
                                 ),
                               ),
@@ -119,13 +172,11 @@ class BarcodeWidget extends StatelessWidget {
                     child: BlocBuilder<PurchasesBloc, PurchasesState>(
                       builder: (context, state) {
                         return TextField(
-                          onChanged: (value) {},
-
-                          // controller: TextEditingController.fromValue(
-                          //   TextEditingValue(text: state.quantity),
-                          // )..selection = TextSelection.collapsed(
-                          //     offset: state.quantity.length),
-                          cursorColor: invertColor,
+                          onChanged: (value) {
+                            purchasesBloc.add(QuantityInput(value));
+                          },
+                          controller: _quantityCont,
+                          cursorColor: widget.invertColor,
                           style: TextStyle(
                             fontWeight: FontWeight.w600,
                             fontSize: 20,
@@ -136,20 +187,20 @@ class BarcodeWidget extends StatelessWidget {
                             //     icon: Icon(Icons.search)),
                             enabledBorder: OutlineInputBorder(
                               borderSide: BorderSide(
-                                color: invertColor,
+                                color: widget.invertColor,
                                 width: 1.5,
                               ),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderSide: BorderSide(
-                                color: invertColor,
+                                color: widget.invertColor,
                                 width: 1.5,
                               ),
                             ),
                           ),
                           inputFormatters: <TextInputFormatter>[
                             FilteringTextInputFormatter.allow(
-                              RegExp(r'\b[1-9][0-9]{0,4}'),
+                              RegExp(r'\b[1-9][0-9]{0,4}'), //^a(?=b)
                             ), // С таким фильтром могут быть введены только числа
                           ],
                         );
@@ -184,12 +235,21 @@ class BarcodeWidget extends StatelessWidget {
                     initialSelection: 'шт',
                     enableFilter: true,
                     enableSearch: false,
+                    controller: _measuringCont,
+                    onSelected: (value) {
+                      purchasesBloc.add(MeasuringInput(value ?? ''));
+                    },
                     dropdownMenuEntries: const [
                       DropdownMenuEntry(value: 'шт', label: 'шт'),
                       DropdownMenuEntry(value: 'г', label: 'г'),
                       DropdownMenuEntry(value: 'мл', label: 'мл'),
-                      DropdownMenuEntry(value: 'кг', label: 'кг'),
+                      // DropdownMenuEntry(value: 'кг', label: 'кг'),
                       DropdownMenuEntry(value: 'л', label: 'л'),
+                    ],
+                    inputFormatters: <TextInputFormatter>[
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'^a(?=b)'), // Ни какие значения не принимаются
+                      ),
                     ],
                     inputDecorationTheme: const InputDecorationTheme(
                       // border: OutlineInputBorder(

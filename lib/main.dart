@@ -1,5 +1,5 @@
 import 'dart:io';
-
+// import 'dart:convert';
 import 'package:fastfood/DB/database.dart';
 import 'package:fastfood/DB/table/storageBD.dart';
 import 'package:fastfood/names/creatingDishes/bloc/creating_dishes_bloc.dart';
@@ -10,28 +10,64 @@ import 'package:fastfood/names/theme/cubit/theme_cubit.dart';
 import 'package:fastfood/routers.dart';
 import 'package:fastfood/theme.dart';
 import 'package:flutter/material.dart';
+// import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:dartpy/dartpy.dart';
+// import 'package:dartpy/dartpy.dart';
 // import 'package:network_info_plus/network_info_plus.dart';
 
 void main() async {
   runApp(const MyApp());
   String mac = '';
-  Future<String> runPythonScript() async {
-    // Укажите полный путь к интерпретатору Python, если он не в PATH
-    var result = await Process.run('python3', [
-      '/home/diamond/Programming/PL/Dart/fastfood/lib/GetMac.py',
-    ]);
-    // print('Вывод: ${result.stdout}');
-    // print('Ошибки: ${result.stderr}');
-    mac = result.stdout;
-    return result.stdout;
-  }
+  Future<String?> getMacAddressLinux() async {
+  try {
+    // Запуск команды ip link show
+    final ProcessResult result = await Process.run('ip', ['link', 'show']);
 
-  print('Mac');
-  await runPythonScript();
-  print(mac);
+    if (result.exitCode != 0) {
+      print('Ошибка выполнения команды: ${result.stderr}');
+      return null;
+    }
+
+    final String output = result.stdout.toString();
+
+    // Парсим вывод для поиска MAC-адреса (после 'link/ether')
+    final macAddressLine = output.split('\n')
+        .firstWhere(
+            (line) => line.trim().startsWith('ether'),
+      );
+
+    if (macAddressLine != null) {
+      return macAddressLine.split(' ').first.trim(); // или другая логика парсинга
+    } else {
+      print('MAC-адрес не найден.');
+      return null;
+    }
+  } catch (e) {
+    print('Ошибка при получении MAC-адреса: $e');
+    return null;
+  }
+}
+final String? macAddress = await getMacAddressLinux();
+if (macAddress != null) {
+        print('MAC-адрес:!!!! $macAddress');
+      } else {
+        print('Не удалось получить MAC-адрес.');
+      }
+  // Future<String> runPythonScript() async {
+  //   // Укажите полный путь к интерпретатору Python, если он не в PATH
+  //   var result = await Process.run('python3', [
+  //     '/home/diamond/Programming/PL/Dart/fastfood/lib/GetMac.py',
+  //   ]);
+  //   // print('Вывод: ${result.stdout}');
+  //   // print('Ошибки: ${result.stderr}');
+  //   mac = result.stdout;
+  //   return result.stdout;
+  // }
+
+  // print('Mac');
+  // await runPythonScript();
+  // print(mac);
 
   // print('MAC');
   // Future<String?> getMacAddress() async {
@@ -58,13 +94,13 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => PurchasesBloc()),
         BlocProvider(create: (context) => CreatingDishesBloc()),
         BlocProvider(
-            lazy: true,
-            create: (context) => RecalculationBloc(
-              initialState: initialRecalculationState,
-              storageSql:storageSql,
-              // heightContainer: 30.0,
-            ),
-          )
+          lazy: true,
+          create: (context) => RecalculationBloc(
+            initialState: initialRecalculationState,
+            storageSql: storageSql,
+            // heightContainer: 30.0,
+          ),
+        ),
       ],
       child: BlocBuilder<ThemeCubit, ThemeState>(
         builder: (context, state) {
@@ -76,6 +112,7 @@ class MyApp extends StatelessWidget {
         },
       ),
     );
+
     // return MaterialApp(
     //   title: 'Flutter Demo',
     //   theme: ThemeData(
