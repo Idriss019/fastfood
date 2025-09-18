@@ -58,18 +58,19 @@ class _BarcodeWidgetState extends State<BarcodeWidget> {
       );
     }
     final String measuring = purchasesBloc.state.measuring;
-    if (_measuringCont.text == '') {
-      _measuringCont.value = TextEditingValue(
-        text: 'шт',
-        selection: TextSelection.collapsed(offset: measuring.length),
-      );
-    }
-    if (_measuringCont.text != measuring) {
+    if (measuring != '' && _measuringCont.text != measuring) {
       _measuringCont.value = TextEditingValue(
         text: measuring,
         selection: TextSelection.collapsed(offset: measuring.length),
       );
+    //   if (_measuringCont.text != measuring) {
+    //   _measuringCont.value = TextEditingValue(
+    //     text: measuring,
+    //     selection: TextSelection.collapsed(offset: measuring.length),
+    //   );
+    // }
     }
+    
   }
 
   @override

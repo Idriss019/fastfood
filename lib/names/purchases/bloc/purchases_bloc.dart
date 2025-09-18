@@ -103,11 +103,40 @@ class PurchasesBloc extends Bloc<PurchasesEvent, PurchasesState> {
         price: '',
         purchasesSum: '',
         priceSum: '',
-        total: totalPurchases.toString()
+        total: totalPurchases.toString(),
       );
       emit(newState);
       print('purchasesList ${newState.purchasesList}');
     });
+
+    on<RemoveFromList>((event, emit) {
+      double totalPurchases = double.parse(state.total);
+      // totalPurchases += 100;
+      totalPurchases -=
+          event.data.quantity! * event.data.priceOfPurchases!;
+      List<PurchasesData> newPurchasesList = List.from(state.purchasesList)
+        ..remove(event.data);
+      emit(
+        state.copyWith(
+          purchasesList: newPurchasesList,
+          total: totalPurchases.toString(),
+        ),
+      );
+    });
+
+    on<RemoveList>((event, emit) {
+      emit(
+        state.copyWith(
+          purchasesList: [],
+          total: '',
+        ),
+      );
+    });
+    // on<TotalInput>((event, emit) {
+    //   final newState = state.copyWith(priceSum: event.total);
+    //   emit(newState);
+    //   print('priceSum ${newState.total}');
+    // }, transformer: debounce<TotalInput>(const Duration(milliseconds: 350)));
   }
 }
 

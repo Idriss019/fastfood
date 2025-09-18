@@ -199,8 +199,8 @@ class TableWidget extends StatelessWidget {
           deleteCell(
             context,
             i.product,
-            () {},
-            // () => bloc.add(RemoveFromList(data: i)),
+            // () {},
+            () => bloc.add(RemoveFromList(data: i)),
             // () => bloc.removePurchasesList(i)
           ),
         ),

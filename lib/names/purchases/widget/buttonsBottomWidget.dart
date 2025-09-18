@@ -1,3 +1,4 @@
+import 'package:fastfood/data_class/purchases_data.dart';
 import 'package:fastfood/global_function.dart';
 import 'package:fastfood/names/purchases/bloc/purchases_bloc.dart';
 import 'package:flutter/material.dart';
@@ -69,7 +70,9 @@ class _ButtonsBottomWidgetState extends State<ButtonsBottomWidget> {
                       ),
                       backgroundColor: widget.myButtonColor,
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      context.read<PurchasesBloc>().add(RemoveList());
+                    },
                     child: Text(
                       'Очистить',
                       style: TextStyle(
@@ -144,14 +147,23 @@ class _ButtonsBottomWidgetState extends State<ButtonsBottomWidget> {
                             //   sum += i.sumOfRubles;
                             //   print('sum == $sum');
                             // }
-                            // state.salesList.reduce((total, element) =>
-                            //     total += element.sumOfRubles);
+
                             // if (state.purchasesList.isNotEmpty) {
-                            //   double totalRub = state.purchasesList
-                            //       .map((item) => item.sumOfRubles)
-                            //       .reduce((a, b) => a + b);
-                            //   blocSales.updateStateText(state.copyWith(
-                            //       totalOfRubles: totalRub.toString()));
+                            //   double totalSum = 0;
+                            //   for (var i in state.purchasesList) {
+                            //     totalSum += (i.quantity! * i.priceOfPurchases!);
+                            //   }
+                            //   context.read<PurchasesBloc>().add(TotalInput(totalSum.to));
+                            //   // state.purchasesList.reduce(
+                            //   //   (total, element) => total =
+                            //   //       (element.quantity! *
+                            //   //       element.priceOfPurchases!),
+                            //   // );
+                            //   // double totalRub = state.purchasesList
+                            //   //     .map((PurchasesData item) => item.)
+                            //   //     .reduce((a, b) => a * b);
+                            //   // PurchasesBloc.updateStateText(state.copyWith(
+                            //   //     totalOfRubles: totalRub.toString()));
                             // }
                             return Text(
                               state.total,

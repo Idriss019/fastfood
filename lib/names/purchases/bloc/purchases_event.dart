@@ -79,3 +79,23 @@ class PriceSumInput extends PurchasesEvent {
 
 /* ButtonInput Line */
 class ButtonInput extends PurchasesEvent {}
+
+/* BottomButtonInput Line */
+class RemoveFromList extends PurchasesEvent {
+  final PurchasesData data;
+  const RemoveFromList({
+    required this.data,
+  });
+  @override
+  List<Object> get props => [data];
+}
+
+class RemoveList extends PurchasesEvent {}
+// /* ButtonInput Line */
+// class TotalInput extends PurchasesEvent {
+//   final String total;
+//   const TotalInput(this.total);
+
+//   @override
+//   List<Object> get props => [total];
+// }

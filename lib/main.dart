@@ -24,9 +24,9 @@ void main() async {
   
   if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
     setWindowTitle('My App');
-    setWindowMinSize(const Size(1024, 768));
-    setWindowMaxSize(const Size(1024, 768));
-    setWindowFrame(const Rect.fromLTWH(100, 100, 1024, 768));
+    setWindowMinSize(const Size(1024, 748));
+    setWindowMaxSize(const Size(1024, 748));
+    setWindowFrame(const Rect.fromLTWH(100, 100, 1024, 748));
   }
   Future<String?> getMacAddressLinux() async {
   try {
