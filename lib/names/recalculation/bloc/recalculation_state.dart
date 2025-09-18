@@ -20,7 +20,7 @@ class RecalculationState extends Equatable {
   final List<String> filterList; // Отфильтрованный список
   final String foundItem; // Искомый объект
 
-  const RecalculationState({
+  const RecalculationState(this.lastInput, this.tableRecalculation, this.heightContainer, this.heightTable, this.filterList, this.foundItem, this.barcodeList, {
     /// для выпадающего списка
     this.messageBloc = '',
     this.search = '',
@@ -30,13 +30,22 @@ class RecalculationState extends Equatable {
     this.calculated = '',
     this.total = '',
     this.remainder = '',
-    this.barcodeList = const {'': StorageData(product: '', id: 0, quantity: 0, barcode: '', priceOfSom: 0, found: 0)},
-    this.lastInput = const StorageData(product: '', id: 0, quantity: 0, barcode: '', priceOfSom: 0, found: 0),
-    this.tableRecalculation = const [StorageData(product: '', id: 0, quantity: 0, barcode: '', priceOfSom: 0, found: 0),],
-    required this.heightContainer,
-    this.heightTable = 0,
-    this.filterList = const [],
-    this.foundItem = '',
+    // this.barcodeList = {'': StorageData(
+    //   product: '', 
+    //   id: 0, 
+    //   quantity: 0, 
+    //   barcode: '', 
+    //   price: 0, 
+    //   found: 0, 
+    //   measuring: '', 
+    //   visibility : true, 
+    //   inDishes : false)},
+    // this.lastInput = const StorageData(product: '', id: 0, quantity: 0, barcode: '', priceOfSom: 0, found: 0),
+    // this.tableRecalculation = const [StorageData(product: '', id: 0, quantity: 0, barcode: '', priceOfSom: 0, found: 0),],
+    // required this.heightContainer,
+    // this.heightTable = 0,
+    // this.filterList = const [],
+    // this.foundItem = '',
   });
   @override
   List<Object> get props {
@@ -71,41 +80,41 @@ class RecalculationState extends Equatable {
 
 
 
-  RecalculationState copyWith({
-    String? messageBloc,
-    String? search,
-    String? quantity,
-    String? barcode,
-    String? product,
-    String? calculated,
-    String? total,
-    String? remainder,
-    Map<String, StorageData>? barcodeList,
-    StorageData? lastInput,
-    List <StorageData>?tableRecalculation,
-    double? heightContainer,
-    double? heightTable,
-    List<String>? filterList,
-    String? foundItem,
-  }) {
-    return RecalculationState(
-      messageBloc: messageBloc ?? this.messageBloc,
-      search: search ?? this.search,
-      quantity: quantity ?? this.quantity,
-      barcode: barcode ?? this.barcode,
-      product: product ?? this.product,
-      calculated: calculated ?? this.calculated,
-      total: total ?? this.total,
-      remainder: remainder ?? this.remainder,
-      barcodeList: barcodeList ?? this.barcodeList,
-      lastInput: lastInput ?? this.lastInput,
-      tableRecalculation: tableRecalculation ?? this.tableRecalculation,
-      heightContainer: heightContainer ?? this.heightContainer,
-      heightTable: heightTable ?? this.heightTable,
-      filterList: filterList ?? this.filterList,
-      foundItem: foundItem ?? this.foundItem,
-    );
-  }
+  // RecalculationState copyWith({
+  //   String? messageBloc,
+  //   String? search,
+  //   String? quantity,
+  //   String? barcode,
+  //   String? product,
+  //   String? calculated,
+  //   String? total,
+  //   String? remainder,
+  //   Map<String, StorageData>? barcodeList,
+  //   StorageData? lastInput,
+  //   List <StorageData>?tableRecalculation,
+  //   double? heightContainer,
+  //   double? heightTable,
+  //   List<String>? filterList,
+  //   String? foundItem,
+  // }) {
+  //   // return RecalculationState(
+  //   //   // messageBloc: messageBloc ?? this.messageBloc,
+  //   //   // search: search ?? this.search,
+  //   //   // quantity: quantity ?? this.quantity,
+  //   //   // barcode: barcode ?? this.barcode,
+  //   //   // product: product ?? this.product,
+  //   //   // calculated: calculated ?? this.calculated,
+  //   //   // total: total ?? this.total,
+  //   //   // remainder: remainder ?? this.remainder,
+  //   //   // barcodeList: barcodeList ?? this.barcodeList,
+  //   //   // lastInput: lastInput ?? this.lastInput,
+  //   //   // tableRecalculation: tableRecalculation ?? this.tableRecalculation,
+  //   //   // heightContainer: heightContainer ?? this.heightContainer,
+  //   //   // heightTable: heightTable ?? this.heightTable,
+  //   //   // filterList: filterList ?? this.filterList,
+  //   //   // foundItem: foundItem ?? this.foundItem,
+  //   // );
+  // }
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -118,7 +127,7 @@ class RecalculationState extends Equatable {
       'total': total,
       'remainder': remainder,
       'barcodeList': barcodeList,
-      'lastInput': lastInput.toMap(),
+      // 'lastInput': lastInput.toMap(),
       '<StorageData>tableRecalculation': tableRecalculation,
       'heightContainer': heightContainer,
       'heightTable': heightTable,

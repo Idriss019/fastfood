@@ -1,6 +1,7 @@
 import 'package:fastfood/data_class/purchases_data.dart';
 import 'package:fastfood/global_function.dart';
 import 'package:fastfood/names/purchases/bloc/purchases_bloc.dart';
+import 'package:fastfood/widgetMetod.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -101,7 +102,9 @@ class _ButtonsBottomWidgetState extends State<ButtonsBottomWidget> {
                       ),
                       backgroundColor: widget.myButtonColor,
                     ),
-                    onPressed: () async {},
+                    onPressed: () {
+                      context.read<PurchasesBloc>().add(InputList());
+                    },
                     child: Text(
                       'Внести',
                       style: TextStyle(
@@ -116,7 +119,7 @@ class _ButtonsBottomWidgetState extends State<ButtonsBottomWidget> {
             ),
             /* Итого */
             Flexible(
-              flex: 7,
+              flex: 9,
               child: Padding(
                 padding: const EdgeInsets.only(top: 2),
                 child: SizedBox(
@@ -166,10 +169,10 @@ class _ButtonsBottomWidgetState extends State<ButtonsBottomWidget> {
                             //   //     totalOfRubles: totalRub.toString()));
                             // }
                             return Text(
-                              state.total,
+                              digitSeparator(state.total),
                               style: TextStyle(
                                 fontWeight: FontWeight.w600,
-                                fontSize: 35,
+                                fontSize: 30,
                               ),
                             );
                           },

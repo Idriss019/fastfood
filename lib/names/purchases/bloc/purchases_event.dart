@@ -15,6 +15,13 @@ class BarcodeInput extends PurchasesEvent {
   List<Object> get props => [barcode];
 }
 
+// class QuantityInput extends PurchasesEvent {
+//   final String quantity;
+//   const QuantityInput(String quantity);
+
+//   @override
+//   List<Object> get props => [quantity];
+// }
 class QuantityInput extends PurchasesEvent {
   final String quantity;
   const QuantityInput(this.quantity);
@@ -22,6 +29,7 @@ class QuantityInput extends PurchasesEvent {
   @override
   List<Object> get props => [quantity];
 }
+
 class MeasuringInput extends PurchasesEvent {
   final String measuring;
   const MeasuringInput(this.measuring);
@@ -78,7 +86,12 @@ class PriceSumInput extends PurchasesEvent {
 }
 
 /* ButtonInput Line */
-class ButtonInput extends PurchasesEvent {}
+class ButtonInput extends PurchasesEvent {
+  final BuildContext context;
+  const ButtonInput(this.context);
+  @override
+  List<Object> get props => [context];
+}
 
 /* BottomButtonInput Line */
 class RemoveFromList extends PurchasesEvent {
@@ -91,6 +104,7 @@ class RemoveFromList extends PurchasesEvent {
 }
 
 class RemoveList extends PurchasesEvent {}
+class InputList extends PurchasesEvent {}
 // /* ButtonInput Line */
 // class TotalInput extends PurchasesEvent {
 //   final String total;
@@ -99,3 +113,12 @@ class RemoveList extends PurchasesEvent {}
 //   @override
 //   List<Object> get props => [total];
 // }
+
+class UpdateLine extends PurchasesEvent {
+  final PurchasesState pState;
+  const UpdateLine({
+    required this.pState,
+  });
+  @override
+  List<Object> get props => [pState];
+}

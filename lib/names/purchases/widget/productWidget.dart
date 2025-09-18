@@ -93,7 +93,8 @@ class _ProductWidgetState extends State<ProductWidget> {
                         return TextField(
                           controller: _productCont,
                           onChanged: (value) {
-                            purchasesBloc.add(ProductInput(value));
+                            purchasesBloc.add(UpdateLine(pState: state.copyWith(product: value)));
+                            // purchasesBloc.add(ProductInput(value));
                           },
                           cursorColor: widget.invertColor,
                           style: TextStyle(

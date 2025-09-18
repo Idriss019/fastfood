@@ -1,4 +1,5 @@
 import 'package:data_table_2/data_table_2.dart';
+import 'package:fastfood/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
@@ -111,4 +112,80 @@ class DoubleTextInputFormatter extends TextInputFormatter {
     }
     return oldValue;
   }
+}
+
+void showDialogOk(BuildContext context, String message, Function func) {
+  final myColor = CustomTheme(context: context);
+  showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+            content: Text(message),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    // print('----');
+                    func();
+                    // print('***');
+                    Navigator.pop(context);
+                  },
+                  child: Text(
+                    'да',
+                    style: TextStyle(color: myColor.colorText),
+                  ))
+            ],
+          ));
+}
+
+Future<void> showDialogYesNo(
+    BuildContext context, String message, Function func) async {
+  final myColor = CustomTheme(context: context);
+  await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+            content: Text(message),
+            actions: [
+              // Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+              //   /*  кнопка принятия */
+              //   TextButton(
+              //     onPressed: () async {
+              //       // await func(title);
+              //     },
+              //     child: Text(
+              //       'OK',
+              //       style: TextStyle(color: myColor.colorText),
+              //     ),
+              //   ),
+              //   /* кнопка отмены */
+              //   TextButton(
+              //     onPressed: () => Navigator.pop(context),
+              //     child: Text(
+              //       'Cancel',
+              //       style: TextStyle(color: myColor.colorText),
+              //     ),
+              //   ),
+              // ])
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  TextButton(
+                      onPressed: () {
+                        func();
+                        Navigator.pop(context);
+                      },
+                      child: Text(
+                        'да',
+                        style: TextStyle(color: myColor.colorText),
+                      )),
+                  TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text(
+                        'нет',
+                        style: TextStyle(color: myColor.colorText),
+                      )),
+                ],
+              ),
+            ],
+          ));
 }

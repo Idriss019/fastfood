@@ -33,6 +33,7 @@ class _BarcodeWidgetState extends State<BarcodeWidget> {
   void initState() {
     super.initState();
     purchasesBloc = context.read<PurchasesBloc>();
+    purchasesBloc.loadStorageList();
     // _barcodeCont.addListener(() {});
     // _courseCont.addListener(() {});
     // blocPurchases = context.read<PurchasesCubit>();
@@ -63,14 +64,13 @@ class _BarcodeWidgetState extends State<BarcodeWidget> {
         text: measuring,
         selection: TextSelection.collapsed(offset: measuring.length),
       );
-    //   if (_measuringCont.text != measuring) {
-    //   _measuringCont.value = TextEditingValue(
-    //     text: measuring,
-    //     selection: TextSelection.collapsed(offset: measuring.length),
-    //   );
-    // }
+      //   if (_measuringCont.text != measuring) {
+      //   _measuringCont.value = TextEditingValue(
+      //     text: measuring,
+      //     selection: TextSelection.collapsed(offset: measuring.length),
+      //   );
+      // }
     }
-    
   }
 
   @override
@@ -125,6 +125,14 @@ class _BarcodeWidgetState extends State<BarcodeWidget> {
                           // if (state.searchByBarcode) {}
                           return TextField(
                             onChanged: (value) {
+                              // purchasesBloc.add(
+                              //   UpdateLine(
+                              //     pState: state.copyWith(barcode: value),
+                              //   ),
+                              // );
+                              // purchasesBloc.updateLine(
+                              //   (state) => state.copyWith(barcode: value),
+                              // );
                               purchasesBloc.add(BarcodeInput(value));
                             },
                             cursorColor: widget.invertColor,
@@ -181,30 +189,44 @@ class _BarcodeWidgetState extends State<BarcodeWidget> {
                       builder: (context, state) {
                         return TextField(
                           onChanged: (value) {
-                            if (value.isNotEmpty) {
-                              purchasesBloc.add(QuantityInput(value));
+                            purchasesBloc.add(QuantityInput(value));
+                            // if (value.isNotEmpty) {
+                            //   purchasesBloc.add(
+                            //     UpdateLine(
+                            //       pState: state.copyWith(quantity: value),
+                            //     ),
+                            //   );
+                            //   // purchasesBloc.add(QuantityInput(value));
 
-                              if (state.purchases.isNotEmpty &&
-                                  double.parse(value) > 0) {
-                                double result =
-                                    double.parse(value) *
-                                    double.parse(state.purchases);
-
-                                purchasesBloc.add(
-                                  PurchasesSumInput(result.toString()),
-                                );
-                              }
-                              if (state.purchasesSum.isNotEmpty &&
-                                  double.parse(value) > 0) {
-                                double result =
-                                    double.parse(state.purchasesSum) /
-                                    double.parse(value);
-
-                                purchasesBloc.add(
-                                  PurchasesInput(result.toString()),
-                                );
-                              }
-                            }
+                            //   if (state.purchases.isNotEmpty &&
+                            //       double.parse(value) > 0) {
+                            //     double result =
+                            //         double.parse(value) *
+                            //         double.parse(state.purchases);
+                            //     purchasesBloc.add(
+                            //       UpdateLine(
+                            //         pState: state.copyWith(
+                            //           purchasesSum: result.toString(),
+                            //         ),
+                            //       ),
+                            //     );
+                            //     // purchasesBloc.add(
+                            //     //   PurchasesSumInput(result.toString()),);
+                            //   }
+                            //   if (state.purchasesSum.isNotEmpty &&
+                            //       double.parse(value) > 0) {
+                            //     double result =
+                            //         double.parse(state.purchasesSum) /
+                            //         double.parse(value);
+                            //     UpdateLine(
+                            //       pState: state.copyWith(
+                            //         purchases: result.toString(),
+                            //       ),
+                            //     );
+                            //     // purchasesBloc.add(
+                            //     //   PurchasesInput(result.toString()),);
+                            //   }
+                            // }
                           },
 
                           controller: _quantityCont,
@@ -262,48 +284,65 @@ class _BarcodeWidgetState extends State<BarcodeWidget> {
                 // ),
                 Container(
                   padding: const EdgeInsets.only(left: 10.0),
-                  child: DropdownMenu<String>(
-                    textStyle: TextStyle(fontSize: 20),
-                    initialSelection: 'шт',
-                    enableFilter: true,
-                    enableSearch: false,
-                    controller: _measuringCont,
-                    onSelected: (value) {
-                      purchasesBloc.add(MeasuringInput(value ?? ''));
+                  child: BlocBuilder<PurchasesBloc, PurchasesState>(
+                    builder: (context, state) {
+                      return DropdownMenu<String>(
+                        textStyle: TextStyle(fontSize: 20),
+                        initialSelection: 'шт',
+                        enableFilter: true,
+                        enableSearch: false,
+                        controller: _measuringCont,
+                        onSelected: (value) {
+                          purchasesBloc.add(
+                            UpdateLine(
+                              pState: state.copyWith(measuring: value ?? ''),
+                            ),
+                          );
+                          // purchasesBloc.add(MeasuringInput(value ?? ''));
+                        },
+                        dropdownMenuEntries: const [
+                          DropdownMenuEntry(value: 'шт', label: 'шт'),
+                          DropdownMenuEntry(value: 'г', label: 'г'),
+                          DropdownMenuEntry(value: 'мл', label: 'мл'),
+                          DropdownMenuEntry(value: 'кг', label: 'кг'),
+                          DropdownMenuEntry(value: 'л', label: 'л'),
+                        ],
+                        inputFormatters: <TextInputFormatter>[
+                          FilteringTextInputFormatter.allow(
+                            RegExp(
+                              r'^a(?=b)',
+                            ), // Ни какие значения не принимаются
+                          ),
+                        ],
+                        inputDecorationTheme: const InputDecorationTheme(
+                          // border: OutlineInputBorder(
+                          //   borderSide: BorderSide(
+                          //     color: Colors.blue, // цвет границы
+                          //     width: 3.0, // толщина границы
+                          //   ),
+                          //   borderRadius: BorderRadius.all(
+                          //     Radius.circular(8),
+                          //   ), // скругление углов (по желанию)
+                          // ),
+                          enabledBorder: OutlineInputBorder(
+                            // граница в обычном состоянии
+                            borderSide: BorderSide(
+                              color: Colors.white,
+                              width: 2.0,
+                            ),
+                            borderRadius: BorderRadius.all(Radius.circular(6)),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            // граница при фокусе
+                            borderSide: BorderSide(
+                              color: Colors.white,
+                              width: 4.0,
+                            ),
+                            borderRadius: BorderRadius.all(Radius.circular(6)),
+                          ),
+                        ),
+                      );
                     },
-                    dropdownMenuEntries: const [
-                      DropdownMenuEntry(value: 'шт', label: 'шт'),
-                      DropdownMenuEntry(value: 'г', label: 'г'),
-                      DropdownMenuEntry(value: 'мл', label: 'мл'),
-                      DropdownMenuEntry(value: 'кг', label: 'кг'),
-                      DropdownMenuEntry(value: 'л', label: 'л'),
-                    ],
-                    inputFormatters: <TextInputFormatter>[
-                      FilteringTextInputFormatter.allow(
-                        RegExp(r'^a(?=b)'), // Ни какие значения не принимаются
-                      ),
-                    ],
-                    inputDecorationTheme: const InputDecorationTheme(
-                      // border: OutlineInputBorder(
-                      //   borderSide: BorderSide(
-                      //     color: Colors.blue, // цвет границы
-                      //     width: 3.0, // толщина границы
-                      //   ),
-                      //   borderRadius: BorderRadius.all(
-                      //     Radius.circular(8),
-                      //   ), // скругление углов (по желанию)
-                      // ),
-                      enabledBorder: OutlineInputBorder(
-                        // граница в обычном состоянии
-                        borderSide: BorderSide(color: Colors.white, width: 2.0),
-                        borderRadius: BorderRadius.all(Radius.circular(6)),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        // граница при фокусе
-                        borderSide: BorderSide(color: Colors.white, width: 4.0),
-                        borderRadius: BorderRadius.all(Radius.circular(6)),
-                      ),
-                    ),
                   ),
                 ),
               ],

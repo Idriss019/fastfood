@@ -1,6 +1,7 @@
 import 'dart:io';
 // import 'dart:convert';
 import 'package:fastfood/DB/database.dart';
+import 'package:fastfood/DB/table/purchasesDB.dart';
 import 'package:fastfood/DB/table/storageBD.dart';
 import 'package:fastfood/names/creatingDishes/bloc/creating_dishes_bloc.dart';
 import 'package:fastfood/names/password/cubit/password_cubit.dart';
@@ -28,55 +29,55 @@ void main() async {
     setWindowMaxSize(const Size(1024, 748));
     setWindowFrame(const Rect.fromLTWH(100, 100, 1024, 748));
   }
-  Future<String?> getMacAddressLinux() async {
-  try {
-    // Запуск команды ip link show
-    final ProcessResult result = await Process.run('ip', ['link', 'show']);
+//   Future<String?> getMacAddressLinux() async {
+//   try {
+//     // Запуск команды ip link show
+//     final ProcessResult result = await Process.run('ip', ['link', 'show']);
 
-    if (result.exitCode != 0) {
-      print('Ошибка выполнения команды: ${result.stderr}');
-      return null;
-    }
+//     if (result.exitCode != 0) {
+//       print('Ошибка выполнения команды: ${result.stderr}');
+//       return null;
+//     }
 
-    final String output = result.stdout.toString();
+//     final String output = result.stdout.toString();
 
-    // Парсим вывод для поиска MAC-адреса (после 'link/ether')
-    final macAddressLine = output.split('\n')
-        .firstWhere(
-            (line) => line.trim().startsWith('ether'),
-      );
+//     // Парсим вывод для поиска MAC-адреса (после 'link/ether')
+//     final macAddressLine = output.split('\n')
+//         .firstWhere(
+//             (line) => line.trim().startsWith('ether'),
+//       );
 
-    if (macAddressLine != null) {
-      return macAddressLine.split(' ').first.trim(); // или другая логика парсинга
-    } else {
-      print('MAC-адрес не найден.');
-      return null;
-    }
-  } catch (e) {
-    print('Ошибка при получении MAC-адреса: $e');
-    return null;
+//     if (macAddressLine != null) {
+//       return macAddressLine.split(' ').first.trim(); // или другая логика парсинга
+//     } else {
+//       print('MAC-адрес не найден.');
+//       return null;
+//     }
+//   } catch (e) {
+//     print('Ошибка при получении MAC-адреса: $e');
+//     return null;
+//   }
+// }
+// final String? macAddress = await getMacAddressLinux();
+// if (macAddress != null) {
+//         print('MAC-адрес:!!!! $macAddress');
+//       } else {
+//         print('Не удалось получить MAC-адрес.');
+//       }
+  Future<String> runPythonScript() async {
+    // Укажите полный путь к интерпретатору Python, если он не в PATH
+    var result = await Process.run('python3', [
+      '/home/diamond/Programming/PL/Dart/fastfood/lib/GetMac.py',
+    ]);
+    // print('Вывод: ${result.stdout}');
+    // print('Ошибки: ${result.stderr}');
+    mac = result.stdout;
+    return result.stdout;
   }
-}
-final String? macAddress = await getMacAddressLinux();
-if (macAddress != null) {
-        print('MAC-адрес:!!!! $macAddress');
-      } else {
-        print('Не удалось получить MAC-адрес.');
-      }
-  // Future<String> runPythonScript() async {
-  //   // Укажите полный путь к интерпретатору Python, если он не в PATH
-  //   var result = await Process.run('python3', [
-  //     '/home/diamond/Programming/PL/Dart/fastfood/lib/GetMac.py',
-  //   ]);
-  //   // print('Вывод: ${result.stdout}');
-  //   // print('Ошибки: ${result.stderr}');
-  //   mac = result.stdout;
-  //   return result.stdout;
-  // }
 
-  // print('Mac');
-  // await runPythonScript();
-  // print(mac);
+  print('Mac');
+  await runPythonScript();
+  print(mac);
 
   // print('MAC');
   // Future<String?> getMacAddress() async {
@@ -94,22 +95,23 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     Map choiceTheme = {'light': lightTheme, 'dark': darkTheme};
     final storageSql = StorageSQL(database: AppDatabase());
-    final initialRecalculationState = RecalculationState(heightContainer: 30);
-    // final db = AppDatabase();
+    final purchaseSql = PurchasesSql(database: AppDatabase());
+
+    // final initialRecalculationState = RecalculationState();
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => ThemeCubit(context)),
         BlocProvider(create: (context) => PasswordCubit('')),
-        BlocProvider(create: (context) => PurchasesBloc()),
+        BlocProvider(create: (context) => PurchasesBloc(purchasesSql: purchaseSql, storageSQL: storageSql,)),
         BlocProvider(create: (context) => CreatingDishesBloc()),
-        BlocProvider(
-          lazy: true,
-          create: (context) => RecalculationBloc(
-            initialState: initialRecalculationState,
-            storageSql: storageSql,
-            // heightContainer: 30.0,
-          ),
-        ),
+        // BlocProvider(
+        //   lazy: true,
+        //   create: (context) => RecalculationBloc(
+        //     // initialState: initialRecalculationState,
+        //     storageSql: storageSql,
+        //     // heightContainer: 30.0,
+        //   ),
+        // ),
       ],
       child: BlocBuilder<ThemeCubit, ThemeState>(
         builder: (context, state) {
@@ -145,157 +147,3 @@ CustomTransitionPage buildPageWithDefaultTransition<T>({
         FadeTransition(opacity: animation, child: child),
   );
 }
-
-// final _router = GoRouter(
-//   routes: [
-//     GoRoute(
-//       path: '/',
-//       pageBuilder: (context, state) => buildPageWithDefaultTransition<void>(
-//         context: context,
-//         state: state,
-//         child: PasswordPage(),
-//       ),
-//       routes: [
-//         GoRoute(
-//           path: 'home',
-//           pageBuilder: (context, state) => buildPageWithDefaultTransition<void>(
-//             context: context,
-//             state: state,
-//             child: OrderPage(),
-//           ),
-//         ),
-//         GoRoute(
-//           path: 'Setting',
-//           pageBuilder: (context, state) => buildPageWithDefaultTransition<void>(
-//             context: context,
-//             state: state,
-//             child: Settings(),
-//           ),
-//         ),
-//         GoRoute(
-//           path: 'Purchases',
-//           pageBuilder: (context, state) => buildPageWithDefaultTransition<void>(
-//             context: context,
-//             state: state,
-//             child: Purchases(),
-//           ),
-//         ),
-//         GoRoute(
-//           path: 'AdjustmentPage',
-//           pageBuilder: (context, state) => buildPageWithDefaultTransition<void>(
-//             context: context,
-//             state: state,
-//             child: AdjustmentPage(),
-//           ),
-//         ),
-//         GoRoute(
-//             path: 'Tables',
-//             pageBuilder: (context, state) => buildPageWithDefaultTransition<void>(
-//                   context: context,
-//                   state: state,
-//                   child: Tables(),
-//                 ),
-//             routes: [
-//         GoRoute(
-//           path: 'StorageTable',
-//           pageBuilder: (context, state) =>
-//               buildPageWithDefaultTransition<void>(
-//             context: context,
-//             state: state,
-//             child: StorageTable(),
-//           ),
-//         ),
-//         GoRoute(
-//           path: 'SalesTable',
-//           pageBuilder: (context, state) =>
-//               buildPageWithDefaultTransition<void>(
-//             context: context,
-//             state: state,
-//             child: SalesTable(),
-//           ),
-//         ),
-//         GoRoute(
-//           path: 'PurchasesTable',
-//           pageBuilder: (context, state) {
-//             return buildPageWithDefaultTransition<void>(
-//               context: context,
-//               state: state,
-//               child: PurchasesTable(),
-//             );
-//           },
-//         ),
-//         GoRoute(
-//           path: 'HistoryTable',
-//           pageBuilder: (context, state) {
-//             return buildPageWithDefaultTransition<void>(
-//               context: context,
-//               state: state,
-//               child: HistoryTable(),
-//             );
-//           },
-//         ),
-//         GoRoute(
-//           path: 'StaffTable',
-//           pageBuilder: (context, state) {
-//             return buildPageWithDefaultTransition<void>(
-//               context: context,
-//               state: state,
-//               child: StaffTable(),
-//             );
-//           },
-//         ),
-//         GoRoute(
-//           path: 'Recalculation',
-//           pageBuilder: (context, state) {
-//             return buildPageWithDefaultTransition<void>(
-//               context: context,
-//               state: state,
-//               child: Recalculation(),
-//             );
-//           },
-//         ),
-//         ]),
-//         GoRoute(
-//           path: 'CreateDishesPage',
-//           pageBuilder: (context, state) => buildPageWithDefaultTransition<void>(
-//             context: context,
-//             state: state,
-//             child: CreateDishesPage(),
-//           ),
-//         ),
-//         GoRoute(
-//           path: 'Disposal',
-//           pageBuilder: (context, state) => buildPageWithDefaultTransition<void>(
-//             context: context,
-//             state: state,
-//             child: CleanForStorage(),
-//           ),
-//         ),
-//         GoRoute(
-//           path: 'Payment',
-//           pageBuilder: (context, state) => buildPageWithDefaultTransition<void>(
-//             context: context,
-//             state: state,
-//             child: Payment(),
-//           ),
-//         ),
-//         GoRoute(
-//           path: 'Staff',
-//           pageBuilder: (context, state) => buildPageWithDefaultTransition<void>(
-//             context: context,
-//             state: state,
-//             child: Staff(),
-//           ),
-//         ),
-//         GoRoute(
-//           path: 'Report',
-//           pageBuilder: (context, state) => buildPageWithDefaultTransition<void>(
-//             context: context,
-//             state: state,
-//             child: Report(),
-//           ),
-//         ),
-//       ],
-//     ),
-//   ],
-// );

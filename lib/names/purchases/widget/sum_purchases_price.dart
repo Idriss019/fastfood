@@ -95,17 +95,17 @@ class _PriceOfSomWidgetState extends State<SumPurchasePrice> {
                       return TextField(
                         onChanged: (value) {
                           purchasesBloc.add(PurchasesSumInput(value));
-                          if (state.quantity.isNotEmpty && value.isNotEmpty) {
-                            double result =
-                                double.parse(value) /
-                                double.parse(state.quantity);
-                            // print(result);
-                            purchasesBloc.add(
-                              PurchasesInput(result.toString()),
-                            );
-                          }
-
-                          
+                          // if (state.quantity.isNotEmpty && value.isNotEmpty) {
+                          //   double result =
+                          //       double.parse(value) /
+                          //       double.parse(state.quantity);
+                          //   // print(result);
+                          //   purchasesBloc.add(UpdateLine(pState: state.copyWith(purchasesSum: value, purchases: result.toString())));
+                          //   // purchasesBloc.add(
+                          //   //   PurchasesInput(result.toString()),);
+                          // }else{
+                          //   purchasesBloc.add(UpdateLine(pState: state.copyWith(purchasesSum: value)));
+                          // }
                         },
                         controller: _purchasesSumCont,
                         cursorColor: widget.invertColor,
@@ -158,6 +158,7 @@ class _PriceOfSomWidgetState extends State<SumPurchasePrice> {
                       return TextField(
                         enabled: false,
                         onChanged: (value) {
+                          // purchasesBloc.add(UpdateLine(pState: state.copyWith(priceSum: value)));
                           // purchasesBloc.add(PriceSumInput(value));
                         },
                         controller: _priceSumCont,

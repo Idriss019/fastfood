@@ -96,15 +96,17 @@ class _PriceOfPurchasesState extends State<PurchasePrice> {
                       return TextField(
                         onChanged: (value) {
                           purchasesBloc.add(PurchasesInput(value));
-                          if (state.quantity.isNotEmpty && value.isNotEmpty) {
-                            double result =
-                                double.parse(value) *
-                                double.parse(state.quantity);
-                            // print(result);
-                            purchasesBloc.add(
-                              PurchasesSumInput(result.toString()),
-                            );
-                          }
+                          // if (state.quantity.isNotEmpty && value.isNotEmpty) {
+                          //   double result =
+                          //       double.parse(value) *
+                          //       double.parse(state.quantity);
+                          //   // print(result);
+                          //   // purchasesBloc.add(
+                          //   //   PurchasesSumInput(result.toString()),);
+                          //   purchasesBloc.add(UpdateLine(pState: state.copyWith(purchases: value, purchasesSum: result.toString())));
+                          // }else{
+                          //   purchasesBloc.add(UpdateLine(pState: state.copyWith(purchases: value)));
+                          // }
                         },
                         controller: _purchasesCont,
                         cursorColor: widget.invertColor,
@@ -156,19 +158,21 @@ class _PriceOfPurchasesState extends State<PurchasePrice> {
                     builder: (context, state) {
                       return TextField(
                         onChanged: (value) {
-                          if (state.quantity.isNotEmpty && value.isNotEmpty) {
-                            purchasesBloc.add(PriceInput(value.toString()));
-                            if (double.parse(value) > 0) {
-                              double result =
-                                  double.parse(value) *
-                                  double.parse(state.quantity);
-                              print('QQQQ');
-                              print(value);
-                              purchasesBloc.add(
-                                PriceSumInput(result.toString()),
-                              );
-                            }
-                          }
+                          purchasesBloc.add(PriceInput(value.toString()));
+                          // if (state.quantity.isNotEmpty && value.isNotEmpty && double.parse(value) > 0) {
+                            
+                          //   // purchasesBloc.add(PriceInput(value.toString()));
+                          //   // if (double.parse(value) > 0) {
+                          //     double result =
+                          //         double.parse(value) *
+                          //         double.parse(state.quantity);
+                          //     purchasesBloc.add(UpdateLine(pState: state.copyWith(price: value, priceSum: result.toString())));
+                          //     // purchasesBloc.add(
+                          //     //   PriceSumInput(result.toString()),);
+                          //   // }
+                          // }else{
+                          //   purchasesBloc.add(UpdateLine(pState: state.copyWith(price: value)));
+                          // }
                         },
                         controller: _priceCont,
                         cursorColor: widget.invertColor,
@@ -190,8 +194,9 @@ class _PriceOfPurchasesState extends State<PurchasePrice> {
                             ),
                           ),
                         ),
-                        inputFormatters: <TextInputFormatter>[
-                          // DoubleTextInputFormatter()
+                        inputFormatters: 
+                        <TextInputFormatter>[
+                          DoubleTextInputFormatter()
                         ],
                       );
                     },

@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:fastfood/DB/database.dart';
+import 'package:fastfood/data_class/purchases_data.dart';
 
 class PurchasesTableDB extends Table {
   IntColumn get id => integer().autoIncrement()();
@@ -14,4 +15,33 @@ class PurchasesTableDB extends Table {
 class PurchasesSql {
   final AppDatabase database;
   PurchasesSql({required this.database});
+
+  /// Добавить все элементы из списка
+  Future<void> insertAllList(List<PurchasesData> purchases) async {
+    final companions = purchases.map((data) {
+      if (data.barcode != null) {
+        return PurchasesTableDBCompanion(
+          date: Value(data.date),
+          barcode: Value(data.barcode),
+          product: Value(data.product),
+          quantity: Value(data.quantity ?? 1),
+          measuring: Value(data.measuring ?? 'шт'),
+          priceOfPurchases: Value(data.priceOfPurchases ?? 0),
+
+        );
+      } else {
+        return PurchasesTableDBCompanion(
+          date: Value(data.date),
+          product: Value(data.product),
+          quantity: Value(data.quantity ?? 1),
+          measuring: Value(data.measuring ?? 'шт'),
+          priceOfPurchases: Value(data.priceOfPurchases ?? 0),
+        );
+      }
+    }).toList();
+
+    await database.batch((batch) {
+      batch.insertAll(database.purchasesTableDB, companions);
+    });
+  }
 }

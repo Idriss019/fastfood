@@ -40,7 +40,7 @@ class ButtonInputWidget extends StatelessWidget {
               backgroundColor: myButtonColor,
             ),
             onPressed: () {
-              context.read<PurchasesBloc>().add(ButtonInput());
+              context.read<PurchasesBloc>().add(ButtonInput(context));
             },
             child: Text(
               'Добавить',
