@@ -33,7 +33,7 @@ class _BarcodeWidgetState extends State<BarcodeWidget> {
   void initState() {
     super.initState();
     purchasesBloc = context.read<PurchasesBloc>();
-    purchasesBloc.loadStorageList();
+    purchasesBloc.updateStorageData();
     // _barcodeCont.addListener(() {});
     // _courseCont.addListener(() {});
     // blocPurchases = context.read<PurchasesCubit>();

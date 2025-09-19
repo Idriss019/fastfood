@@ -14,6 +14,7 @@ class PurchasesState extends Equatable {
   final String total;
   final List<PurchasesData> purchasesList;
   final List<StorageData> storageListSQL;
+  final Map<String, StorageData> storageMapSQL;
   const PurchasesState({
     this.showTitle = '',
     this.barcode = '',
@@ -27,6 +28,7 @@ class PurchasesState extends Equatable {
     this.total = '',
     this.purchasesList = const [],
     this.storageListSQL = const [],
+    this.storageMapSQL = const {},
   });
   
   @override
@@ -43,6 +45,7 @@ class PurchasesState extends Equatable {
     total,
     purchasesList,
     storageListSQL,
+    storageMapSQL
   ];
 
   PurchasesState copyWith({
@@ -58,6 +61,7 @@ class PurchasesState extends Equatable {
     String? total,
     List<PurchasesData>? purchasesList,
     List<StorageData>? storageListSQL,
+    Map<String, StorageData>? storageMapSQL,
   }) {
     return PurchasesState(
       showTitle: showTitle ?? this.showTitle,
@@ -72,6 +76,7 @@ class PurchasesState extends Equatable {
       total: total ?? this.total,
       purchasesList: purchasesList ?? this.purchasesList,
       storageListSQL: storageListSQL ?? this.storageListSQL,
+      storageMapSQL: storageMapSQL ?? this.storageMapSQL,
     );
   }
 }

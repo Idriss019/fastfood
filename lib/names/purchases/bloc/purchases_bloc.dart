@@ -156,104 +156,124 @@ class PurchasesBloc extends Bloc<PurchasesEvent, PurchasesState> {
         if (newElement.isNotEmpty) {
           showDialogOk(event.context, newElement, () {});
         }
-        double totalPurchases = state.total != ''
-            ? double.parse(state.total)
-            : 0;
-        totalPurchases +=
-            double.parse(state.quantity) * double.parse(state.purchases);
-        List<PurchasesData> newPurchasesList = state.purchasesList
-            .map((item) => item)
-            .toList();
-        PurchasesState newState = state;
-        bool newElementInsert = false;
-        for (int index = 0; index < newPurchasesList.length; index++) {
-          final i = newPurchasesList[index];
-          if (i.product == state.product) {
-            newPurchasesList[index] = i.copyWith(
-              quantity: i.quantity! + int.parse(state.quantity),
-            );
-            newElementInsert = true;
-            newState = state.copyWith(
-              purchasesList: newPurchasesList,
-              barcode: '',
-              quantity: '',
-              measuring: 'шт',
-              product: '',
-              purchases: '',
-              price: '',
-              purchasesSum: '',
-              priceSum: '',
-              total: totalPurchases.toString(),
-            );
-            emit(newState);
-          }
-        }
-        if (newElementInsert == false) {
-          newState = state.copyWith(
-            purchasesList: List.from(state.purchasesList)
-              ..add(
-                PurchasesData(
-                  id: 0,
-                  product: state.product,
-                  date: DateTime.now().millisecondsSinceEpoch,
-                  barcode: state.barcode,
-                  quantity: int.parse(state.quantity),
-                  measuring: state.measuring == '' ? 'шт' : state.measuring,
-                  priceOfPurchases: double.parse(state.purchases),
-                ),
+        // String totalPurchases = updateTotal();
+        // double totalPurchases = state.total != ''
+        //     ? double.parse(state.total)
+        //     : 0;
+        // totalPurchases +=
+        //     double.parse(state.quantity) * double.parse(state.purchases);
+
+        // List<PurchasesData> newPurchasesList = state.purchasesList
+        //     .map((item) => item)
+        //     .toList();
+        // PurchasesState newState = state;
+        // bool newElementInsert = false;
+        PurchasesState newState = state.copyWith(
+          purchasesList: List.from(state.purchasesList)
+            ..add(
+              PurchasesData(
+                id: 0,
+                product: state.product,
+                date: DateTime.now().millisecondsSinceEpoch,
+                barcode: state.barcode,
+                quantity: int.parse(state.quantity),
+                measuring: state.measuring == '' ? 'шт' : state.measuring,
+                priceOfPurchases: double.parse(state.purchases),
               ),
-            barcode: '',
-            quantity: '',
-            measuring: 'шт',
-            product: '',
-            purchases: '',
-            price: '',
-            purchasesSum: '',
-            priceSum: '',
-            total: totalPurchases.toString(),
-          );
-          emit(newState);
-        }
-        // final newState = state.copyWith(
-        //   purchasesList: List.from(state.purchasesList)
-        //     ..add(
-        //       PurchasesData(
-        //         id: 0,
-        //         product: state.product,
-        //         date: DateTime.now().millisecondsSinceEpoch,
-        //         barcode: state.barcode,
-        //         quantity: int.parse(state.quantity),
-        //         measuring: state.measuring == '' ? 'шт' : state.measuring,
-        //         priceOfPurchases: double.parse(state.purchases),
+            ),
+          barcode: '',
+          quantity: '',
+          measuring: 'шт',
+          product: '',
+          purchases: '',
+          price: '',
+          purchasesSum: '',
+          priceSum: '',
+          // total: totalPurchases,
+        );
+        emit(newState);
+        updateTotal();
+        // for (int index = 0; index < newPurchasesList.length; index++) {
+        //   final i = newPurchasesList[index];
+        //   if (i.product == state.product) {
+        //     newPurchasesList[index] = i.copyWith(
+        //       quantity: i.quantity! + int.parse(state.quantity),
+        //     );
+        //     newElementInsert = true;
+        //     newState = state.copyWith(
+        //       purchasesList: newPurchasesList,
+        //       barcode: '',
+        //       quantity: '',
+        //       measuring: 'шт',
+        //       product: '',
+        //       purchases: '',
+        //       price: '',
+        //       purchasesSum: '',
+        //       priceSum: '',
+        //       total: totalPurchases.toString(),
+        //     );
+        //     emit(newState);
+        //   }
+        // }
+        // if (newElementInsert == false) {
+        //   newState = state.copyWith(
+        //     purchasesList: List.from(state.purchasesList)
+        //       ..add(
+        //         PurchasesData(
+        //           id: 0,
+        //           product: state.product,
+        //           date: DateTime.now().millisecondsSinceEpoch,
+        //           barcode: state.barcode,
+        //           quantity: int.parse(state.quantity),
+        //           measuring: state.measuring == '' ? 'шт' : state.measuring,
+        //           priceOfPurchases: double.parse(state.purchases),
+        //         ),
         //       ),
-        //     ),
-        //   barcode: '',
-        //   quantity: '',
-        //   measuring: 'шт',
-        //   product: '',
-        //   purchases: '',
-        //   price: '',
-        //   purchasesSum: '',
-        //   priceSum: '',
-        //   total: totalPurchases.toString(),
-        // );
-        // emit(newState);
-        // print('purchasesList ${newState.purchasesList}');
+        //     barcode: '',
+        //     quantity: '',
+        //     measuring: 'шт',
+        //     product: '',
+        //     purchases: '',
+        //     price: '',
+        //     purchasesSum: '',
+        //     priceSum: '',
+        //     total: totalPurchases.toString(),
+        //   );
+        //   emit(newState);
       }
+      // final newState = state.copyWith(
+      //   purchasesList: List.from(state.purchasesList)
+      //     ..add(
+      //       PurchasesData(
+      //         id: 0,
+      //         product: state.product,
+      //         date: DateTime.now().millisecondsSinceEpoch,
+      //         barcode: state.barcode,
+      //         quantity: int.parse(state.quantity),
+      //         measuring: state.measuring == '' ? 'шт' : state.measuring,
+      //         priceOfPurchases: double.parse(state.purchases),
+      //       ),
+      //     ),
+      //   barcode: '',
+      //   quantity: '',
+      //   measuring: 'шт',
+      //   product: '',
+      //   purchases: '',
+      //   price: '',
+      //   purchasesSum: '',
+      //   priceSum: '',
+      //   total: totalPurchases.toString(),
+      // );
+      // emit(newState);
+      // print('purchasesList ${newState.purchasesList}');
+      // }
     });
 
     on<RemoveFromList>((event, emit) {
-      double totalPurchases = double.parse(state.total);
-      // totalPurchases += 100;
-      totalPurchases -= event.data.quantity! * event.data.priceOfPurchases!;
       List<PurchasesData> newPurchasesList = List.from(state.purchasesList)
         ..remove(event.data);
-      emit(
-        state.copyWith(
-          purchasesList: newPurchasesList,
-          total: totalPurchases.toString(),
-        ),
-      );
+      emit(state.copyWith(purchasesList: newPurchasesList));
+      updateTotal();
     });
 
     on<RemoveList>((event, emit) {
@@ -299,8 +319,46 @@ class PurchasesBloc extends Bloc<PurchasesEvent, PurchasesState> {
     return 'Обнаружен новый элемент!';
   }
 
-  Future<void> loadStorageList() async {
-    emit(state.copyWith(storageListSQL: await storageSQL.selectAll()));
+  Future<void> updateStorageData() async {
+    add(
+      UpdateLine(
+        pState: state.copyWith(storageListSQL: await storageSQL.selectAll()),
+      ),
+    );
+    add(
+      UpdateLine(
+        pState: state.copyWith(
+          storageMapSQL: Map.fromIterable(
+            state.storageListSQL,
+            key: (item) => item.product,
+            value: (item) => item,
+          ),
+        ),
+      ),
+    );
+    // emit(state.copyWith(storageListSQL: await storageSQL.selectAll()));
+  }
+
+  // Map<String, Data> dataMap = Map.fromIterable(
+  //   dataList,
+  //   key: (item) => item.product,
+  //   value: (item) => item,
+  // );
+
+  //   void updateTotal() {
+  //   double total = 0;
+  //   state.purchasesList.forEach((el) {
+  //     total += el.quantity! * el.priceOfPurchases!;
+  //   });
+  //   // Обновляем состояние через emit
+  //   emit(state.copyWith(total: total.toString()));
+  // }
+  void updateTotal() {
+    double total = 0;
+    state.purchasesList.forEach((el) {
+      total += el.quantity! * el.priceOfPurchases!;
+    });
+    add(UpdateLine(pState: state.copyWith(total: total.toString())));
   }
 }
 
