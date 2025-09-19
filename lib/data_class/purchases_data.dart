@@ -7,6 +7,7 @@ class PurchasesData {
   final int? quantity;
   final String? measuring;
   final double? priceOfPurchases;
+  final double? price;
 
   PurchasesData({
     required this.id,
@@ -16,6 +17,7 @@ class PurchasesData {
     this.quantity = 0,
     this.measuring = '',
     this.priceOfPurchases,
+    this.price,
   });
 
   PurchasesData copyWith({
@@ -26,6 +28,7 @@ class PurchasesData {
     int? quantity,
     String? measuring,
     double? priceOfPurchases,
+    double? price,
   }) {
     return PurchasesData(
       id: id ?? this.id,
@@ -35,6 +38,7 @@ class PurchasesData {
       quantity: quantity ?? this.quantity,
       measuring: measuring ?? this.measuring,
       priceOfPurchases: priceOfPurchases ?? this.priceOfPurchases,
+      price: price ?? this.price,
     );
   }
 }

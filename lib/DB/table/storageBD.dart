@@ -39,4 +39,90 @@ class StorageSQL {
     }
     return storageList;
   }
+  
+  /// Добавить все элементы из списка
+  Future<void> insertAllList(List<StorageData> storage) async {
+    final companions = storage.map((data) {
+      if (data.barcode != null && data.barcode != '') {
+        return StorageTableDBCompanion(
+          inDishes: Value(data.inDishes),
+          barcode: Value(data.barcode),
+          product: Value(data.product),
+          quantity: Value(data.quantity ?? 1),
+          measuring: Value(data.measuring  == '' ? 'шт': data.measuring),
+          visibility: Value(data.visibility),
+          price: Value(data.price ?? 0),
+          found: Value(data.found ?? 0)
+        );
+      } else {
+        return StorageTableDBCompanion(
+          inDishes: Value(data.inDishes),
+          product: Value(data.product),
+          quantity: Value(data.quantity ?? 1),
+          measuring: Value(data.measuring  == '' ? 'шт': data.measuring),
+          visibility: Value(data.visibility),
+          price: Value(data.price ?? 0),
+          found: Value(data.found ?? 0)
+        );
+      }
+    }).toList();
+
+    await database.batch((batch) {
+      batch.insertAll(database.storageTableDB, companions);
+    });
+  }
+  
+  /// Обновить по названию продукта из списка
+  Future<void> updateByProductClass(List<StorageData> list) async {
+  await database.transaction(() async {
+    for (StorageData item in list) {
+      final companion = StorageTableDBCompanion(
+        barcode: (item.barcode != null && item.barcode != '') ? Value(item.barcode) : const Value.absent(),
+        quantity: item.quantity != null ? Value(item.quantity!) : const Value.absent(),
+        price: item.price != null ? Value(item.price) : const Value.absent(),
+        found: item.found != null ? Value(item.found) : const Value.absent(),
+      );
+
+      await (database.update(database.storageTableDB)
+            ..where((tbl) => tbl.product.equals(item.product)))
+          .write(companion);
+    }
+  });
+}
+
+  /// Обновить по названию продукта
+  // Future<void> updateByProduct({
+  //   required String product,
+  //   String? barcode,
+  //   int? quantity,
+  //   double? priceOfSom,
+  //   int? found,
+  // }) async {
+  //   // Создаем пустой компаньон
+  //   final companion = StorageTableDBCompanion();
+
+  //   // Заполняем только переданные параметры
+  //   if (barcode != null) {
+  //     companion.barcode = Value(barcode);
+  //   }
+  //   if (quantity != null) {
+  //     companion.quantity = Value(quantity);
+  //   }
+  //   if (priceOfSom != null) {
+  //     companion.priceOfSom = Value(priceOfSom);
+  //   }
+  //   if (found != null) {
+  //     companion.found = Value(found);
+  //   }
+
+  //   // Выполняем обновление по названию продукта
+  //   // await (database.update(database.storageTable)
+  //   //       ..where((tbl) => tbl.product.equals(product)))
+  //   //     .write(companion);
+  //   await database.transaction(() async {
+  //     await (database.update(database.storageTable)
+  //           ..where((tbl) => tbl.product.equals(product)))
+  //         .write(companion);
+  //   });
+  // }
 }

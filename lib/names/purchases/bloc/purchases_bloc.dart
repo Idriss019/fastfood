@@ -17,24 +17,42 @@ class PurchasesBloc extends Bloc<PurchasesEvent, PurchasesState> {
 
   PurchasesBloc({required this.purchasesSql, required this.storageSQL})
     : super(PurchasesInitial()) {
-    on<UpdateLine>((event, emit) {
+    on<UpdataState>((event, emit) {
       final newState = event.pState;
       emit(newState);
-    }, transformer: debounce<UpdateLine>(const Duration(milliseconds: 350)));
+    }, transformer: debounce<UpdataState>(const Duration(milliseconds: 350)));
 
     on<BarcodeInput>((event, emit) {
       final newState = state.copyWith(barcode: event.barcode);
       emit(newState);
-      print('barcode ${newState.barcode}');
+      // поиск по штрих-коду
+      bool search = false;
+      for (StorageData sEl in state.storageListSQL) {
+        if (sEl.barcode == event.barcode) {
+          search = true;
+          final newState = state.copyWith(
+            barcode: event.barcode,
+            product: sEl.product,
+            measuring: sEl.measuring,
+            price: sEl.price != null ? sEl.price.toString() : '',
+          );
+          emit(newState);
+          return;
+        }
+      }
+      if (search == false) {
+        emit(state.copyWith(barcode: event.barcode));
+      }
+      // print('barcode ${newState.barcode}');
     }, transformer: debounce<BarcodeInput>(const Duration(milliseconds: 250)));
 
     on<QuantityInput>((event, emit) {
       // PurchasesState newState = state;
-
       if (event.quantity.isNotEmpty) {
         // newState = state.copyWith(quantity: event.quantity);
         double? purchasesSum;
         double? purchases;
+        double? priceSum;
         if (state.purchases.isNotEmpty) {
           double result =
               double.parse(event.quantity) * double.parse(state.purchases);
@@ -45,6 +63,11 @@ class PurchasesBloc extends Bloc<PurchasesEvent, PurchasesState> {
               double.parse(state.purchasesSum) / double.parse(event.quantity);
           purchases = result;
         }
+        if (state.price.isNotEmpty) {
+          double result =
+              double.parse(event.quantity) * double.parse(state.price);
+          priceSum = result;
+        }
 
         final newState = state.copyWith(
           quantity: event.quantity,
@@ -52,6 +75,7 @@ class PurchasesBloc extends Bloc<PurchasesEvent, PurchasesState> {
               ? ''
               : purchasesSum.toString(),
           purchases: purchases.toString() == 'null' ? '' : purchases.toString(),
+          priceSum: priceSum.toString() == 'null' ? '' : priceSum.toString(),
         );
         emit(newState);
       } else {
@@ -68,22 +92,20 @@ class PurchasesBloc extends Bloc<PurchasesEvent, PurchasesState> {
     //   },
     //   transformer: debounce<MeasuringInput>(const Duration(milliseconds: 250)),
     // );
-
-    // on<ProductInput>((event, emit) {
-    //   // final bloc = event.context.watch<StorageCubit>().state.storageList;
-    //   // print('qqqq'); final bloc = context.watch<StorageCubit>();
-    //   // _foundToList(event.product,
-    //   //     event.list.map((toElement) => toElement.product).toList());
-    //   // /// Исправить это фигню
-    //   // List<String> _foundList = blocStorage.state.storageList
-    //   //     .map((toElement) => toElement.product)
-    //   //     .toList();
-    //   // state.foundToList(event.product, foundList);
-    //   final newState = state.copyWith(product: event.product);
-    //   emit(newState);
-    //   print('product ${newState.product}');
-    //   // print('purchases ${newState.purchases}');
-    // }, transformer: debounce<ProductInput>(const Duration(milliseconds: 250)));
+    /* Product Line */
+    on<ProductInput>((event, emit) {
+      if (event.product != '') {
+        List<String> newFilteredList = _foundToList(
+          event.product,
+          state.storageListSQL.map((toElement) => toElement.product).toList(),
+        );
+        emit(
+          state.copyWith(product: event.product, filterList: newFilteredList),
+        );
+      } else {
+        emit(state.copyWith(product: event.product, filterList: []));
+      }
+    }, transformer: debounce<ProductInput>(const Duration(milliseconds: 250)));
 
     on<PurchasesInput>(
       (event, emit) {
@@ -145,17 +167,20 @@ class PurchasesBloc extends Bloc<PurchasesEvent, PurchasesState> {
     //   emit(newState);
     //   print('priceSum ${newState.priceSum}');
     // }, transformer: debounce<PriceSumInput>(const Duration(milliseconds: 350)));
-
+    /*  << ButtonInput >> */
     on<ButtonInput>((event, emit) {
       String title = changeInput();
       if (title.isNotEmpty) {
         showDialogOk(event.context, title, () {});
         // emit(state.copyWith(showTitle: ''));
       } else {
-        String newElement = searchNewElement();
-        if (newElement.isNotEmpty) {
-          showDialogOk(event.context, newElement, () {});
+        if (searchElement(state.product) == false) {
+          showDialogOk(event.context, 'Обнаружен новый элемент!', () {});
         }
+        // String newElement = searchNewElement();
+        // if (newElement.isNotEmpty) {
+        //   showDialogOk(event.context, newElement, () {});
+        // }
         // String totalPurchases = updateTotal();
         // double totalPurchases = state.total != ''
         //     ? double.parse(state.total)
@@ -179,6 +204,7 @@ class PurchasesBloc extends Bloc<PurchasesEvent, PurchasesState> {
                 quantity: int.parse(state.quantity),
                 measuring: state.measuring == '' ? 'шт' : state.measuring,
                 priceOfPurchases: double.parse(state.purchases),
+                price: double.parse(state.price),
               ),
             ),
           barcode: '',
@@ -192,7 +218,7 @@ class PurchasesBloc extends Bloc<PurchasesEvent, PurchasesState> {
           // total: totalPurchases,
         );
         emit(newState);
-        updateTotal();
+        add(UpdateTotal());
         // for (int index = 0; index < newPurchasesList.length; index++) {
         //   final i = newPurchasesList[index];
         //   if (i.product == state.product) {
@@ -273,24 +299,92 @@ class PurchasesBloc extends Bloc<PurchasesEvent, PurchasesState> {
       List<PurchasesData> newPurchasesList = List.from(state.purchasesList)
         ..remove(event.data);
       emit(state.copyWith(purchasesList: newPurchasesList));
-      updateTotal();
+      add(UpdateTotal());
     });
 
     on<RemoveList>((event, emit) {
       emit(state.copyWith(purchasesList: [], total: ''));
     });
 
+    /*  << InputList >> */
     on<InputList>((event, emit) async {
       await purchasesSql.insertAllList(state.purchasesList);
+      insertOfStorage();
       emit(state.copyWith(purchasesList: [], total: ''));
     });
+
+    on<UpdatePurchasesList>((event, emit) {
+      int index = event.index;
+      // Создаем копию списка
+      List<PurchasesData> copyPurchasesList = List.from(state.purchasesList);
+      // Обновляем только нужное поле
+      copyPurchasesList[index] = event.newData;
+      emit(state.copyWith(purchasesList: copyPurchasesList));
+    });
+
+    on<UpdateTotal>((event, emit) {
+      double total = 0;
+      state.purchasesList.forEach((el) {
+        total += el.quantity! * el.priceOfPurchases!;
+      });
+      emit(state.copyWith(total: total.toString()));
+    });
+
+    on<UpdataStorageData>((event, emit) async {
+      Map<String, StorageData> newStorageMapSQL = {};
+      List<StorageData> newStorageListSQL = await storageSQL.selectAll();
+      for (StorageData i in newStorageListSQL) {
+        newStorageMapSQL[i.product] = i;
+      }
+      emit(
+        state.copyWith(
+          storageMapSQL: newStorageMapSQL,
+          storageListSQL: newStorageListSQL,
+        ),
+      );
+    });
+
+    on<PressDropList>((event, emit) {
+      StorageData filterStorage = state.storageMapSQL[event.filter]!;
+      emit(
+        state.copyWith(
+          barcode: filterStorage.barcode != '' ? filterStorage.barcode : '',
+          quantity: '1',
+          product: filterStorage.product,
+          measuring: filterStorage.measuring,
+          price: filterStorage.price != null
+              ? filterStorage.price.toString()
+              : '',
+          filterList: [],
+        ),
+      );
+    });
+
+    // void _updatePurchasesList(PurchasesData element, PurchasesData newElement) {
+    //   int index = state.purchasesList.indexOf(element);
+
+    //   // Завершаем выполнение функции, если элемент не найден
+    //   if (index == -1) {
+    //     emit(state.copyWith(errorTitle: 'Элемент не найден в списке!'));
+    //     return;
+    //   }
+
+    //   // Создаем копию списка
+    //   List<PurchasesData> copyPurchasesList = List.from(state.purchasesList);
+
+    //   // Обновляем только нужное поле
+    //   copyPurchasesList[index] = newElement;
+
+    //   emit(state.copyWith(purchasesList: copyPurchasesList));
+    // }
+
     // on<TotalInput>((event, emit) {
     //   final newState = state.copyWith(priceSum: event.total);
     //   emit(newState);
     //   print('priceSum ${newState.total}');
     // }, transformer: debounce<TotalInput>(const Duration(milliseconds: 350)));
   }
-  // void updateLine<T>(T Function(PurchasesState) updateFunction) {
+  // void UpdataState<T>(T Function(PurchasesState) updateFunction) {
   //   final newState = updateFunction(state);
 
   //   emit(newState as PurchasesState);
@@ -310,34 +404,110 @@ class PurchasesBloc extends Bloc<PurchasesEvent, PurchasesState> {
     }
   }
 
-  String searchNewElement() {
-    for (StorageData sE in state.storageListSQL) {
-      if (sE.product == state.product) {
-        return '';
-      }
-    }
-    return 'Обнаружен новый элемент!';
+  bool searchElement(searchElement) {
+    // Элемент есть в базе !
+    return state.storageMapSQL.containsKey(searchElement);
+    // for (StorageData sE in state.storageListSQL) {
+    //   if (sE.product == state.product) {
+    //     return '';
+    //   }
+    // }
+    // return 'Обнаружен новый элемент!';
   }
 
-  Future<void> updateStorageData() async {
-    add(
-      UpdateLine(
-        pState: state.copyWith(storageListSQL: await storageSQL.selectAll()),
-      ),
-    );
-    add(
-      UpdateLine(
-        pState: state.copyWith(
-          storageMapSQL: Map.fromIterable(
-            state.storageListSQL,
-            key: (item) => item.product,
-            value: (item) => item,
+  insertOfStorage() {
+    List<StorageData> newElements = [];
+    List<StorageData> updateElements = [];
+    for (int index = 0; index < state.purchasesList.length; index++) {
+      final purEl = state.purchasesList[index];
+      if (searchElement(purEl.product)) {
+        updateElements.add(
+          StorageData(
+            id: index,
+            product: purEl.product,
+            barcode: purEl.barcode,
+            quantity:
+                state.storageMapSQL[purEl.product]!.quantity + purEl.quantity!,
+            measuring: purEl.measuring == '' ? 'шт' : purEl.measuring ?? 'шт',
+            price: purEl.price,
           ),
-        ),
-      ),
-    );
-    // emit(state.copyWith(storageListSQL: await storageSQL.selectAll()));
+        );
+      } else {
+        newElements.add(
+          StorageData(
+            id: index,
+            product: purEl.product,
+            barcode: purEl.barcode,
+            quantity: purEl.quantity!,
+            measuring: purEl.measuring == '' ? 'шт' : purEl.measuring ?? 'шт',
+            price: purEl.price,
+          ),
+        );
+      }
+    }
+    storageSQL.insertAllList(newElements);
+    storageSQL.updateByProductClass(updateElements);
+    add(UpdataStorageData());
   }
+
+  // Функция для поиска совпадений и создания списка
+  List<String> _foundToList(String value, List<String> foundList) {
+    // state.filterList.clear();
+    // print(object)
+    // emit(state.copyWith(filterList: []));
+    return foundList.where((it) => it.contains(value)).toList();
+  }
+
+  // if (searchElement() == false) {
+  //   storageSQL.insert(
+  //     StorageData(
+  //       id: 0,
+  //       product: element.product,
+  //       barcode: element.barcode,
+  //       quantity: 0,
+  //       measuring: element.measuring == '' ? 'шт' : element.measuring,
+  //       priceOfPurchases: 0,
+  //       priceOfSales: 0,
+  //     ),
+  //   );
+  // }
+  // });
+  // }
+  // Future<void> updataStorageData() async {
+  //   Map<String, StorageData> newStorageMapSQL = {};
+  //   List<StorageData> newStorageListSQL = await storageSQL.selectAll();
+  //   for (StorageData i in newStorageListSQL) {
+  //     newStorageMapSQL[i.product] = i;
+  //   }
+  //   add(
+  //     UpdataState(
+  //       pState: state.copyWith(
+  //         storageMapSQL: newStorageMapSQL,
+  //         storageListSQL: newStorageListSQL,
+  //       ),
+  //     ),
+  //   );
+  // }
+
+  // Future<void> updateStorageData() async { !!!print(map.containsKey(2));
+  //   add(
+  //     UpdataState(
+  //       pState: state.copyWith(storageListSQL: await storageSQL.selectAll()),
+  //     ),
+  //   );
+  //   add(
+  //     UpdataState(
+  //       pState: state.copyWith(
+  //         storageMapSQL: Map.fromIterable(
+  //           state.storageListSQL,
+  //           key: (item) => item.product,
+  //           value: (item) => item,
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  //   // emit(state.copyWith(storageListSQL: await storageSQL.selectAll()));
+  // }
 
   // Map<String, Data> dataMap = Map.fromIterable(
   //   dataList,
@@ -353,13 +523,13 @@ class PurchasesBloc extends Bloc<PurchasesEvent, PurchasesState> {
   //   // Обновляем состояние через emit
   //   emit(state.copyWith(total: total.toString()));
   // }
-  void updateTotal() {
-    double total = 0;
-    state.purchasesList.forEach((el) {
-      total += el.quantity! * el.priceOfPurchases!;
-    });
-    add(UpdateLine(pState: state.copyWith(total: total.toString())));
-  }
+  // void updateTotal() {
+  //   double total = 0;
+  //   state.purchasesList.forEach((el) {
+  //     total += el.quantity! * el.priceOfPurchases!;
+  //   });
+  //   add(UpdataState(pState: state.copyWith(total: total.toString())));
+  // }
 }
 
 EventTransformer<T> debounce<T>(Duration duration) {

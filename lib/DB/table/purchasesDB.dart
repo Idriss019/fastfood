@@ -8,7 +8,7 @@ class PurchasesTableDB extends Table {
   TextColumn get barcode => text().withLength(min: 1, max: 20).nullable()();
   TextColumn get product => text()();
   IntColumn get quantity => integer()(); // Количество
-  TextColumn get measuring => text().withLength(min: 1, max: 5)();  // Изм
+  TextColumn get measuring => text().withLength(min: 1, max: 5)(); // Изм
   RealColumn get priceOfPurchases => real()(); // Одного
 }
 
@@ -19,7 +19,7 @@ class PurchasesSql {
   /// Добавить все элементы из списка
   Future<void> insertAllList(List<PurchasesData> purchases) async {
     final companions = purchases.map((data) {
-      if (data.barcode != null) {
+      if (data.barcode != null && data.barcode != '') {
         return PurchasesTableDBCompanion(
           date: Value(data.date),
           barcode: Value(data.barcode),
@@ -27,7 +27,6 @@ class PurchasesSql {
           quantity: Value(data.quantity ?? 1),
           measuring: Value(data.measuring ?? 'шт'),
           priceOfPurchases: Value(data.priceOfPurchases ?? 0),
-
         );
       } else {
         return PurchasesTableDBCompanion(

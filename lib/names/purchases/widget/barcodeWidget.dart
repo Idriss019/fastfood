@@ -33,7 +33,7 @@ class _BarcodeWidgetState extends State<BarcodeWidget> {
   void initState() {
     super.initState();
     purchasesBloc = context.read<PurchasesBloc>();
-    purchasesBloc.updateStorageData();
+    purchasesBloc.add(UpdataStorageData());
     // _barcodeCont.addListener(() {});
     // _courseCont.addListener(() {});
     // blocPurchases = context.read<PurchasesCubit>();
@@ -126,11 +126,11 @@ class _BarcodeWidgetState extends State<BarcodeWidget> {
                           return TextField(
                             onChanged: (value) {
                               // purchasesBloc.add(
-                              //   UpdateLine(
+                              //   UpdataState(
                               //     pState: state.copyWith(barcode: value),
                               //   ),
                               // );
-                              // purchasesBloc.updateLine(
+                              // purchasesBloc.UpdataState(
                               //   (state) => state.copyWith(barcode: value),
                               // );
                               purchasesBloc.add(BarcodeInput(value));
@@ -192,7 +192,7 @@ class _BarcodeWidgetState extends State<BarcodeWidget> {
                             purchasesBloc.add(QuantityInput(value));
                             // if (value.isNotEmpty) {
                             //   purchasesBloc.add(
-                            //     UpdateLine(
+                            //     UpdataState(
                             //       pState: state.copyWith(quantity: value),
                             //     ),
                             //   );
@@ -204,7 +204,7 @@ class _BarcodeWidgetState extends State<BarcodeWidget> {
                             //         double.parse(value) *
                             //         double.parse(state.purchases);
                             //     purchasesBloc.add(
-                            //       UpdateLine(
+                            //       UpdataState(
                             //         pState: state.copyWith(
                             //           purchasesSum: result.toString(),
                             //         ),
@@ -218,7 +218,7 @@ class _BarcodeWidgetState extends State<BarcodeWidget> {
                             //     double result =
                             //         double.parse(state.purchasesSum) /
                             //         double.parse(value);
-                            //     UpdateLine(
+                            //     UpdataState(
                             //       pState: state.copyWith(
                             //         purchases: result.toString(),
                             //       ),
@@ -294,7 +294,7 @@ class _BarcodeWidgetState extends State<BarcodeWidget> {
                         controller: _measuringCont,
                         onSelected: (value) {
                           purchasesBloc.add(
-                            UpdateLine(
+                            UpdataState(
                               pState: state.copyWith(measuring: value ?? ''),
                             ),
                           );

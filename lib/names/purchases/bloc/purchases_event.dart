@@ -6,6 +6,7 @@ abstract class PurchasesEvent extends Equatable {
   @override
   List<Object> get props => [];
 }
+
 /* Barcode Line */
 class BarcodeInput extends PurchasesEvent {
   final String barcode;
@@ -42,15 +43,18 @@ class MeasuringInput extends PurchasesEvent {
 class ProductInput extends PurchasesEvent {
   final String product;
   // final List<StorageData> list;
-  const ProductInput(this.product, 
-  // this.list
+  const ProductInput(
+    this.product,
+    // this.list
   );
 
   @override
-  List<Object> get props => [product, 
-  // list
+  List<Object> get props => [
+    product,
+    // list
   ];
 }
+
 /* Purchases Line */
 class PurchasesInput extends PurchasesEvent {
   final String purchases;
@@ -96,15 +100,26 @@ class ButtonInput extends PurchasesEvent {
 /* BottomButtonInput Line */
 class RemoveFromList extends PurchasesEvent {
   final PurchasesData data;
-  const RemoveFromList({
-    required this.data,
-  });
+  const RemoveFromList({required this.data});
   @override
   List<Object> get props => [data];
 }
 
 class RemoveList extends PurchasesEvent {}
+
 class InputList extends PurchasesEvent {}
+
+class UpdateTotal extends PurchasesEvent {}
+
+class UpdataStorageData extends PurchasesEvent {}
+
+class PressDropList extends PurchasesEvent {
+  final String filter;
+  const PressDropList(this.filter);
+
+  @override
+  List<Object> get props => [filter];
+}
 // /* ButtonInput Line */
 // class TotalInput extends PurchasesEvent {
 //   final String total;
@@ -114,11 +129,17 @@ class InputList extends PurchasesEvent {}
 //   List<Object> get props => [total];
 // }
 
-class UpdateLine extends PurchasesEvent {
+class UpdataState extends PurchasesEvent {
   final PurchasesState pState;
-  const UpdateLine({
-    required this.pState,
-  });
+  const UpdataState({required this.pState});
   @override
   List<Object> get props => [pState];
+}
+
+class UpdatePurchasesList extends PurchasesEvent {
+  final PurchasesData newData;
+  final int index;
+  const UpdatePurchasesList({required this.index, required this.newData});
+  @override
+  List<Object> get props => [index, newData];
 }

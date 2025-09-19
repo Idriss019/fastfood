@@ -30,6 +30,12 @@ class _ProductWidgetState extends State<ProductWidget> {
   void initState() {
     super.initState();
     purchasesBloc = context.read<PurchasesBloc>();
+    purchasesBloc.add(ProductInput(''));
+    // purchasesBloc.add(UpdataState(pState: purchasesBloc.state.copyWith(
+    //   filterList: purchasesBloc.state.storageListSQL
+    //                         .map((toElement) => toElement.product)
+    //                         .toList(),
+    // )));
   }
 
   @override
@@ -83,47 +89,31 @@ class _ProductWidgetState extends State<ProductWidget> {
                 ),
               ),
               Expanded(
-                child: Container(
-                  margin: const EdgeInsets.only(right: 45.0),
-                  // width: double.infinity,
-                  // height: 200,
-                  child: Center(
-                    child: BlocBuilder<PurchasesBloc, PurchasesState>(
-                      builder: (context, state) {
-                        return TextField(
-                          controller: _productCont,
-                          onChanged: (value) {
-                            purchasesBloc.add(UpdateLine(pState: state.copyWith(product: value)));
-                            // purchasesBloc.add(ProductInput(value));
-                          },
-                          cursorColor: widget.invertColor,
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 20,
-                          ),
-                          decoration: InputDecoration(
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: widget.invertColor,
-                                width: 1.5,
-                              ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: widget.invertColor,
-                                width: 1.5,
-                              ),
-                            ),
-                          ),
-                          inputFormatters: <TextInputFormatter>[
-                            FilteringTextInputFormatter.allow(
-                              RegExp(r'[^A-ZА-Я]'),
-                            ), // С таким фильтром могут быть введены только строчные буквы
-                          ],
-                        );
-                      },
-                    ),
-                  ),
+                child: BlocBuilder<PurchasesBloc, PurchasesState>(
+                  builder: (context, state) {
+                    return Container(
+                      margin: const EdgeInsets.only(right: 45.0),
+                      child: DropDownList(
+                        onChangedTextField: (value) {
+                          purchasesBloc.add(ProductInput(value));
+                        },
+                        onChangedDrop: (value) {
+                          purchasesBloc.add(
+                            PressDropList(value), // state.filterList[index]
+                          );
+                        },
+                        filterList: state.filterList,
+                        // filterList: state.storageListSQL
+                        //     .map((toElement) => toElement.product)
+                        //     .toList(),
+                        heightDropContainer: 40,
+                        myColor: myColor.colorText,
+                        productCont: _productCont,
+                        // purchasesBloc: purchasesBloc,
+                        widget: widget,
+                      ),
+                    );
+                  },
                 ),
               ),
             ],
@@ -181,5 +171,109 @@ class _ProductWidgetState extends State<ProductWidget> {
       ],
     );
     // );
+  }
+}
+
+class DropDownList extends StatelessWidget {
+  final List<String> filterList;
+  final double heightDropContainer;
+  final TextEditingController _productCont;
+  final Function? onChangedTextField;
+  final Function? onChangedDrop;
+  final TextInputFormatter? formatInput;
+  final Color myColor;
+  // final PurchasesBloc purchasesBloc;
+  final ProductWidget widget;
+
+  const DropDownList({
+    super.key,
+    required TextEditingController productCont,
+    // required this.purchasesBloc,
+    required this.heightDropContainer,
+    required this.filterList,
+    required this.myColor,
+    required this.widget,
+    this.onChangedTextField,
+    this.onChangedDrop,
+    this.formatInput,
+  }) : _productCont = productCont;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        SizedBox(
+          // margin: const EdgeInsets.only(right: 45.0),
+          // width: double.infinity,
+          // height: 200,
+          child: Center(
+            // child: BlocBuilder<PurchasesBloc, PurchasesState>(
+            //   builder: (context, state) {
+            child: TextField(
+              controller: _productCont,
+              onChanged: (value) {
+                onChangedTextField?.call(value);
+                // purchasesBloc.add(UpdataState(pState: state.copyWith(product: value)));
+                // purchasesBloc.add(ProductInput(value));
+              },
+              cursorColor: widget.invertColor,
+              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
+              decoration: InputDecoration(
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: widget.invertColor, width: 1.5),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: widget.invertColor, width: 1.5),
+                ),
+              ),
+              inputFormatters: formatInput != null ? [?formatInput] : null,
+            ),
+            //  <TextInputFormatter>[
+            //   FilteringTextInputFormatter.allow(
+            //     RegExp(r'[^A-ZА-Я]'),
+            //   ), // С таким фильтром могут быть введены только строчные буквы
+            // ],
+            // ),
+            //   },
+            // ),
+          ),
+        ),
+        SizedBox(
+          height:
+              heightDropContainer *
+              (filterList.length > 3 ? 3 : filterList.length),
+          child: ListView.builder(
+            itemCount: filterList.length, // state.filterList.length,
+            itemBuilder: (BuildContext context, int index) {
+              return Container(
+                // margin: const EdgeInsets.only(right: 45.0),
+                // width: double.infinity,
+                height: heightDropContainer, // state.heightContainer,
+                decoration: BoxDecoration(
+                  border: Border.all(width: 0.5),
+                  borderRadius: BorderRadius.circular(7),
+                ),
+                child: TextButton(
+                  onPressed: () {
+                    onChangedDrop?.call(filterList[index]);
+                    // context.read<PurchasesBloc>().add(PressDropList(
+                    //     foundItem: state.filterList[index],
+                    //     list: blocStorage.state.storageList));
+
+                    // foundItem = filterList[index];
+                    // func();
+                    // heightTable = 0;
+                  },
+                  child: Text(
+                    filterList[index], // state.filterList[index],
+                    style: TextStyle(fontSize: 20, color: myColor),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );
   }
 }

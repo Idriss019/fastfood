@@ -10,7 +10,12 @@ import 'dart:ui';
 // import 'package:vitamin_opt_5/theme.dart';
 
 DataColumn2 customDataColumn(
-    title, TextAlign textAlign, double? fontSize, double? width, {int?maxLine}) {
+  title,
+  TextAlign textAlign,
+  double? fontSize,
+  double? width, {
+  int? maxLine,
+}) {
   return DataColumn2(
     label: SizedBox(
       width: double.infinity,
@@ -18,10 +23,7 @@ DataColumn2 customDataColumn(
         maxLines: maxLine,
         title,
         textAlign: textAlign,
-        style: TextStyle(
-          overflow: TextOverflow.ellipsis,
-          fontSize: fontSize,
-        ),
+        style: TextStyle(overflow: TextOverflow.ellipsis, fontSize: fontSize),
       ),
     ),
     fixedWidth: width,
@@ -31,7 +33,12 @@ DataColumn2 customDataColumn(
 }
 
 DataColumn2 customDataColumnFunc(
-    title, TextAlign textAlign, double? fontSize, double? width, func) {
+  title,
+  TextAlign textAlign,
+  double? fontSize,
+  double? width,
+  func,
+) {
   return DataColumn2(
     label: SizedBox(
       width: double.infinity,
@@ -40,10 +47,7 @@ DataColumn2 customDataColumnFunc(
         child: Text(
           title,
           textAlign: textAlign,
-          style: TextStyle(
-            overflow: TextOverflow.ellipsis,
-            fontSize: fontSize,
-          ),
+          style: TextStyle(overflow: TextOverflow.ellipsis, fontSize: fontSize),
         ),
       ),
     ),
@@ -53,8 +57,13 @@ DataColumn2 customDataColumnFunc(
   );
 }
 
-SizedBox textCell(String title, TextAlign textAlign,
-    {bool separator = false, double? textSize, int? maxLine}) {
+SizedBox textCell(
+  String title,
+  TextAlign textAlign, {
+  bool separator = false,
+  double? textSize,
+  int? maxLine,
+}) {
   String funcSeparator(String number) {
     if (separator) {
       return digitSeparator(number);
@@ -65,67 +74,78 @@ SizedBox textCell(String title, TextAlign textAlign,
 
   return SizedBox(
     width: double.infinity,
-    child: Text(funcSeparator(title.capitalizeEach()),
-        textAlign: textAlign,
-        maxLines: maxLine,
-        style: TextStyle(fontSize: textSize)),
+    child: Text(
+      funcSeparator(title.capitalizeEach()),
+      textAlign: textAlign,
+      maxLines: maxLine,
+      style: TextStyle(fontSize: textSize),
+    ),
   );
 }
 
-TextButton textFieldCell(String title, BuildContext context, bloc,
-    TextAlign textAlign, Function func, colorText) {
+TextButton textFieldCell(
+  String title,
+  BuildContext context,
+  bloc,
+  TextAlign textAlign,
+  Function func,
+  colorText,
+) {
   return TextButton(
-      style: TextButton.styleFrom(padding: EdgeInsets.zero),
-      child: SizedBox(
-        width: double.infinity,
-        child: Text(
-          title.capitalizeEach(),
-          textAlign: textAlign,
-          style: TextStyle(color: colorText),
-        ),
+    style: TextButton.styleFrom(padding: EdgeInsets.zero),
+    child: SizedBox(
+      width: double.infinity,
+      child: Text(
+        title.capitalizeEach(),
+        textAlign: textAlign,
+        style: TextStyle(color: colorText),
       ),
-      onPressed: () {
-        showDialog(
-            context: context,
-            builder: (context) {
-              final myColor = CustomTheme(context: context);
-              return SingleChildScrollView(
-                child: AlertDialog(
-                    title: TextField(
-                      onChanged: (value) => title = value,
-                      controller: TextEditingController.fromValue(
-                        TextEditingValue(text: title),
-                      )..selection =
-                          TextSelection.collapsed(offset: title.length),
+    ),
+    onPressed: () {
+      showDialog(
+        context: context,
+        builder: (context) {
+          final myColor = CustomTheme(context: context);
+          return SingleChildScrollView(
+            child: AlertDialog(
+              title: TextField(
+                onChanged: (value) => title = value,
+                controller: TextEditingController.fromValue(
+                  TextEditingValue(text: title),
+                )..selection = TextSelection.collapsed(offset: title.length),
+              ),
+              actions: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    /*  кнопка принятия */
+                    TextButton(
+                      onPressed: () {
+                        func(title);
+                        // Navigator.pop(context);
+                      },
+                      child: Text(
+                        'OK',
+                        style: TextStyle(color: myColor.colorText),
+                      ),
                     ),
-                    actions: [
-                      Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            /*  кнопка принятия */
-                            TextButton(
-                              onPressed: () {
-                                func(title);
-                                // Navigator.pop(context);
-                              },
-                              child: Text(
-                                'OK',
-                                style: TextStyle(color: myColor.colorText),
-                              ),
-                            ),
-                            /* кнопка отмены */
-                            TextButton(
-                              onPressed: () => Navigator.pop(context),
-                              child: Text(
-                                'Cancel',
-                                style: TextStyle(color: myColor.colorText),
-                              ),
-                            ),
-                          ])
-                    ]),
-              );
-            });
-      });
+                    /* кнопка отмены */
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: Text(
+                        'Cancel',
+                        style: TextStyle(color: myColor.colorText),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          );
+        },
+      );
+    },
+  );
 }
 
 SizedBox messageCell(BuildContext context, String title, String message) {
@@ -134,35 +154,41 @@ SizedBox messageCell(BuildContext context, String title, String message) {
     child: TextButton(
       onPressed: () {
         showDialog(
-            context: context,
-            builder: (context) {
-              // final myColor = CustomTheme(context: context);
-              return AlertDialog(title: Text(message), actions: [
+          context: context,
+          builder: (context) {
+            // final myColor = CustomTheme(context: context);
+            return AlertDialog(
+              title: Text(message),
+              actions: [
                 Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      /*  кнопка принятия */
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        child: Text(
-                          'OK',
-                          style: TextStyle(
-                              color: CustomTheme(context: context).colorText),
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    /*  кнопка принятия */
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text(
+                        'OK',
+                        style: TextStyle(
+                          color: CustomTheme(context: context).colorText,
                         ),
                       ),
-                      // /* кнопка отмены */
-                      // TextButton(
-                      //   onPressed: () => Navigator.pop(context),
-                      //   child: Text(
-                      //     'Cancel',
-                      //     style: TextStyle(color: myColor.colorText),
-                      //   ),
-                      // ),
-                    ])
-              ]);
-            });
+                    ),
+                    // /* кнопка отмены */
+                    // TextButton(
+                    //   onPressed: () => Navigator.pop(context),
+                    //   child: Text(
+                    //     'Cancel',
+                    //     style: TextStyle(color: myColor.colorText),
+                    //   ),
+                    // ),
+                  ],
+                ),
+              ],
+            );
+          },
+        );
       },
       child: Text(
         title,
@@ -180,45 +206,54 @@ SizedBox deleteCell(BuildContext context, String title, Function func) {
       alignment: Alignment.center,
       onPressed: () {
         showDialog(
-            context: context,
-            builder: (context) {
-              final myColor = CustomTheme(context: context);
-              return AlertDialog(
-                  title: Text(
-                      'Уверены что хотите удалить - \n${title.capitalizeEach()} ?'),
-                  actions: [
-                    Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          /*  кнопка принятия */
-                          TextButton(
-                            onPressed: () {
-                              func();
-                              Navigator.pop(context);
-                            },
-                            child: Text(
-                              'OK',
-                              style: TextStyle(color: myColor.colorText),
-                            ),
-                          ),
-                          /* кнопка отмены */
-                          TextButton(
-                            onPressed: () => Navigator.pop(context),
-                            child: Text(
-                              'Cancel',
-                              style: TextStyle(color: myColor.colorText),
-                            ),
-                          ),
-                        ])
-                  ]);
-            });
+          context: context,
+          builder: (context) {
+            final myColor = CustomTheme(context: context);
+            return AlertDialog(
+              title: Text(
+                'Уверены что хотите удалить - \n${title.capitalizeEach()} ?',
+              ),
+              actions: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    /*  кнопка принятия */
+                    TextButton(
+                      onPressed: () {
+                        func();
+                        Navigator.pop(context);
+                      },
+                      child: Text(
+                        'OK',
+                        style: TextStyle(color: myColor.colorText),
+                      ),
+                    ),
+                    /* кнопка отмены */
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: Text(
+                        'Cancel',
+                        style: TextStyle(color: myColor.colorText),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            );
+          },
+        );
       },
     ),
   );
 }
 
-SizedBox funcCell(BuildContext context, String title, TextAlign textAlign,Function func,
-    {double? textSize}) {
+SizedBox funcCell(
+  BuildContext context,
+  String title,
+  TextAlign textAlign,
+  Function func, {
+  double? textSize,
+}) {
   return SizedBox(
     width: double.infinity,
     child: TextButton(
@@ -226,10 +261,12 @@ SizedBox funcCell(BuildContext context, String title, TextAlign textAlign,Functi
         func();
       },
       child: Text(
-        textAlign:textAlign,
+        textAlign: textAlign,
         title,
-        style: TextStyle(color: CustomTheme(context: context).colorText,
-        fontSize: textSize),
+        style: TextStyle(
+          color: CustomTheme(context: context).colorText,
+          fontSize: textSize,
+        ),
       ),
     ),
   );
@@ -240,38 +277,42 @@ IconButton updateCell(BuildContext context, String title, Function func) {
     icon: Icon(Icons.create),
     onPressed: () {
       showDialog(
-          context: context,
-          builder: (context) {
-            final myColor = CustomTheme(context: context);
-            return AlertDialog(
-                title: Text(
-                    'Уверены что хотите изменить? - \n${title.capitalizeEach()} ?'),
-                actions: [
-                  Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        /*  кнопка принятия */
-                        TextButton(
-                          onPressed: () {
-                            func();
-                            Navigator.pop(context);
-                          },
-                          child: Text(
-                            'OK',
-                            style: TextStyle(color: myColor.colorText),
-                          ),
-                        ),
-                        /* кнопка отмены */
-                        TextButton(
-                          onPressed: () => Navigator.pop(context),
-                          child: Text(
-                            'Cancel',
-                            style: TextStyle(color: myColor.colorText),
-                          ),
-                        ),
-                      ])
-                ]);
-          });
+        context: context,
+        builder: (context) {
+          final myColor = CustomTheme(context: context);
+          return AlertDialog(
+            title: Text(
+              'Уверены что хотите изменить? - \n${title.capitalizeEach()} ?',
+            ),
+            actions: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  /*  кнопка принятия */
+                  TextButton(
+                    onPressed: () {
+                      func();
+                      Navigator.pop(context);
+                    },
+                    child: Text(
+                      'OK',
+                      style: TextStyle(color: myColor.colorText),
+                    ),
+                  ),
+                  /* кнопка отмены */
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: Text(
+                      'Cancel',
+                      style: TextStyle(color: myColor.colorText),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          );
+        },
+      );
     },
   );
 }
@@ -297,63 +338,64 @@ TextButton textFieldCellWithReg(
   }
 
   return TextButton(
-      style: TextButton.styleFrom(
-        padding: EdgeInsets.zero,
+    style: TextButton.styleFrom(padding: EdgeInsets.zero),
+    child: SizedBox(
+      width: double.infinity,
+      child: Text(
+        funcSeparator(title.capitalizeEach()),
+        textAlign: textAlign,
+        maxLines: maxLine ?? 1,
+        style: TextStyle(color: colorText, fontSize: textSize),
       ),
-      child: SizedBox(
-        width: double.infinity,
-        child: Text(
-          funcSeparator(title.capitalizeEach()),
-          textAlign: textAlign,
-          maxLines: maxLine ?? 1,
-          style: TextStyle(color: colorText, fontSize: textSize),
-        ),
-      ),
-      onPressed: () {
-        showDialog(
-            context: context,
-            builder: (context) {
-              final myColor = CustomTheme(context: context);
-              return SingleChildScrollView(
-                child: AlertDialog(
-                    title: TextField(
-                      onChanged: (value) => title = value,
-                      controller: TextEditingController.fromValue(
-                        TextEditingValue(text: title),
-                      )..selection =
-                          TextSelection.collapsed(offset: title.length),
-                      inputFormatters:
-                          formatInput != null ? [formatInput] : null,
+    ),
+    onPressed: () {
+      showDialog(
+        context: context,
+        builder: (context) {
+          final myColor = CustomTheme(context: context);
+          return SingleChildScrollView(
+            child: AlertDialog(
+              title: TextField(
+                onChanged: (value) => title = value,
+                controller: TextEditingController.fromValue(
+                  TextEditingValue(text: title),
+                )..selection = TextSelection.collapsed(offset: title.length),
+                inputFormatters: formatInput != null ? [formatInput] : null,
+              ),
+              actions: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    /*  кнопка принятия */
+                    TextButton(
+                      onPressed: () async {
+                        await func(title);
+                        Navigator.pop(context);
+                      },
+                      child: Text(
+                        'OK',
+                        style: TextStyle(color: myColor.colorText),
+                      ),
                     ),
-                    actions: [
-                      Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            /*  кнопка принятия */
-                            TextButton(
-                              onPressed: () async {
-                                await func(title);
-                                //  Navigator.pop(context);
-                              },
-                              child: Text(
-                                'OK',
-                                style: TextStyle(color: myColor.colorText),
-                              ),
-                            ),
-                            /* кнопка отмены */
-                            TextButton(
-                              onPressed: () => Navigator.pop(context),
-                              child: Text(
-                                'Cancel',
-                                style: TextStyle(color: myColor.colorText),
-                              ),
-                            ),
-                          ])
-                    ]),
-              );
-            });
-      });
+                    /* кнопка отмены */
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: Text(
+                        'Cancel',
+                        style: TextStyle(color: myColor.colorText),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          );
+        },
+      );
+    },
+  );
 }
+
 TextButton textFieldDateCellWithReg(
   BuildContext context,
   final TextEditingController controller,
@@ -374,60 +416,61 @@ TextButton textFieldDateCellWithReg(
   }
 
   return TextButton(
-      style: TextButton.styleFrom(
-        padding: EdgeInsets.zero,
+    style: TextButton.styleFrom(padding: EdgeInsets.zero),
+    child: SizedBox(
+      width: double.infinity,
+      child: Text(
+        funcSeparator(title.capitalizeEach()),
+        textAlign: textAlign,
+        maxLines: maxLine ?? 1,
+        style: TextStyle(color: colorText, fontSize: textSize),
       ),
-      child: SizedBox(
-        width: double.infinity,
-        child: Text(
-          funcSeparator(title.capitalizeEach()),
-          textAlign: textAlign,
-          maxLines: maxLine ?? 1,
-          style: TextStyle(color: colorText, fontSize: textSize),
-        ),
-      ),
-      onPressed: () {
-        showDialog(
-            context: context,
-            builder: (context) {
-              final myColor = CustomTheme(context: context);
-              return SingleChildScrollView(
-                child: AlertDialog(
-                    title: TextField(
-                      onChanged: (value) => title = value,
-                      controller: TextEditingController.fromValue(
-                        TextEditingValue(text: title),
-                      )..selection =
-                          TextSelection.collapsed(offset: title.length),
+    ),
+    onPressed: () {
+      showDialog(
+        context: context,
+        builder: (context) {
+          final myColor = CustomTheme(context: context);
+          return SingleChildScrollView(
+            child: AlertDialog(
+              title: TextField(
+                onChanged: (value) => title = value,
+                controller: TextEditingController.fromValue(
+                  TextEditingValue(text: title),
+                )..selection = TextSelection.collapsed(offset: title.length),
+              ),
+              actions: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    /*  кнопка принятия */
+                    TextButton(
+                      onPressed: () async {
+                        await func(conversionToMilliseconds(title));
+                        //  Navigator.pop(context);
+                      },
+                      child: Text(
+                        'OK',
+                        style: TextStyle(color: myColor.colorText),
+                      ),
                     ),
-                    actions: [
-                      Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            /*  кнопка принятия */
-                            TextButton(
-                              onPressed: () async {
-                                await func(conversionToMilliseconds(title));
-                                //  Navigator.pop(context);
-                              },
-                              child: Text(
-                                'OK',
-                                style: TextStyle(color: myColor.colorText),
-                              ),
-                            ),
-                            /* кнопка отмены */
-                            TextButton(
-                              onPressed: () => Navigator.pop(context),
-                              child: Text(
-                                'Cancel',
-                                style: TextStyle(color: myColor.colorText),
-                              ),
-                            ),
-                          ])
-                    ]),
-              );
-            });
-      });
+                    /* кнопка отмены */
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: Text(
+                        'Cancel',
+                        style: TextStyle(color: myColor.colorText),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          );
+        },
+      );
+    },
+  );
 }
 
 TextButton textFieldCellWithReg2(
@@ -450,61 +493,61 @@ TextButton textFieldCellWithReg2(
   }
 
   return TextButton(
-      style: TextButton.styleFrom(
-        padding: EdgeInsets.zero,
+    style: TextButton.styleFrom(padding: EdgeInsets.zero),
+    child: SizedBox(
+      width: double.infinity,
+      child: Text(
+        funcSeparator(title.capitalizeEach()),
+        textAlign: textAlign,
+        maxLines: maxLine ?? 1,
+        style: TextStyle(color: colorText),
       ),
-      child: SizedBox(
-        width: double.infinity,
-        child: Text(
-          funcSeparator(title.capitalizeEach()),
-          textAlign: textAlign,
-          maxLines: maxLine ?? 1,
-          style: TextStyle(color: colorText),
-        ),
-      ),
-      onPressed: () {
-        showDialog(
-            context: context,
-            builder: (context) {
-              final myColor = CustomTheme(context: context);
-              return SingleChildScrollView(
-                child: AlertDialog(
-                    title: TextField(
-                      onChanged: (value) => title = value,
-                      controller: TextEditingController.fromValue(
-                        TextEditingValue(text: title),
-                      )..selection =
-                          TextSelection.collapsed(offset: title.length),
-                      inputFormatters:
-                          formatInput != null ? [formatInput] : null,
+    ),
+    onPressed: () {
+      showDialog(
+        context: context,
+        builder: (context) {
+          final myColor = CustomTheme(context: context);
+          return SingleChildScrollView(
+            child: AlertDialog(
+              title: TextField(
+                onChanged: (value) => title = value,
+                controller: TextEditingController.fromValue(
+                  TextEditingValue(text: title),
+                )..selection = TextSelection.collapsed(offset: title.length),
+                inputFormatters: formatInput != null ? [formatInput] : null,
+              ),
+              actions: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    /*  кнопка принятия */
+                    TextButton(
+                      onPressed: () async {
+                        await func(title);
+                      },
+                      child: Text(
+                        'OK',
+                        style: TextStyle(color: myColor.colorText),
+                      ),
                     ),
-                    actions: [
-                      Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            /*  кнопка принятия */
-                            TextButton(
-                              onPressed: () async {
-                                await func(title);
-                              },
-                              child: Text(
-                                'OK',
-                                style: TextStyle(color: myColor.colorText),
-                              ),
-                            ),
-                            /* кнопка отмены */
-                            TextButton(
-                              onPressed: () => Navigator.pop(context),
-                              child: Text(
-                                'Cancel',
-                                style: TextStyle(color: myColor.colorText),
-                              ),
-                            ),
-                          ])
-                    ]),
-              );
-            });
-      });
+                    /* кнопка отмены */
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: Text(
+                        'Cancel',
+                        style: TextStyle(color: myColor.colorText),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          );
+        },
+      );
+    },
+  );
 }
 
 /* Разделитель разрядов */

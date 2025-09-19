@@ -181,7 +181,7 @@ class _ButtonsBottomWidgetState extends State<ButtonsBottomWidget> {
                       SizedBox(
                         // width: 225,
                         child: Text(
-                          'P',
+                          '₽',
                           style: TextStyle(
                             fontWeight: FontWeight.w600,
                             fontSize: 35,

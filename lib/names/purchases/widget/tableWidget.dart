@@ -4,8 +4,9 @@ import 'package:fastfood/global_function.dart';
 import 'package:fastfood/names/purchases/bloc/purchases_bloc.dart';
 import 'package:fastfood/widgetMetod.dart' hide customDataColumn;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:string_capitalize/string_capitalize.dart';
+// import 'package:string_capitalize/string_capitalize.dart';
 
 class TableWidget extends StatelessWidget {
   const TableWidget({
@@ -36,7 +37,7 @@ class TableWidget extends StatelessWidget {
           border: Border.all(color: lineBorderColor),
         ),
         // width: 1000,
-        height: 400,
+        height: 200,
         child: BlocBuilder<PurchasesBloc, PurchasesState>(
           builder: (context, state) {
             return DataTable2(
@@ -88,7 +89,7 @@ class TableWidget extends StatelessWidget {
   List<DataRow> _createRows(
     List<PurchasesData> dataClass,
     context,
-    bloc,
+    PurchasesBloc bloc,
     colorText,
   ) {
     // final bloc = context.read<PurchasesCubit>();
@@ -151,11 +152,23 @@ class TableWidget extends StatelessWidget {
 
         /// Количество
         DataCell(
-          textCell(
+          textFieldCellWithReg(
+            context,
             i.quantity.toString(),
             TextAlign.center,
-            separator: true,
-            maxLine: 1,
+            (title) {
+              bloc.add(
+                UpdatePurchasesList(
+                  index: dataClass.indexOf(i),
+                  newData: i.copyWith(quantity: int.parse(title)),
+                ),
+              );
+              bloc.add(UpdateTotal());
+              // bloc.updateTotal();
+            },
+            FilteringTextInputFormatter.allow(RegExp(r'\b[1-9][0-9]{0,4}')),
+            1,
+            colorText,
           ),
         ),
 
