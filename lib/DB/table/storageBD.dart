@@ -9,7 +9,7 @@ class StorageTableDB extends Table {
   TextColumn get product => text()();
   IntColumn get quantity => integer()(); 
   TextColumn get measuring => text().withLength(min: 1, max: 5)();  // Изм
-  BoolColumn get visibility => boolean().clientDefault(() => true)(); //Вид
+  // BoolColumn get visibility => boolean().clientDefault(() => true)(); //Вид
   RealColumn get price => real().nullable()();
   IntColumn get found =>
       integer().nullable().clientDefault(() => 0)(); // перерасчет
@@ -33,7 +33,7 @@ class StorageSQL {
         price: i.price,
         found: i.found, 
         measuring: '',
-        visibility: i.visibility,
+        // visibility: i.visibility,
       );
       storageList.add(storageData);
     }
@@ -50,7 +50,7 @@ class StorageSQL {
           product: Value(data.product),
           quantity: Value(data.quantity ?? 1),
           measuring: Value(data.measuring  == '' ? 'шт': data.measuring),
-          visibility: Value(data.visibility),
+          // visibility: Value(data.visibility),
           price: Value(data.price ?? 0),
           found: Value(data.found ?? 0)
         );
@@ -60,7 +60,7 @@ class StorageSQL {
           product: Value(data.product),
           quantity: Value(data.quantity ?? 1),
           measuring: Value(data.measuring  == '' ? 'шт': data.measuring),
-          visibility: Value(data.visibility),
+          // visibility: Value(data.visibility),
           price: Value(data.price ?? 0),
           found: Value(data.found ?? 0)
         );

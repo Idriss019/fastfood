@@ -17,8 +17,74 @@ class CreateDishesPage extends StatefulWidget {
 }
 
 class _CreateDishesPageState extends State<CreateDishesPage> {
+  final TextEditingController _dishesCont = TextEditingController();
+  final TextEditingController _priceCont = TextEditingController();
+  final TextEditingController _ingredientCont = TextEditingController();
+  final TextEditingController _quantityCont = TextEditingController();
+  final TextEditingController _measuringCont = TextEditingController();
+  late CreatingDishesBloc createDBloc;
   MenuItem menu = MenuItem(''); // Корневой элемент меню
   final String filename = 'database/menu.json';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadMenu();
+    createDBloc = context.read<CreatingDishesBloc>();
+    createDBloc.add(UpdataStorageData());
+  }
+
+  @override
+  void dispose() {
+    _dishesCont.dispose();
+    _priceCont.dispose();
+    _ingredientCont.dispose();
+    _quantityCont.dispose();
+    _measuringCont.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final createDBloc = context.watch<CreatingDishesBloc>();
+    // Обновляем контроллер при изменении состояния
+    final String dishes = createDBloc.state.dishes;
+    if (_dishesCont.text != dishes) {
+      _dishesCont.value = TextEditingValue(
+        text: dishes,
+        selection: TextSelection.collapsed(offset: dishes.length),
+      );
+    }
+    final String price = createDBloc.state.price;
+    if (price != '' && _priceCont.text != price) {
+      _priceCont.value = TextEditingValue(
+        text: price,
+        selection: TextSelection.collapsed(offset: price.length),
+      );
+    }
+    final String ingredientTitle = createDBloc.state.ingredientTitle;
+    if (_ingredientCont.text != ingredientTitle) {
+      _ingredientCont.value = TextEditingValue(
+        text: ingredientTitle,
+        selection: TextSelection.collapsed(offset: ingredientTitle.length),
+      );
+    }
+    final String quantity = createDBloc.state.quantity;
+    if (_quantityCont.text != quantity) {
+      _quantityCont.value = TextEditingValue(
+        text: quantity,
+        selection: TextSelection.collapsed(offset: quantity.length),
+      );
+    }
+    final String measuring = createDBloc.state.measuring;
+    if (measuring != '' && _measuringCont.text != measuring) {
+      _measuringCont.value = TextEditingValue(
+        text: measuring,
+        selection: TextSelection.collapsed(offset: measuring.length),
+      );
+    }
+  }
 
   Future<void> _loadMenu() async {
     MenuItem? loadedMenu = await DirectoryFilesUtils.loadMenuFromFile(filename);
@@ -27,12 +93,6 @@ class _CreateDishesPageState extends State<CreateDishesPage> {
           loadedMenu ??
           MenuItem(''); // Предполагается, что menu объявлена в State
     });
-  }
-
-  @override
-  void initState() {
-    _loadMenu();
-    super.initState();
   }
 
   @override
@@ -88,7 +148,10 @@ class _CreateDishesPageState extends State<CreateDishesPage> {
                         DirectoryFilesUtils.saveMenuToFile(menu, filename);
                       }
                     },
-                    child: Text('+', style: TextStyle(fontSize: 30)),
+                    child: Text(
+                      '+',
+                      style: TextStyle(fontSize: 30, color: invertColor),
+                    ),
                   ),
                 ],
               ),
@@ -101,7 +164,11 @@ class _CreateDishesPageState extends State<CreateDishesPage> {
                   border: Border.all(color: invertColor, width: 2),
                   borderRadius: BorderRadius.all(Radius.circular(5)),
                 ),
-                child: MenuDirectoryPage(rootItem: menu, pathFile: filename),
+                child: MenuDirectoryPage(
+                  rootItem: menu,
+                  pathFile: filename,
+                  invertColor: invertColor,
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.only(bottom: 10.0),
@@ -119,6 +186,7 @@ class _CreateDishesPageState extends State<CreateDishesPage> {
                       child: Container(
                         margin: EdgeInsets.only(right: 10),
                         child: TextField(
+                          controller: _dishesCont,
                           autofocus: true,
                           decoration: InputDecoration(
                             hintText: 'Найти или создать',
@@ -184,24 +252,28 @@ class _CreateDishesPageState extends State<CreateDishesPage> {
                           border: Border.all(width: 1, color: invertColor),
                           borderRadius: BorderRadius.all(Radius.circular(5)),
                         ),
-                        child: Text(
-                          '',
-                          // _currentPath.isEmpty
-                          //     ? ''
-                          //     : _currentPath.join(
-                          //         ' → ',
-                          //       ), // "Яблоки/фреш/со льдем",
-                          textAlign: TextAlign.left,
-                          style: TextStyle(fontSize: 25),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
+                        child:
+                            BlocBuilder<
+                              CreatingDishesBloc,
+                              CreatingDishesState
+                            >(
+                              builder: (context, state) {
+                                return Text(
+                                  state.pathMenu,
+                                  textAlign: TextAlign.left,
+                                  style: TextStyle(fontSize: 25),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                );
+                              },
+                            ),
                       ),
                     ),
                     Container(
                       margin: EdgeInsets.only(right: 10),
-                      width: 80,
+                      width: 60,
                       child: TextField(
+                        controller: _priceCont,
                         // enabled: false,
                         decoration: InputDecoration(
                           labelText: 'Цена',
@@ -256,6 +328,7 @@ class _CreateDishesPageState extends State<CreateDishesPage> {
                                 // }
                                 // if (state.searchByBarcode) {}
                                 return TextField(
+                                  controller: _ingredientCont,
                                   onChanged: (value) {},
                                   cursorColor: invertColor,
                                   // controller: TextEditingController.fromValue(
@@ -313,8 +386,8 @@ class _CreateDishesPageState extends State<CreateDishesPage> {
                           child: BlocBuilder<CreatingDishesBloc, CreatingDishesState>(
                             builder: (context, state) {
                               return TextField(
+                                controller: _quantityCont,
                                 onChanged: (value) {},
-
                                 // controller: TextEditingController.fromValue(
                                 //   TextEditingValue(text: state.quantity),
                                 // )..selection = TextSelection.collapsed(
@@ -374,6 +447,7 @@ class _CreateDishesPageState extends State<CreateDishesPage> {
                       Container(
                         padding: const EdgeInsets.only(left: 10.0, right: 10),
                         child: DropdownMenu<String>(
+                          controller: _measuringCont,
                           width: 90,
                           textStyle: TextStyle(fontSize: 17),
                           initialSelection: 'шт',

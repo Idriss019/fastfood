@@ -89,21 +89,6 @@ class $StorageTableDBTable extends StorageTableDB
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
-  static const VerificationMeta _visibilityMeta = const VerificationMeta(
-    'visibility',
-  );
-  @override
-  late final GeneratedColumn<bool> visibility = GeneratedColumn<bool>(
-    'visibility',
-    aliasedName,
-    false,
-    type: DriftSqlType.bool,
-    requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'CHECK ("visibility" IN (0, 1))',
-    ),
-    clientDefault: () => true,
-  );
   static const VerificationMeta _priceMeta = const VerificationMeta('price');
   @override
   late final GeneratedColumn<double> price = GeneratedColumn<double>(
@@ -131,7 +116,6 @@ class $StorageTableDBTable extends StorageTableDB
     product,
     quantity,
     measuring,
-    visibility,
     price,
     found,
   ];
@@ -186,12 +170,6 @@ class $StorageTableDBTable extends StorageTableDB
     } else if (isInserting) {
       context.missing(_measuringMeta);
     }
-    if (data.containsKey('visibility')) {
-      context.handle(
-        _visibilityMeta,
-        visibility.isAcceptableOrUnknown(data['visibility']!, _visibilityMeta),
-      );
-    }
     if (data.containsKey('price')) {
       context.handle(
         _priceMeta,
@@ -237,10 +215,6 @@ class $StorageTableDBTable extends StorageTableDB
         DriftSqlType.string,
         data['${effectivePrefix}measuring'],
       )!,
-      visibility: attachedDatabase.typeMapping.read(
-        DriftSqlType.bool,
-        data['${effectivePrefix}visibility'],
-      )!,
       price: attachedDatabase.typeMapping.read(
         DriftSqlType.double,
         data['${effectivePrefix}price'],
@@ -266,7 +240,6 @@ class StorageTableDBData extends DataClass
   final String product;
   final int quantity;
   final String measuring;
-  final bool visibility;
   final double? price;
   final int? found;
   const StorageTableDBData({
@@ -276,7 +249,6 @@ class StorageTableDBData extends DataClass
     required this.product,
     required this.quantity,
     required this.measuring,
-    required this.visibility,
     this.price,
     this.found,
   });
@@ -291,7 +263,6 @@ class StorageTableDBData extends DataClass
     map['product'] = Variable<String>(product);
     map['quantity'] = Variable<int>(quantity);
     map['measuring'] = Variable<String>(measuring);
-    map['visibility'] = Variable<bool>(visibility);
     if (!nullToAbsent || price != null) {
       map['price'] = Variable<double>(price);
     }
@@ -311,7 +282,6 @@ class StorageTableDBData extends DataClass
       product: Value(product),
       quantity: Value(quantity),
       measuring: Value(measuring),
-      visibility: Value(visibility),
       price: price == null && nullToAbsent
           ? const Value.absent()
           : Value(price),
@@ -333,7 +303,6 @@ class StorageTableDBData extends DataClass
       product: serializer.fromJson<String>(json['product']),
       quantity: serializer.fromJson<int>(json['quantity']),
       measuring: serializer.fromJson<String>(json['measuring']),
-      visibility: serializer.fromJson<bool>(json['visibility']),
       price: serializer.fromJson<double?>(json['price']),
       found: serializer.fromJson<int?>(json['found']),
     );
@@ -348,7 +317,6 @@ class StorageTableDBData extends DataClass
       'product': serializer.toJson<String>(product),
       'quantity': serializer.toJson<int>(quantity),
       'measuring': serializer.toJson<String>(measuring),
-      'visibility': serializer.toJson<bool>(visibility),
       'price': serializer.toJson<double?>(price),
       'found': serializer.toJson<int?>(found),
     };
@@ -361,7 +329,6 @@ class StorageTableDBData extends DataClass
     String? product,
     int? quantity,
     String? measuring,
-    bool? visibility,
     Value<double?> price = const Value.absent(),
     Value<int?> found = const Value.absent(),
   }) => StorageTableDBData(
@@ -371,7 +338,6 @@ class StorageTableDBData extends DataClass
     product: product ?? this.product,
     quantity: quantity ?? this.quantity,
     measuring: measuring ?? this.measuring,
-    visibility: visibility ?? this.visibility,
     price: price.present ? price.value : this.price,
     found: found.present ? found.value : this.found,
   );
@@ -383,9 +349,6 @@ class StorageTableDBData extends DataClass
       product: data.product.present ? data.product.value : this.product,
       quantity: data.quantity.present ? data.quantity.value : this.quantity,
       measuring: data.measuring.present ? data.measuring.value : this.measuring,
-      visibility: data.visibility.present
-          ? data.visibility.value
-          : this.visibility,
       price: data.price.present ? data.price.value : this.price,
       found: data.found.present ? data.found.value : this.found,
     );
@@ -400,7 +363,6 @@ class StorageTableDBData extends DataClass
           ..write('product: $product, ')
           ..write('quantity: $quantity, ')
           ..write('measuring: $measuring, ')
-          ..write('visibility: $visibility, ')
           ..write('price: $price, ')
           ..write('found: $found')
           ..write(')'))
@@ -415,7 +377,6 @@ class StorageTableDBData extends DataClass
     product,
     quantity,
     measuring,
-    visibility,
     price,
     found,
   );
@@ -429,7 +390,6 @@ class StorageTableDBData extends DataClass
           other.product == this.product &&
           other.quantity == this.quantity &&
           other.measuring == this.measuring &&
-          other.visibility == this.visibility &&
           other.price == this.price &&
           other.found == this.found);
 }
@@ -441,7 +401,6 @@ class StorageTableDBCompanion extends UpdateCompanion<StorageTableDBData> {
   final Value<String> product;
   final Value<int> quantity;
   final Value<String> measuring;
-  final Value<bool> visibility;
   final Value<double?> price;
   final Value<int?> found;
   const StorageTableDBCompanion({
@@ -451,7 +410,6 @@ class StorageTableDBCompanion extends UpdateCompanion<StorageTableDBData> {
     this.product = const Value.absent(),
     this.quantity = const Value.absent(),
     this.measuring = const Value.absent(),
-    this.visibility = const Value.absent(),
     this.price = const Value.absent(),
     this.found = const Value.absent(),
   });
@@ -462,7 +420,6 @@ class StorageTableDBCompanion extends UpdateCompanion<StorageTableDBData> {
     required String product,
     required int quantity,
     required String measuring,
-    this.visibility = const Value.absent(),
     this.price = const Value.absent(),
     this.found = const Value.absent(),
   }) : product = Value(product),
@@ -475,7 +432,6 @@ class StorageTableDBCompanion extends UpdateCompanion<StorageTableDBData> {
     Expression<String>? product,
     Expression<int>? quantity,
     Expression<String>? measuring,
-    Expression<bool>? visibility,
     Expression<double>? price,
     Expression<int>? found,
   }) {
@@ -486,7 +442,6 @@ class StorageTableDBCompanion extends UpdateCompanion<StorageTableDBData> {
       if (product != null) 'product': product,
       if (quantity != null) 'quantity': quantity,
       if (measuring != null) 'measuring': measuring,
-      if (visibility != null) 'visibility': visibility,
       if (price != null) 'price': price,
       if (found != null) 'found': found,
     });
@@ -499,7 +454,6 @@ class StorageTableDBCompanion extends UpdateCompanion<StorageTableDBData> {
     Value<String>? product,
     Value<int>? quantity,
     Value<String>? measuring,
-    Value<bool>? visibility,
     Value<double?>? price,
     Value<int?>? found,
   }) {
@@ -510,7 +464,6 @@ class StorageTableDBCompanion extends UpdateCompanion<StorageTableDBData> {
       product: product ?? this.product,
       quantity: quantity ?? this.quantity,
       measuring: measuring ?? this.measuring,
-      visibility: visibility ?? this.visibility,
       price: price ?? this.price,
       found: found ?? this.found,
     );
@@ -537,9 +490,6 @@ class StorageTableDBCompanion extends UpdateCompanion<StorageTableDBData> {
     if (measuring.present) {
       map['measuring'] = Variable<String>(measuring.value);
     }
-    if (visibility.present) {
-      map['visibility'] = Variable<bool>(visibility.value);
-    }
     if (price.present) {
       map['price'] = Variable<double>(price.value);
     }
@@ -558,7 +508,6 @@ class StorageTableDBCompanion extends UpdateCompanion<StorageTableDBData> {
           ..write('product: $product, ')
           ..write('quantity: $quantity, ')
           ..write('measuring: $measuring, ')
-          ..write('visibility: $visibility, ')
           ..write('price: $price, ')
           ..write('found: $found')
           ..write(')'))
@@ -1718,12 +1667,12 @@ class $DishesTableDBTable extends DishesTableDB
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
-  static const VerificationMeta _typeQuantityMeta = const VerificationMeta(
-    'typeQuantity',
+  static const VerificationMeta _measuringMeta = const VerificationMeta(
+    'measuring',
   );
   @override
-  late final GeneratedColumn<String> typeQuantity = GeneratedColumn<String>(
-    'type_quantity',
+  late final GeneratedColumn<String> measuring = GeneratedColumn<String>(
+    'measuring',
     aliasedName,
     true,
     additionalChecks: GeneratedColumn.checkTextLength(
@@ -1758,7 +1707,7 @@ class $DishesTableDBTable extends DishesTableDB
     id,
     nameDishes,
     product,
-    typeQuantity,
+    measuring,
     quantity,
     price,
   ];
@@ -1791,13 +1740,10 @@ class $DishesTableDBTable extends DishesTableDB
     } else if (isInserting) {
       context.missing(_productMeta);
     }
-    if (data.containsKey('type_quantity')) {
+    if (data.containsKey('measuring')) {
       context.handle(
-        _typeQuantityMeta,
-        typeQuantity.isAcceptableOrUnknown(
-          data['type_quantity']!,
-          _typeQuantityMeta,
-        ),
+        _measuringMeta,
+        measuring.isAcceptableOrUnknown(data['measuring']!, _measuringMeta),
       );
     }
     if (data.containsKey('quantity')) {
@@ -1835,9 +1781,9 @@ class $DishesTableDBTable extends DishesTableDB
         DriftSqlType.string,
         data['${effectivePrefix}product'],
       )!,
-      typeQuantity: attachedDatabase.typeMapping.read(
+      measuring: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
-        data['${effectivePrefix}type_quantity'],
+        data['${effectivePrefix}measuring'],
       ),
       quantity: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
@@ -1861,14 +1807,14 @@ class DishesTableDBData extends DataClass
   final int id;
   final String? nameDishes;
   final String product;
-  final String? typeQuantity;
+  final String? measuring;
   final int quantity;
   final double? price;
   const DishesTableDBData({
     required this.id,
     this.nameDishes,
     required this.product,
-    this.typeQuantity,
+    this.measuring,
     required this.quantity,
     this.price,
   });
@@ -1880,8 +1826,8 @@ class DishesTableDBData extends DataClass
       map['name_dishes'] = Variable<String>(nameDishes);
     }
     map['product'] = Variable<String>(product);
-    if (!nullToAbsent || typeQuantity != null) {
-      map['type_quantity'] = Variable<String>(typeQuantity);
+    if (!nullToAbsent || measuring != null) {
+      map['measuring'] = Variable<String>(measuring);
     }
     map['quantity'] = Variable<int>(quantity);
     if (!nullToAbsent || price != null) {
@@ -1897,9 +1843,9 @@ class DishesTableDBData extends DataClass
           ? const Value.absent()
           : Value(nameDishes),
       product: Value(product),
-      typeQuantity: typeQuantity == null && nullToAbsent
+      measuring: measuring == null && nullToAbsent
           ? const Value.absent()
-          : Value(typeQuantity),
+          : Value(measuring),
       quantity: Value(quantity),
       price: price == null && nullToAbsent
           ? const Value.absent()
@@ -1916,7 +1862,7 @@ class DishesTableDBData extends DataClass
       id: serializer.fromJson<int>(json['id']),
       nameDishes: serializer.fromJson<String?>(json['nameDishes']),
       product: serializer.fromJson<String>(json['product']),
-      typeQuantity: serializer.fromJson<String?>(json['typeQuantity']),
+      measuring: serializer.fromJson<String?>(json['measuring']),
       quantity: serializer.fromJson<int>(json['quantity']),
       price: serializer.fromJson<double?>(json['price']),
     );
@@ -1928,7 +1874,7 @@ class DishesTableDBData extends DataClass
       'id': serializer.toJson<int>(id),
       'nameDishes': serializer.toJson<String?>(nameDishes),
       'product': serializer.toJson<String>(product),
-      'typeQuantity': serializer.toJson<String?>(typeQuantity),
+      'measuring': serializer.toJson<String?>(measuring),
       'quantity': serializer.toJson<int>(quantity),
       'price': serializer.toJson<double?>(price),
     };
@@ -1938,14 +1884,14 @@ class DishesTableDBData extends DataClass
     int? id,
     Value<String?> nameDishes = const Value.absent(),
     String? product,
-    Value<String?> typeQuantity = const Value.absent(),
+    Value<String?> measuring = const Value.absent(),
     int? quantity,
     Value<double?> price = const Value.absent(),
   }) => DishesTableDBData(
     id: id ?? this.id,
     nameDishes: nameDishes.present ? nameDishes.value : this.nameDishes,
     product: product ?? this.product,
-    typeQuantity: typeQuantity.present ? typeQuantity.value : this.typeQuantity,
+    measuring: measuring.present ? measuring.value : this.measuring,
     quantity: quantity ?? this.quantity,
     price: price.present ? price.value : this.price,
   );
@@ -1956,9 +1902,7 @@ class DishesTableDBData extends DataClass
           ? data.nameDishes.value
           : this.nameDishes,
       product: data.product.present ? data.product.value : this.product,
-      typeQuantity: data.typeQuantity.present
-          ? data.typeQuantity.value
-          : this.typeQuantity,
+      measuring: data.measuring.present ? data.measuring.value : this.measuring,
       quantity: data.quantity.present ? data.quantity.value : this.quantity,
       price: data.price.present ? data.price.value : this.price,
     );
@@ -1970,7 +1914,7 @@ class DishesTableDBData extends DataClass
           ..write('id: $id, ')
           ..write('nameDishes: $nameDishes, ')
           ..write('product: $product, ')
-          ..write('typeQuantity: $typeQuantity, ')
+          ..write('measuring: $measuring, ')
           ..write('quantity: $quantity, ')
           ..write('price: $price')
           ..write(')'))
@@ -1979,7 +1923,7 @@ class DishesTableDBData extends DataClass
 
   @override
   int get hashCode =>
-      Object.hash(id, nameDishes, product, typeQuantity, quantity, price);
+      Object.hash(id, nameDishes, product, measuring, quantity, price);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -1987,7 +1931,7 @@ class DishesTableDBData extends DataClass
           other.id == this.id &&
           other.nameDishes == this.nameDishes &&
           other.product == this.product &&
-          other.typeQuantity == this.typeQuantity &&
+          other.measuring == this.measuring &&
           other.quantity == this.quantity &&
           other.price == this.price);
 }
@@ -1996,14 +1940,14 @@ class DishesTableDBCompanion extends UpdateCompanion<DishesTableDBData> {
   final Value<int> id;
   final Value<String?> nameDishes;
   final Value<String> product;
-  final Value<String?> typeQuantity;
+  final Value<String?> measuring;
   final Value<int> quantity;
   final Value<double?> price;
   const DishesTableDBCompanion({
     this.id = const Value.absent(),
     this.nameDishes = const Value.absent(),
     this.product = const Value.absent(),
-    this.typeQuantity = const Value.absent(),
+    this.measuring = const Value.absent(),
     this.quantity = const Value.absent(),
     this.price = const Value.absent(),
   });
@@ -2011,7 +1955,7 @@ class DishesTableDBCompanion extends UpdateCompanion<DishesTableDBData> {
     this.id = const Value.absent(),
     this.nameDishes = const Value.absent(),
     required String product,
-    this.typeQuantity = const Value.absent(),
+    this.measuring = const Value.absent(),
     required int quantity,
     this.price = const Value.absent(),
   }) : product = Value(product),
@@ -2020,7 +1964,7 @@ class DishesTableDBCompanion extends UpdateCompanion<DishesTableDBData> {
     Expression<int>? id,
     Expression<String>? nameDishes,
     Expression<String>? product,
-    Expression<String>? typeQuantity,
+    Expression<String>? measuring,
     Expression<int>? quantity,
     Expression<double>? price,
   }) {
@@ -2028,7 +1972,7 @@ class DishesTableDBCompanion extends UpdateCompanion<DishesTableDBData> {
       if (id != null) 'id': id,
       if (nameDishes != null) 'name_dishes': nameDishes,
       if (product != null) 'product': product,
-      if (typeQuantity != null) 'type_quantity': typeQuantity,
+      if (measuring != null) 'measuring': measuring,
       if (quantity != null) 'quantity': quantity,
       if (price != null) 'price': price,
     });
@@ -2038,7 +1982,7 @@ class DishesTableDBCompanion extends UpdateCompanion<DishesTableDBData> {
     Value<int>? id,
     Value<String?>? nameDishes,
     Value<String>? product,
-    Value<String?>? typeQuantity,
+    Value<String?>? measuring,
     Value<int>? quantity,
     Value<double?>? price,
   }) {
@@ -2046,7 +1990,7 @@ class DishesTableDBCompanion extends UpdateCompanion<DishesTableDBData> {
       id: id ?? this.id,
       nameDishes: nameDishes ?? this.nameDishes,
       product: product ?? this.product,
-      typeQuantity: typeQuantity ?? this.typeQuantity,
+      measuring: measuring ?? this.measuring,
       quantity: quantity ?? this.quantity,
       price: price ?? this.price,
     );
@@ -2064,8 +2008,8 @@ class DishesTableDBCompanion extends UpdateCompanion<DishesTableDBData> {
     if (product.present) {
       map['product'] = Variable<String>(product.value);
     }
-    if (typeQuantity.present) {
-      map['type_quantity'] = Variable<String>(typeQuantity.value);
+    if (measuring.present) {
+      map['measuring'] = Variable<String>(measuring.value);
     }
     if (quantity.present) {
       map['quantity'] = Variable<int>(quantity.value);
@@ -2082,7 +2026,7 @@ class DishesTableDBCompanion extends UpdateCompanion<DishesTableDBData> {
           ..write('id: $id, ')
           ..write('nameDishes: $nameDishes, ')
           ..write('product: $product, ')
-          ..write('typeQuantity: $typeQuantity, ')
+          ..write('measuring: $measuring, ')
           ..write('quantity: $quantity, ')
           ..write('price: $price')
           ..write(')'))
@@ -2837,7 +2781,6 @@ typedef $$StorageTableDBTableCreateCompanionBuilder =
       required String product,
       required int quantity,
       required String measuring,
-      Value<bool> visibility,
       Value<double?> price,
       Value<int?> found,
     });
@@ -2849,7 +2792,6 @@ typedef $$StorageTableDBTableUpdateCompanionBuilder =
       Value<String> product,
       Value<int> quantity,
       Value<String> measuring,
-      Value<bool> visibility,
       Value<double?> price,
       Value<int?> found,
     });
@@ -2890,11 +2832,6 @@ class $$StorageTableDBTableFilterComposer
 
   ColumnFilters<String> get measuring => $composableBuilder(
     column: $table.measuring,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<bool> get visibility => $composableBuilder(
-    column: $table.visibility,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -2948,11 +2885,6 @@ class $$StorageTableDBTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<bool> get visibility => $composableBuilder(
-    column: $table.visibility,
-    builder: (column) => ColumnOrderings(column),
-  );
-
   ColumnOrderings<double> get price => $composableBuilder(
     column: $table.price,
     builder: (column) => ColumnOrderings(column),
@@ -2990,11 +2922,6 @@ class $$StorageTableDBTableAnnotationComposer
 
   GeneratedColumn<String> get measuring =>
       $composableBuilder(column: $table.measuring, builder: (column) => column);
-
-  GeneratedColumn<bool> get visibility => $composableBuilder(
-    column: $table.visibility,
-    builder: (column) => column,
-  );
 
   GeneratedColumn<double> get price =>
       $composableBuilder(column: $table.price, builder: (column) => column);
@@ -3046,7 +2973,6 @@ class $$StorageTableDBTableTableManager
                 Value<String> product = const Value.absent(),
                 Value<int> quantity = const Value.absent(),
                 Value<String> measuring = const Value.absent(),
-                Value<bool> visibility = const Value.absent(),
                 Value<double?> price = const Value.absent(),
                 Value<int?> found = const Value.absent(),
               }) => StorageTableDBCompanion(
@@ -3056,7 +2982,6 @@ class $$StorageTableDBTableTableManager
                 product: product,
                 quantity: quantity,
                 measuring: measuring,
-                visibility: visibility,
                 price: price,
                 found: found,
               ),
@@ -3068,7 +2993,6 @@ class $$StorageTableDBTableTableManager
                 required String product,
                 required int quantity,
                 required String measuring,
-                Value<bool> visibility = const Value.absent(),
                 Value<double?> price = const Value.absent(),
                 Value<int?> found = const Value.absent(),
               }) => StorageTableDBCompanion.insert(
@@ -3078,7 +3002,6 @@ class $$StorageTableDBTableTableManager
                 product: product,
                 quantity: quantity,
                 measuring: measuring,
-                visibility: visibility,
                 price: price,
                 found: found,
               ),
@@ -3664,7 +3587,7 @@ typedef $$DishesTableDBTableCreateCompanionBuilder =
       Value<int> id,
       Value<String?> nameDishes,
       required String product,
-      Value<String?> typeQuantity,
+      Value<String?> measuring,
       required int quantity,
       Value<double?> price,
     });
@@ -3673,7 +3596,7 @@ typedef $$DishesTableDBTableUpdateCompanionBuilder =
       Value<int> id,
       Value<String?> nameDishes,
       Value<String> product,
-      Value<String?> typeQuantity,
+      Value<String?> measuring,
       Value<int> quantity,
       Value<double?> price,
     });
@@ -3702,8 +3625,8 @@ class $$DishesTableDBTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<String> get typeQuantity => $composableBuilder(
-    column: $table.typeQuantity,
+  ColumnFilters<String> get measuring => $composableBuilder(
+    column: $table.measuring,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -3742,8 +3665,8 @@ class $$DishesTableDBTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<String> get typeQuantity => $composableBuilder(
-    column: $table.typeQuantity,
+  ColumnOrderings<String> get measuring => $composableBuilder(
+    column: $table.measuring,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -3778,10 +3701,8 @@ class $$DishesTableDBTableAnnotationComposer
   GeneratedColumn<String> get product =>
       $composableBuilder(column: $table.product, builder: (column) => column);
 
-  GeneratedColumn<String> get typeQuantity => $composableBuilder(
-    column: $table.typeQuantity,
-    builder: (column) => column,
-  );
+  GeneratedColumn<String> get measuring =>
+      $composableBuilder(column: $table.measuring, builder: (column) => column);
 
   GeneratedColumn<int> get quantity =>
       $composableBuilder(column: $table.quantity, builder: (column) => column);
@@ -3828,14 +3749,14 @@ class $$DishesTableDBTableTableManager
                 Value<int> id = const Value.absent(),
                 Value<String?> nameDishes = const Value.absent(),
                 Value<String> product = const Value.absent(),
-                Value<String?> typeQuantity = const Value.absent(),
+                Value<String?> measuring = const Value.absent(),
                 Value<int> quantity = const Value.absent(),
                 Value<double?> price = const Value.absent(),
               }) => DishesTableDBCompanion(
                 id: id,
                 nameDishes: nameDishes,
                 product: product,
-                typeQuantity: typeQuantity,
+                measuring: measuring,
                 quantity: quantity,
                 price: price,
               ),
@@ -3844,14 +3765,14 @@ class $$DishesTableDBTableTableManager
                 Value<int> id = const Value.absent(),
                 Value<String?> nameDishes = const Value.absent(),
                 required String product,
-                Value<String?> typeQuantity = const Value.absent(),
+                Value<String?> measuring = const Value.absent(),
                 required int quantity,
                 Value<double?> price = const Value.absent(),
               }) => DishesTableDBCompanion.insert(
                 id: id,
                 nameDishes: nameDishes,
                 product: product,
-                typeQuantity: typeQuantity,
+                measuring: measuring,
                 quantity: quantity,
                 price: price,
               ),

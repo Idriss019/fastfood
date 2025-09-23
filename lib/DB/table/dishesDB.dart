@@ -5,7 +5,7 @@ class DishesTableDB extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get nameDishes => text().withLength(min: 1, max: 30).nullable()();
   TextColumn get product => text()();
-  TextColumn get typeQuantity => text().withLength(min: 1, max: 8).nullable()(); // measuring
+  TextColumn get measuring => text().withLength(min: 1, max: 8).nullable()(); // measuring
   IntColumn get quantity => integer()(); // Количество
   RealColumn get price => real().nullable()();
 }

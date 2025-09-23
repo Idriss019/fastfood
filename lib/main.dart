@@ -103,14 +103,14 @@ class MyApp extends StatelessWidget {
     Map choiceTheme = {'light': lightTheme, 'dark': darkTheme};
     final storageSql = StorageSQL(database: AppDatabase());
     final purchaseSql = PurchasesSql(database: AppDatabase());
-
+    
     // final initialRecalculationState = RecalculationState();
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => ThemeCubit(context)),
         BlocProvider(create: (context) => PasswordCubit('')),
         BlocProvider(create: (context) => PurchasesBloc(purchasesSql: purchaseSql, storageSQL: storageSql,)),
-        BlocProvider(create: (context) => CreatingDishesBloc()),
+        BlocProvider(create: (context) => CreatingDishesBloc(storageSQL: storageSql)),
         // BlocProvider(
         //   lazy: true,
         //   create: (context) => RecalculationBloc(

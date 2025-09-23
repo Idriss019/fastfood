@@ -5,7 +5,7 @@ class StorageData {
   final String product;
   final int quantity;
   final String measuring;
-  final bool visibility;
+  // final bool visibility;
   final double? price;
   final int? found;
 
@@ -16,7 +16,7 @@ class StorageData {
     required this.product,
     required this.quantity,
     required this.measuring,
-    this.visibility = true,
+    // this.visibility = true,
     this.price,
     this.found = 0,
   });
@@ -29,7 +29,7 @@ class StorageData {
     String? product,
     int? quantity,
     String? measuring,
-    bool? visibility,
+    // bool? visibility,
     double? price,
     int? found,
   }) {
@@ -40,7 +40,7 @@ class StorageData {
       product: product ?? this.product,
       quantity: quantity ?? this.quantity,
       measuring: measuring ?? this.measuring,
-      visibility: visibility ?? this.visibility,
+      // visibility: visibility ?? this.visibility,
       price: price ?? this.price,
       found: found ?? this.found,
     );
