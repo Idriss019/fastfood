@@ -1,3 +1,4 @@
 {
-    "cmake.sourceDirectory": "/home/diamond/Programming/PL/Dart/fastfood/linux"
+    "cmake.sourceDirectory": "/home/diamond/Programming/PL/Dart/fastfood/linux",
+    "claudeCodeChat.permissions.yoloMode": false
 }

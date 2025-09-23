@@ -448,6 +448,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.0"
+  my_widgets:
+    dependency: "direct main"
+    description:
+      path: "/home/diamond/Programming/PL/Dart/my_widgets"
+      relative: false
+    source: path
+    version: "1.0.0"
   nested:
     dependency: transitive
     description:

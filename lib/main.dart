@@ -3,11 +3,11 @@ import 'dart:io';
 import 'package:fastfood/DB/database.dart';
 import 'package:fastfood/DB/table/purchasesDB.dart';
 import 'package:fastfood/DB/table/storageBD.dart';
-import 'package:fastfood/names/creatingDishes/bloc/creating_dishes_bloc.dart';
-import 'package:fastfood/names/password/cubit/password_cubit.dart';
-import 'package:fastfood/names/purchases/bloc/purchases_bloc.dart';
-import 'package:fastfood/names/recalculation/bloc/recalculation_bloc.dart';
-import 'package:fastfood/names/theme/cubit/theme_cubit.dart';
+import 'package:fastfood/presentation/creatingDishes/bloc/creating_dishes_bloc.dart';
+import 'package:fastfood/presentation/password/cubit/password_cubit.dart';
+import 'package:fastfood/presentation/purchases/bloc/purchases_bloc.dart';
+import 'package:fastfood/presentation/recalculation/bloc/recalculation_bloc.dart';
+import 'package:fastfood/presentation/theme/cubit/theme_cubit.dart';
 import 'package:fastfood/routers.dart';
 import 'package:fastfood/theme.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +19,13 @@ import 'package:go_router/go_router.dart';
 import 'package:window_size/window_size.dart';
 
 void main() async {
+  final exePath = '/proc/self/exe';
+  if (File(exePath).existsSync()) {
+    print('Executable path: ${File(exePath).resolveSymbolicLinksSync()}');
+  } else {
+    print('Cannot access $exePath');
+  }
+
   runApp(const MyApp());
   String mac = '';
   WidgetsFlutterBinding.ensureInitialized();
