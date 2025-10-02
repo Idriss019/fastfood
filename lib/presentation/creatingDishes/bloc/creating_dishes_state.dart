@@ -10,10 +10,13 @@ class CreatingDishesState extends Equatable {
   final String costPrice;
   final String price;
   final List<DishesData>ingredients;
-  final List<DishesData> ingredientsSQL;
+  final List<IngredientData> ingredientsList;
   final Map<String, DishesData> ingredientsMapSQL;
   final List<StorageData> storageListSQL;
   final Map<String, StorageData> storageMapSQL;
+  final List<String> filterIngredient;
+  final List<String> filterDishes;
+
   const CreatingDishesState({
     this.dishes = '',
     this.pathMenu = '',
@@ -23,10 +26,12 @@ class CreatingDishesState extends Equatable {
     this.price = '',
     this.ingredientTitle = '',
     this.ingredients = const [],
-    this.ingredientsSQL = const [],
+    this.ingredientsList = const [],
     this.ingredientsMapSQL = const {},
     this.storageListSQL = const [],
     this.storageMapSQL = const {},
+    this.filterIngredient = const [],
+    this.filterDishes = const [],
 });
 
   @override
@@ -39,11 +44,15 @@ class CreatingDishesState extends Equatable {
     price,
     ingredientTitle,
     ingredients,
-    ingredientsSQL,
+    ingredientsList,
     ingredientsMapSQL,
     storageListSQL,
     storageMapSQL,
+    filterIngredient,
+    filterDishes,
   ];
+
+  
 
   CreatingDishesState copyWith({
     String? dishes,
@@ -53,10 +62,12 @@ class CreatingDishesState extends Equatable {
     String? measuring,
     String? costPrice,
     String? price,
-    List<DishesData>? ingredientsSQL,
+    List<IngredientData>? ingredientsList,
     Map<String, DishesData>? ingredientsMapSQL,
     List<StorageData>? storageListSQL,
     Map<String, StorageData>? storageMapSQL,
+    List<String>? filterIngredient,
+    List<String>? filterDishes,
   }) {
     return CreatingDishesState(
       dishes: dishes ?? this.dishes,
@@ -66,10 +77,12 @@ class CreatingDishesState extends Equatable {
       measuring: measuring ?? this.measuring,
       costPrice: costPrice ?? this.costPrice,
       price: price ?? this.price,
-      ingredientsSQL: ingredientsSQL ?? this.ingredientsSQL,
+      ingredientsList: ingredientsList ?? this.ingredientsList,
       ingredientsMapSQL: ingredientsMapSQL ?? this.ingredientsMapSQL,
       storageListSQL: storageListSQL ?? this.storageListSQL,
       storageMapSQL: storageMapSQL ?? this.storageMapSQL,
+      filterIngredient: filterIngredient ?? this.filterIngredient,
+      filterDishes: filterDishes ?? this.filterDishes,
     );
   }
 }

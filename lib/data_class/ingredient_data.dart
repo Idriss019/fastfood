@@ -1,36 +1,32 @@
-class DishesData {
-  final String nameDishes;
-  final String? product;
+class IngredientData {
+  final String product;
+  final String? barcode;
   final int? quantity;
   final String? measuring;
   final double? costPrice;
-  final double? price;
 
-  DishesData({
-    required this.nameDishes,
-    this.product,
+  IngredientData({
+    required this.product,
+    this.barcode,
     this.quantity,
     this.measuring,
     this.costPrice,
-    this.price,
   });
 
-  DishesData copyWith({
-    String? nameDishes,
+
+  IngredientData copyWith({
     String? product,
     String? barcode,
     int? quantity,
     String? measuring,
     double? costPrice,
-    double? price,
   }) {
-    return DishesData(
-      nameDishes: nameDishes ?? this.nameDishes,
+    return IngredientData(
       product: product ?? this.product,
+      barcode: barcode ?? this.barcode,
       quantity: quantity ?? this.quantity,
       measuring: measuring ?? this.measuring,
       costPrice: costPrice ?? this.costPrice,
-      price: price ?? this.price,
     );
   }
 }

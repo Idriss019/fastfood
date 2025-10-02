@@ -23,7 +23,7 @@ class PurchasesSql {
         return PurchasesTableDBCompanion(
           date: Value(data.date),
           barcode: Value(data.barcode),
-          product: Value(data.product),
+          product: Value(data.product.toLowerCase()),
           quantity: Value(data.quantity ?? 1),
           measuring: Value(data.measuring ?? 'шт'),
           priceOfPurchases: Value(data.priceOfPurchases ?? 0),
@@ -31,7 +31,7 @@ class PurchasesSql {
       } else {
         return PurchasesTableDBCompanion(
           date: Value(data.date),
-          product: Value(data.product),
+          product: Value(data.product.toLowerCase()),
           quantity: Value(data.quantity ?? 1),
           measuring: Value(data.measuring ?? 'шт'),
           priceOfPurchases: Value(data.priceOfPurchases ?? 0),

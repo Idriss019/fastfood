@@ -103,12 +103,12 @@ class _ProductWidgetState extends State<ProductWidget> {
                           purchasesBloc.add(PressDropList(value));
                         },
                         filterList: state.filterList,
-                        formatInput: FilteringTextInputFormatter.allow(
-                          RegExp(r'[^A-ZА-Я]'),
-                        ),
+                        // formatInput: FilteringTextInputFormatter.allow(
+                        //   RegExp(r'[^A-ZА-Я]'),
+                        // ),
                         heightDropContainer: 40,
                         myColor: myColor.colorText,
-                        productCont: _productCont,
+                        controller: _productCont,
                         invertColor: widget.invertColor,
                         countColumn: 3,
                       ),

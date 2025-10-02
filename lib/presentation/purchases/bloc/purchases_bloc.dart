@@ -33,6 +33,7 @@ class PurchasesBloc extends Bloc<PurchasesEvent, PurchasesState> {
           final newState = state.copyWith(
             barcode: event.barcode,
             product: sEl.product,
+            quantity: '1',
             measuring: sEl.measuring,
             price: sEl.price != null ? sEl.price.toString() : '',
           );
@@ -397,9 +398,13 @@ class PurchasesBloc extends Bloc<PurchasesEvent, PurchasesState> {
       return 'Ведите  название !';
     } else if (state.purchases.isEmpty) {
       return 'Ведите цену закупа !';
-    } else if (state.purchases.isEmpty) {
-      return 'Ведите цену закупа !';
-    } else {
+    } else if (state.price.isEmpty) {
+      return 'Ведите цену продажи !';
+    } 
+    // else if (int.tryParse(state.quantity) == null) {
+    //   return 'Ведите цену закупа !';
+    // }
+    else {
       return '';
     }
   }
@@ -424,7 +429,7 @@ class PurchasesBloc extends Bloc<PurchasesEvent, PurchasesState> {
         updateElements.add(
           StorageData(
             id: index,
-            product: purEl.product,
+            product: purEl.product.toLowerCase(),
             barcode: purEl.barcode,
             quantity:
                 state.storageMapSQL[purEl.product]!.quantity + purEl.quantity!,
@@ -436,7 +441,7 @@ class PurchasesBloc extends Bloc<PurchasesEvent, PurchasesState> {
         newElements.add(
           StorageData(
             id: index,
-            product: purEl.product,
+            product: purEl.product.toLowerCase(),
             barcode: purEl.barcode,
             quantity: purEl.quantity!,
             measuring: purEl.measuring == '' ? 'шт' : purEl.measuring ?? 'шт',

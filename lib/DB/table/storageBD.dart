@@ -32,7 +32,7 @@ class StorageSQL {
         quantity: i.quantity,
         price: i.price,
         found: i.found, 
-        measuring: '',
+        measuring: i.measuring,
         // visibility: i.visibility,
       );
       storageList.add(storageData);

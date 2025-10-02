@@ -1,6 +1,7 @@
 import 'dart:io';
 // import 'dart:convert';
 import 'package:fastfood/DB/database.dart';
+import 'package:fastfood/DB/table/dishesDB.dart';
 import 'package:fastfood/DB/table/purchasesDB.dart';
 import 'package:fastfood/DB/table/storageBD.dart';
 import 'package:fastfood/presentation/creatingDishes/bloc/creating_dishes_bloc.dart';
@@ -29,48 +30,48 @@ void main() async {
   runApp(const MyApp());
   String mac = '';
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
     setWindowTitle('My App');
     setWindowMinSize(const Size(1024, 748));
     setWindowMaxSize(const Size(1024, 748));
     setWindowFrame(const Rect.fromLTWH(100, 100, 1024, 748));
   }
-//   Future<String?> getMacAddressLinux() async {
-//   try {
-//     // Запуск команды ip link show
-//     final ProcessResult result = await Process.run('ip', ['link', 'show']);
+  //   Future<String?> getMacAddressLinux() async {
+  //   try {
+  //     // Запуск команды ip link show
+  //     final ProcessResult result = await Process.run('ip', ['link', 'show']);
 
-//     if (result.exitCode != 0) {
-//       print('Ошибка выполнения команды: ${result.stderr}');
-//       return null;
-//     }
+  //     if (result.exitCode != 0) {
+  //       print('Ошибка выполнения команды: ${result.stderr}');
+  //       return null;
+  //     }
 
-//     final String output = result.stdout.toString();
+  //     final String output = result.stdout.toString();
 
-//     // Парсим вывод для поиска MAC-адреса (после 'link/ether')
-//     final macAddressLine = output.split('\n')
-//         .firstWhere(
-//             (line) => line.trim().startsWith('ether'),
-//       );
+  //     // Парсим вывод для поиска MAC-адреса (после 'link/ether')
+  //     final macAddressLine = output.split('\n')
+  //         .firstWhere(
+  //             (line) => line.trim().startsWith('ether'),
+  //       );
 
-//     if (macAddressLine != null) {
-//       return macAddressLine.split(' ').first.trim(); // или другая логика парсинга
-//     } else {
-//       print('MAC-адрес не найден.');
-//       return null;
-//     }
-//   } catch (e) {
-//     print('Ошибка при получении MAC-адреса: $e');
-//     return null;
-//   }
-// }
-// final String? macAddress = await getMacAddressLinux();
-// if (macAddress != null) {
-//         print('MAC-адрес:!!!! $macAddress');
-//       } else {
-//         print('Не удалось получить MAC-адрес.');
-//       }
+  //     if (macAddressLine != null) {
+  //       return macAddressLine.split(' ').first.trim(); // или другая логика парсинга
+  //     } else {
+  //       print('MAC-адрес не найден.');
+  //       return null;
+  //     }
+  //   } catch (e) {
+  //     print('Ошибка при получении MAC-адреса: $e');
+  //     return null;
+  //   }
+  // }
+  // final String? macAddress = await getMacAddressLinux();
+  // if (macAddress != null) {
+  //         print('MAC-адрес:!!!! $macAddress');
+  //       } else {
+  //         print('Не удалось получить MAC-адрес.');
+  //       }
   Future<String> runPythonScript() async {
     // Укажите полный путь к интерпретатору Python, если он не в PATH
     var result = await Process.run('python3', [
@@ -103,14 +104,20 @@ class MyApp extends StatelessWidget {
     Map choiceTheme = {'light': lightTheme, 'dark': darkTheme};
     final storageSql = StorageSQL(database: AppDatabase());
     final purchaseSql = PurchasesSql(database: AppDatabase());
-    
+    final dishesSQL = DishesSQL(database: AppDatabase());
+
     // final initialRecalculationState = RecalculationState();
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => ThemeCubit(context)),
         BlocProvider(create: (context) => PasswordCubit('')),
-        BlocProvider(create: (context) => PurchasesBloc(purchasesSql: purchaseSql, storageSQL: storageSql,)),
-        BlocProvider(create: (context) => CreatingDishesBloc(storageSQL: storageSql)),
+        BlocProvider(
+          create: (context) =>
+              PurchasesBloc(purchasesSql: purchaseSql, storageSQL: storageSql),
+        ),
+        BlocProvider(
+          create: (context) => CreatingDishesBloc(storageSQL: storageSql, dishesSQL: dishesSQL),
+        ),
         // BlocProvider(
         //   lazy: true,
         //   create: (context) => RecalculationBloc(

@@ -1,9 +1,12 @@
 import 'package:data_table_2/data_table_2.dart';
-import 'package:fastfood/global_function.dart';
+import 'package:fastfood/data_class/dishes_data.dart';
+import 'package:fastfood/data_class/ingredient_data.dart';
+import 'package:fastfood/global_function.dart' hide customDataColumn;
 import 'package:fastfood/presentation/creatingDishes/bloc/creating_dishes_bloc.dart';
 import 'package:fastfood/presentation/creatingDishes/widget/menu_directory.dart';
 import 'package:fastfood/navBar.dart';
 import 'package:fastfood/theme.dart';
+import 'package:fastfood/widgetMetod.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -19,6 +22,7 @@ class CreateDishesPage extends StatefulWidget {
 class _CreateDishesPageState extends State<CreateDishesPage> {
   final TextEditingController _dishesCont = TextEditingController();
   final TextEditingController _priceCont = TextEditingController();
+  final TextEditingController _costPriceCont = TextEditingController();
   final TextEditingController _ingredientCont = TextEditingController();
   final TextEditingController _quantityCont = TextEditingController();
   final TextEditingController _measuringCont = TextEditingController();
@@ -38,6 +42,7 @@ class _CreateDishesPageState extends State<CreateDishesPage> {
   void dispose() {
     _dishesCont.dispose();
     _priceCont.dispose();
+    _costPriceCont.dispose();
     _ingredientCont.dispose();
     _quantityCont.dispose();
     _measuringCont.dispose();
@@ -61,6 +66,13 @@ class _CreateDishesPageState extends State<CreateDishesPage> {
       _priceCont.value = TextEditingValue(
         text: price,
         selection: TextSelection.collapsed(offset: price.length),
+      );
+    }
+    final String costPrice = createDBloc.state.costPrice;
+    if (costPrice != '' && _costPriceCont.text != costPrice) {
+      _costPriceCont.value = TextEditingValue(
+        text: costPrice,
+        selection: TextSelection.collapsed(offset: costPrice.length),
       );
     }
     final String ingredientTitle = createDBloc.state.ingredientTitle;
@@ -97,7 +109,7 @@ class _CreateDishesPageState extends State<CreateDishesPage> {
 
   @override
   Widget build(BuildContext context) {
-    double heightRow = 60;
+    // double heightRow = 60;
     Color invertColor = CustomTheme(context: context).colorBorder;
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -186,6 +198,7 @@ class _CreateDishesPageState extends State<CreateDishesPage> {
                       child: Container(
                         margin: EdgeInsets.only(right: 10),
                         child: TextField(
+                          enabled: false,
                           controller: _dishesCont,
                           autofocus: true,
                           decoration: InputDecoration(
@@ -206,6 +219,7 @@ class _CreateDishesPageState extends State<CreateDishesPage> {
                       margin: EdgeInsets.only(right: 10),
                       width: 90,
                       child: TextField(
+                        controller: _costPriceCont,
                         enabled: false,
                         decoration: InputDecoration(
                           labelText: 'себестоимость',
@@ -226,74 +240,78 @@ class _CreateDishesPageState extends State<CreateDishesPage> {
               ),
               Padding(
                 padding: const EdgeInsets.only(bottom: 10.0),
-                child: Row(
-                  // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Container(
-                      margin: EdgeInsets.only(left: 10, right: 20),
-                      // width: 300,
-                      child: Center(
-                        child: Text('Путь :', style: TextStyle(fontSize: 25)),
-                      ),
-                    ),
-                    Expanded(
-                      child: Container(
-                        // padding: EdgeInsets.only(top: 20, bottom: 20),
-                        margin: EdgeInsets.only(
-                          // left: 10,
-                          right: 10,
-                          // top: 10,
-                          // bottom: 10,
-                        ),
-                        // color: Colors.white,
-                        height: 40,
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          border: Border.all(width: 1, color: invertColor),
-                          borderRadius: BorderRadius.all(Radius.circular(5)),
-                        ),
-                        child:
-                            BlocBuilder<
-                              CreatingDishesBloc,
-                              CreatingDishesState
-                            >(
-                              builder: (context, state) {
-                                return Text(
-                                  state.pathMenu,
-                                  textAlign: TextAlign.left,
-                                  style: TextStyle(fontSize: 25),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                );
-                              },
-                            ),
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(right: 10),
-                      width: 60,
-                      child: TextField(
-                        controller: _priceCont,
-                        // enabled: false,
-                        decoration: InputDecoration(
-                          labelText: 'Цена',
-                          hintText: 'Цена',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: BorderSide(
-                              color: Colors.black, // Не работает!
-                              width: 5,
+                child: BlocBuilder<CreatingDishesBloc, CreatingDishesState>(
+                  builder: (context, state) {
+                    return Row(
+                      // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Container(
+                          margin: EdgeInsets.only(left: 10, right: 20),
+                          // width: 300,
+                          child: Center(
+                            child: Text(
+                              'Путь :',
+                              style: TextStyle(fontSize: 25),
                             ),
                           ),
                         ),
-                        style: TextStyle(fontSize: 12),
-                      ),
-                    ),
-                  ],
+                        Expanded(
+                          child: Container(
+                            // padding: EdgeInsets.only(top: 20, bottom: 20),
+                            margin: EdgeInsets.only(
+                              // left: 10,
+                              right: 10,
+                              // top: 10,
+                              // bottom: 10,
+                            ),
+                            // color: Colors.white,
+                            height: 40,
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              border: Border.all(width: 1, color: invertColor),
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(5),
+                              ),
+                            ),
+                            child: Text(
+                              state.pathMenu,
+                              textAlign: TextAlign.left,
+                              style: TextStyle(fontSize: 22),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(right: 10),
+                          width: 60,
+                          child: TextField(
+                            onChanged: (value) => createDBloc.add(
+                              UpdataState(pState: state.copyWith(price: value)),
+                            ),
+                            controller: _priceCont,
+                            // enabled: false,
+                            decoration: InputDecoration(
+                              labelText: 'Цена',
+                              hintText: 'Цена',
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: BorderSide(
+                                  color: Colors.black, // Не работает!
+                                  width: 5,
+                                ),
+                              ),
+                            ),
+                            style: TextStyle(fontSize: 12),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
                 ),
               ),
               SizedBox(
-                height: heightRow,
+                // height: heightRow + 4,
                 child: Padding(
                   padding: const EdgeInsets.only(
                     left: 10,
@@ -317,77 +335,123 @@ class _CreateDishesPageState extends State<CreateDishesPage> {
                         ),
                       ),
                       Expanded(
-                        child: SizedBox(
-                          // width: 200,
-                          // height: 200,
-                          child: Center(
-                            child: BlocBuilder<CreatingDishesBloc, CreatingDishesState>(
+                        child:
+                            BlocBuilder<
+                              CreatingDishesBloc,
+                              CreatingDishesState
+                            >(
                               builder: (context, state) {
-                                //        if (state.errorTitle.isNotEmpty) {
-                                //   showDialogOk(context, state.errorTitle);
-                                // }
-                                // if (state.searchByBarcode) {}
-                                return TextField(
+                                return
+                                // Container(
+                                // margin: const EdgeInsets.only(right: 45.0),
+                                /* Выпадающий список */
+                                // child:
+                                DropDownList(
+                                  onChangedTextField: (value) {
+                                    createDBloc.add(IngredientInput(value));
+                                  },
+                                  onChangedDrop: (value) {
+                                    createDBloc.add(PressDropIngredient(value));
+                                    // print(state.measuring);
+                                  },
+                                  filterList: state.filterIngredient,
+                                  // formatInput:
+                                  //     FilteringTextInputFormatter.allow(
+                                  //       RegExp(r'[^A-ZА-Я]'),
+                                  //     ),
+                                  heightDropContainer: 40,
+                                  myColor: invertColor, // myColor.colorText,
                                   controller: _ingredientCont,
-                                  onChanged: (value) {},
-                                  cursorColor: invertColor,
-                                  // controller: TextEditingController.fromValue(
-                                  //   TextEditingValue(text: state.barcode),
-                                  // )..selection = TextSelection.collapsed(
-                                  //     offset: state.barcode.length),
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 20,
-                                  ),
-                                  decoration: InputDecoration(
-                                    enabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: invertColor,
-                                        width: 1.5,
-                                      ),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: invertColor,
-                                        width: 1.5,
-                                      ),
-                                    ),
-                                  ),
-                                  inputFormatters: <TextInputFormatter>[
-                                    FilteringTextInputFormatter
-                                        .digitsOnly, // С таким фильтром могут быть введены только числа
-                                  ],
+                                  invertColor:
+                                      invertColor, // widget.invertColor,
+                                  countColumn: 3,
+                                  // ),
                                 );
                               },
                             ),
+                      ),
+
+                      // Expanded(
+                      //   child: SizedBox(
+                      //     // width: 200,
+                      //     // height: 200,
+                      //     child: Center(
+                      //       child: BlocBuilder<CreatingDishesBloc, CreatingDishesState>(
+                      //         builder: (context, state) {
+                      //           //        if (state.errorTitle.isNotEmpty) {
+                      //           //   showDialogOk(context, state.errorTitle);
+                      //           // }
+                      //           // if (state.searchByBarcode) {}
+                      //           return TextField(
+                      //             controller: _ingredientCont,
+                      //             onChanged: (value) {},
+                      //             cursorColor: invertColor,
+                      //             // controller: TextEditingController.fromValue(
+                      //             //   TextEditingValue(text: state.barcode),
+                      //             // )..selection = TextSelection.collapsed(
+                      //             //     offset: state.barcode.length),
+                      //             style: TextStyle(
+                      //               fontWeight: FontWeight.w600,
+                      //               fontSize: 20,
+                      //             ),
+                      //             decoration: InputDecoration(
+                      //               enabledBorder: OutlineInputBorder(
+                      //                 borderSide: BorderSide(
+                      //                   color: invertColor,
+                      //                   width: 1.5,
+                      //                 ),
+                      //               ),
+                      //               focusedBorder: OutlineInputBorder(
+                      //                 borderSide: BorderSide(
+                      //                   color: invertColor,
+                      //                   width: 1.5,
+                      //                 ),
+                      //               ),
+                      //             ),
+                      //             inputFormatters: <TextInputFormatter>[
+                      //               FilteringTextInputFormatter
+                      //                   .digitsOnly, // С таким фильтром могут быть введены только числа
+                      //             ],
+                      //           );
+                      //         },
+                      //       ),
+                      //     ),
+                      //   ),
+                      // ),
+
+                      // Padding(
+                      // padding: const EdgeInsets.only(left: 20.0, right: 13),
+                      // child:
+                      Container(
+                        margin: const EdgeInsets.only(left: 10.0, right: 13),
+                        decoration: BoxDecoration(
+                          // border:
+                          //     Border.all(color: Colors.black)
+                        ),
+                        child: Text(
+                          'Количество',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 25,
                           ),
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 30.0, right: 13),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            // border:
-                            //     Border.all(color: Colors.black)
-                          ),
-                          child: Text(
-                            'Количество',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 25,
-                            ),
-                          ),
-                        ),
-                      ),
+                      // ),
                       SizedBox(
-                        width: 60,
+                        width: 70,
                         // height: 200,
                         child: Center(
                           child: BlocBuilder<CreatingDishesBloc, CreatingDishesState>(
                             builder: (context, state) {
                               return TextField(
                                 controller: _quantityCont,
-                                onChanged: (value) {},
+                                onChanged: (value) {
+                                  createDBloc.add(
+                                    UpdataState(
+                                      pState: state.copyWith(quantity: value),
+                                    ),
+                                  );
+                                },
                                 // controller: TextEditingController.fromValue(
                                 //   TextEditingValue(text: state.quantity),
                                 // )..selection = TextSelection.collapsed(
@@ -424,6 +488,7 @@ class _CreateDishesPageState extends State<CreateDishesPage> {
                           ),
                         ),
                       ),
+
                       // Container(
                       //   padding: const EdgeInsets.only(left: 10.0),
                       //   child: DropdownMenu<String>(
@@ -445,62 +510,91 @@ class _CreateDishesPageState extends State<CreateDishesPage> {
                       //   ),
                       // ),
                       Container(
-                        padding: const EdgeInsets.only(left: 10.0, right: 10),
-                        child: DropdownMenu<String>(
-                          controller: _measuringCont,
-                          width: 90,
-                          textStyle: TextStyle(fontSize: 17),
-                          initialSelection: 'шт',
-                          enableFilter: true,
-                          enableSearch: false,
-                          dropdownMenuEntries: const [
-                            DropdownMenuEntry(value: 'шт', label: 'шт'),
-                            DropdownMenuEntry(value: 'г', label: 'г'),
-                            DropdownMenuEntry(value: 'мл', label: 'мл'),
-                            DropdownMenuEntry(value: 'кг', label: 'кг'),
-                            DropdownMenuEntry(value: 'л', label: 'л'),
-                          ],
-                          inputDecorationTheme: const InputDecorationTheme(
-                            // border: OutlineInputBorder(
-                            //   borderSide: BorderSide(
-                            //     color: Colors.blue, // цвет границы
-                            //     width: 3.0, // толщина границы
-                            //   ),
-                            //   borderRadius: BorderRadius.all(
-                            //     Radius.circular(8),
-                            //   ), // скругление углов (по желанию)
-                            // ),
-                            enabledBorder: OutlineInputBorder(
-                              // граница в обычном состоянии
-                              borderSide: BorderSide(
-                                color: Colors.white,
-                                width: 2.0,
-                              ),
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(6),
-                              ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              // граница при фокусе
-                              borderSide: BorderSide(
-                                color: Colors.white,
-                                width: 4.0,
-                              ),
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(6),
-                              ),
-                            ),
-                          ),
+                        // padding: EdgeInsets.only(top: 20, bottom: 20),
+                        margin: EdgeInsets.only(
+                          left: 10,
+                          right: 10,
+                          // top: 10,
+                          // bottom: 10,
+                        ),
+                        // color: Colors.white,
+                        height: 53,
+                        width: 90,
+                        decoration: BoxDecoration(
+                          border: Border.all(width: 1, color: invertColor),
+                          borderRadius: BorderRadius.all(Radius.circular(5)),
+                        ),
+                        child: Text(
+                          _measuringCont.text,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 25),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
+
+                      // measuring
+                      // Container(
+                      //   padding: const EdgeInsets.only(left: 10.0, right: 10),
+                      //   child: DropdownMenu<String>(
+                      //     enabled: false,
+                      //     controller: _measuringCont,
+                      //     width: 90,
+                      //     textStyle: TextStyle(fontSize: 17),
+                      //     initialSelection: 'шт',
+                      //     enableFilter: true,
+                      //     enableSearch: false,
+                      //     dropdownMenuEntries: const [
+                      //       DropdownMenuEntry(value: 'шт', label: 'шт'),
+                      //       DropdownMenuEntry(value: 'г', label: 'г'),
+                      //       DropdownMenuEntry(value: 'мл', label: 'мл'),
+                      //       DropdownMenuEntry(value: 'кг', label: 'кг'),
+                      //       DropdownMenuEntry(value: 'л', label: 'л'),
+                      //     ],
+                      //     inputDecorationTheme: const InputDecorationTheme(
+                      //       // border: OutlineInputBorder(
+                      //       //   borderSide: BorderSide(
+                      //       //     color: Colors.blue, // цвет границы
+                      //       //     width: 3.0, // толщина границы
+                      //       //   ),
+                      //       //   borderRadius: BorderRadius.all(
+                      //       //     Radius.circular(8),
+                      //       //   ), // скругление углов (по желанию)
+                      //       // ),
+                      //       enabledBorder: OutlineInputBorder(
+                      //         // граница в обычном состоянии
+                      //         borderSide: BorderSide(
+                      //           color: Colors.white,
+                      //           width: 2.0,
+                      //         ),
+                      //         borderRadius: BorderRadius.all(
+                      //           Radius.circular(6),
+                      //         ),
+                      //       ),
+                      //       focusedBorder: OutlineInputBorder(
+                      //         // граница при фокусе
+                      //         borderSide: BorderSide(
+                      //           color: Colors.white,
+                      //           width: 4.0,
+                      //         ),
+                      //         borderRadius: BorderRadius.all(
+                      //           Radius.circular(6),
+                      //         ),
+                      //       ),
+                      //     ),
+                      //   ),
+                      // ),
                       Container(
+                        margin: EdgeInsets.only(right: 10),
                         height: 60,
                         decoration: BoxDecoration(
                           border: Border.all(color: invertColor, width: 2.5),
                           borderRadius: BorderRadius.all(Radius.circular(25)),
                         ),
                         child: TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            createDBloc.add(ButtonInputIngredient(context));
+                          },
                           child: Text(
                             '+',
                             style: TextStyle(fontSize: 25, color: invertColor),
@@ -515,88 +609,105 @@ class _CreateDishesPageState extends State<CreateDishesPage> {
                 child: Container(
                   margin: EdgeInsets.only(bottom: 8),
                   color: Colors.cyan,
-                  child: DataTable2(
-                    // scrollController:
-                    //     yourScrollController,
-                    columnSpacing: 5,
-                    horizontalMargin: 10,
-                    headingTextStyle: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      fontSize: 20,
-                    ),
-                    dataTextStyle: TextStyle(
-                      // color: invertColor,
-                      fontWeight: FontWeight.w500,
-                      // fontSize: 25,
-                    ),
-                    // border: TableBorder.all(
-                    //     // color: Colors.grey,
-                    //     // borderRadius: BorderRadius.only(
-                    //     //     bottomLeft: Radius.circular(20),
-                    //     //     bottomRight: Radius.circular(20))
-                    //     ),
-                    headingRowColor: WidgetStateProperty.all(Colors.blueGrey),
-                    dataRowHeight: 40,
-                    columns: [
-                      customDataColumn(
-                        'Штрих-код',
-                        TextAlign.center,
-                        18,
-                        180,
-                        maxLine: 2,
-                      ),
-                      customDataColumn(
-                        'Название',
-                        TextAlign.center,
-                        null,
-                        null,
-                      ),
+                  child: BlocBuilder<CreatingDishesBloc, CreatingDishesState>(
+                    builder: (context, state) {
+                      return DataTable2(
+                        // scrollController:
+                        //     yourScrollController,
+                        columnSpacing: 5,
+                        horizontalMargin: 10,
+                        headingTextStyle: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 20,
+                        ),
+                        dataTextStyle: TextStyle(
+                          // color: invertColor,
+                          fontWeight: FontWeight.w500,
+                          // fontSize: 25,
+                        ),
+                        // border: TableBorder.all(
+                        //     // color: Colors.grey,
+                        //     // borderRadius: BorderRadius.only(
+                        //     //     bottomLeft: Radius.circular(20),
+                        //     //     bottomRight: Radius.circular(20))
+                        //     ),
+                        headingRowColor: WidgetStateProperty.all(
+                          Colors.blueGrey,
+                        ),
+                        dataRowHeight: 40,
+                        columns: [
+                          customDataColumn(
+                            'Штрих-код',
+                            TextAlign.center,
+                            18,
+                            180,
+                            maxLine: 2,
+                          ),
+                          customDataColumn(
+                            'Название',
+                            TextAlign.center,
+                            null,
+                            null,
+                          ),
 
-                      // customDataColumn(
-                      //   'масса мл/г',
-                      //   TextAlign.center,
-                      //   13,
-                      //   80,
-                      // ),
-                      // customDataColumn(
-                      //   'Цена',
-                      //   TextAlign.center,
-                      //   18,
-                      //   100,
-                      // ),
-                      customDataColumn('шт/г/мл', TextAlign.center, 13, 80),
-                      customDataColumn('измерение ', TextAlign.center, 13, 80),
-                      customDataColumn('Удалить', TextAlign.center, 13, 50),
-                      // customDataColumn('Количество', TextAlign.center, 18, 100),
+                          // customDataColumn(
+                          //   'масса мл/г',
+                          //   TextAlign.center,
+                          //   13,
+                          //   80,
+                          // ),
+                          // customDataColumn(
+                          //   'Цена',
+                          //   TextAlign.center,
+                          //   18,
+                          //   100,
+                          // ),
+                          customDataColumn('шт/г/мл', TextAlign.center, 13, 80),
+                          customDataColumn(
+                            'измерение ',
+                            TextAlign.center,
+                            13,
+                            80,
+                          ),
+                          customDataColumn('Удалить', TextAlign.center, 13, 50),
+                          // customDataColumn('Количество', TextAlign.center, 18, 100),
 
-                      // customDataColumn('Удалить', TextAlign.center, 13, 50),
-                      // customDataColumn('Кол', TextAlign.center, 15, 90),
-                      // customDataColumn(
-                      //   'Цена в с',
-                      //   TextAlign.center,
-                      //   18,
-                      //   100,
-                      // ),
-                      // customDataColumn(
-                      //   'Сумма в с.',
-                      //   TextAlign.center,
-                      //   18,
-                      //   150,
-                      // ),
-                    ],
-                    rows: //listTable
-                        [],
-                    // ),
-                    // _createRows(
-                    //     // state.purchasesListSQL,
-                    //     // _bloc.switchableList.listPosition(),
-                    //     // _bloc.state.listPosition(),
-
-                    //     swichList.listPosition(),
-                    //     context,
-                    //     _bloc,
-                    //     invertColor),
+                          // customDataColumn('Удалить', TextAlign.center, 13, 50),
+                          // customDataColumn('Кол', TextAlign.center, 15, 90),
+                          // customDataColumn(
+                          //   'Цена в с',
+                          //   TextAlign.center,
+                          //   18,
+                          //   100,
+                          // ),
+                          // customDataColumn(
+                          //   'Сумма в с.',
+                          //   TextAlign.center,
+                          //   18,
+                          //   150,
+                          // ),
+                        ],
+                        rows: _createRows(
+                          state.ingredientsList,
+                          context,
+                          createDBloc,
+                          invertColor,
+                        ),
+                      ); //listTable
+                      //[],
+                      // );
+                    },
                   ),
+
+                  // _createRows(
+                  //     // state.purchasesListSQL,
+                  //     // _bloc.switchableList.listPosition(),
+                  //     // _bloc.state.listPosition(),
+
+                  //     swichList.listPosition(),
+                  //     context,
+                  //     _bloc,
+                  //     invertColor),
                 ),
               ),
               Container(
@@ -638,7 +749,9 @@ class _CreateDishesPageState extends State<CreateDishesPage> {
                           borderRadius: BorderRadius.all(Radius.circular(5)),
                         ),
                         child: TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            createDBloc.add(ButtonCreateDishes(context));
+                          },
                           child: Text(
                             'Создать',
                             style: TextStyle(fontSize: 40, color: invertColor),
@@ -654,5 +767,145 @@ class _CreateDishesPageState extends State<CreateDishesPage> {
         ),
       ),
     );
+  }
+
+  /* Функция для создание строк */
+  List<DataRow> _createRows(
+    List<IngredientData> dataClass,
+    context,
+    CreatingDishesBloc bloc,
+    colorText,
+  ) {
+    // final bloc = context.read<PurchasesCubit>();
+    List<DataRow> dataR = [];
+    // int number = 0;
+
+    for (IngredientData i in dataClass) {
+      // double sum = i.priceOfSom! * i.quantity!.toDouble();
+      // number++;
+      List<DataCell> dataC = [
+        /// barcode
+        DataCell(textCell(i.barcode ?? '', TextAlign.center)),
+
+        /// Название
+        DataCell(textCell(i.product, TextAlign.center)),
+
+        // /// Цена в закупки
+        // DataCell(
+        //   textCell(
+        //     i.priceOfPurchases.toString(),
+        //     TextAlign.center,
+        //     separator: true,
+        //     maxLine: 1,
+        //   ),
+        // ),
+        // DataCell(
+        //   textFieldCellWithReg(
+        //     context,
+        //     i.priceOfPurchases.toString(),
+        //     TextAlign.center,
+        //     (newPurchases) {
+        //       double parsedPurchases;
+
+        //       try {
+        //         parsedPurchases = double.parse(newPurchases);
+        //         bloc.add(
+        //           UpdatePurchasesFromList(
+        //             data: i,
+        //             newData: i.copyWith(priceOfPurchases: parsedPurchases),
+        //           ),
+        //         );
+        //         Navigator.pop(context);
+        //       } catch (e) {
+        //         print('Не корректное число!');
+        //         // emit(state.copyWith(errorTitle: 'Некорректное числовое значение!'));
+        //         return;
+        //       }
+        //     },
+        //     // (title) {
+        //     // bloc.updatePurchasesList(
+        //     //     i, i.copyWith(priceOfPurchases: double.parse(title)));
+        //     // Navigator.pop(context);
+        //     // }
+        //     DoubleTextInputFormatter(),
+        //     1,
+        //     colorText,
+        //     separator: true,
+        //   ),
+        // ),
+
+        /// Количество
+        DataCell(
+          textFieldCellWithReg(
+            context,
+            i.quantity.toString(),
+            TextAlign.center,
+            (title) {
+              bloc.add(
+                UpdateIngredientList(
+                  index: dataClass.indexOf(i),
+                  newData: i.copyWith(quantity: int.parse(title)),
+                ),
+              );
+              bloc.add(UpdateTotal());
+              // bloc.updateTotal();
+            },
+            FilteringTextInputFormatter.allow(RegExp(r'\b[1-9][0-9]{0,4}')),
+            1,
+            colorText,
+          ),
+        ),
+
+        /// Измеритель
+        DataCell(
+          textCell(
+            i.measuring ?? 'шт',
+            TextAlign.center,
+            separator: true,
+            maxLine: 1,
+          ),
+        ),
+        // DataCell(
+        //   textFieldCellWithReg(
+        //     context,
+        //     i.quantity.toString(),
+        //     TextAlign.center,
+        //     (title) {
+        //       // bloc.updatePurchasesList(i, i.copyWith(quantity: int.parse(title)));
+        //       // Navigator.pop(context);
+        //     },
+        //     FilteringTextInputFormatter.allow(RegExp(r'\b[1-9][0-9]{0,4}')),
+        //     1,
+        //     colorText,
+        //     separator: true,
+        //   ),
+        // ),
+
+        // /// Сумма
+        // DataCell(
+        //   textCell(
+        //     (i.priceOfPurchases! * i.quantity!.toDouble()).toString(),
+        //     TextAlign.center,
+        //     separator: true,
+        //     maxLine: 1,
+        //   ),
+        // ),
+
+        /// Удалить
+        DataCell(
+          deleteCell(
+            context,
+            i.product!,
+            // () {},
+            () => bloc.add(RemoveFromList(data: i)),
+            // () => bloc.removePurchasesList(i)
+          ),
+        ),
+        // /// Штрих-код
+        // DataCell(textCell((i.barcode ?? ''), TextAlign.center)),
+      ];
+      dataR.add(DataRow(cells: dataC));
+    }
+    return dataR;
   }
 }
