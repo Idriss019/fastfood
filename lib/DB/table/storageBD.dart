@@ -10,6 +10,7 @@ class StorageTableDB extends Table {
   IntColumn get quantity => integer()(); 
   TextColumn get measuring => text().withLength(min: 1, max: 5)();  // Изм
   // BoolColumn get visibility => boolean().clientDefault(() => true)(); //Вид
+  RealColumn get costPrice => real().nullable()();
   RealColumn get price => real().nullable()();
   IntColumn get found =>
       integer().nullable().clientDefault(() => 0)(); // перерасчет
@@ -30,6 +31,7 @@ class StorageSQL {
         barcode: i.barcode,
         product: i.product,
         quantity: i.quantity,
+        costPrice: i.costPrice,
         price: i.price,
         found: i.found, 
         measuring: i.measuring,
@@ -51,6 +53,7 @@ class StorageSQL {
           quantity: Value(data.quantity ?? 1),
           measuring: Value(data.measuring  == '' ? 'шт': data.measuring),
           // visibility: Value(data.visibility),
+          costPrice: Value(data.costPrice ?? 0),
           price: Value(data.price ?? 0),
           found: Value(data.found ?? 0)
         );
@@ -61,6 +64,7 @@ class StorageSQL {
           quantity: Value(data.quantity ?? 1),
           measuring: Value(data.measuring  == '' ? 'шт': data.measuring),
           // visibility: Value(data.visibility),
+          costPrice: Value(data.costPrice ?? 0),
           price: Value(data.price ?? 0),
           found: Value(data.found ?? 0)
         );
@@ -79,6 +83,7 @@ class StorageSQL {
       final companion = StorageTableDBCompanion(
         barcode: (item.barcode != null && item.barcode != '') ? Value(item.barcode) : const Value.absent(),
         quantity: item.quantity != null ? Value(item.quantity!) : const Value.absent(),
+        costPrice: item.costPrice != null ? Value(item.costPrice) : const Value.absent(),
         price: item.price != null ? Value(item.price) : const Value.absent(),
         found: item.found != null ? Value(item.found) : const Value.absent(),
       );

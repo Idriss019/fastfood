@@ -40,14 +40,15 @@ class _MenuDirectoryPageState extends State<MenuDirectoryPage> {
           titleSize: 15,
           pressOnFile: (MenuItem menu) {
             // print(menu.name);
-            createDBloc.add(
-              UpdataState(
-                pState: state.copyWith(
-                  dishes: menu.name,
-                  pathMenu: menu.path.join('/'),
-                ),
-              ),
-            );
+            // createDBloc.add(
+            //   UpdataState(
+            //     pState: state.copyWith(
+            //       dishes: menu.name,
+            //       pathMenu: menu.path.join('/'),
+            //     ),
+            //   ),
+            // );
+            createDBloc.add(DishesInput(menu.name, menu.path.join('/')));
           },
           // stringHeight: 10,
         );

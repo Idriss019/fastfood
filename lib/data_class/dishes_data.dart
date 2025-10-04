@@ -3,16 +3,16 @@ class DishesData {
   final String? product;
   final int? quantity;
   final String? measuring;
-  final double? costPrice;
-  final double? price;
+  final double? costPriceProduct;
+  final double? priceDishes;
 
   DishesData({
     required this.nameDishes,
     this.product,
     this.quantity,
     this.measuring,
-    this.costPrice,
-    this.price,
+    this.costPriceProduct,
+    this.priceDishes,
   });
 
   DishesData copyWith({
@@ -21,16 +21,16 @@ class DishesData {
     String? barcode,
     int? quantity,
     String? measuring,
-    double? costPrice,
-    double? price,
+    double? costPriceProduct,
+    double? priceDishes,
   }) {
     return DishesData(
       nameDishes: nameDishes ?? this.nameDishes,
       product: product ?? this.product,
       quantity: quantity ?? this.quantity,
       measuring: measuring ?? this.measuring,
-      costPrice: costPrice ?? this.costPrice,
-      price: price ?? this.price,
+      costPriceProduct: costPriceProduct ?? this.costPriceProduct,
+      priceDishes: priceDishes ?? this.priceDishes,
     );
   }
 }

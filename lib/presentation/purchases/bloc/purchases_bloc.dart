@@ -35,6 +35,7 @@ class PurchasesBloc extends Bloc<PurchasesEvent, PurchasesState> {
             product: sEl.product,
             quantity: '1',
             measuring: sEl.measuring,
+            purchases: sEl.costPrice != null ? sEl.costPrice.toString() : '',
             price: sEl.price != null ? sEl.price.toString() : '',
           );
           emit(newState);
@@ -434,6 +435,7 @@ class PurchasesBloc extends Bloc<PurchasesEvent, PurchasesState> {
             quantity:
                 state.storageMapSQL[purEl.product]!.quantity + purEl.quantity!,
             measuring: purEl.measuring == '' ? 'шт' : purEl.measuring ?? 'шт',
+            costPrice: purEl.priceOfPurchases,
             price: purEl.price,
           ),
         );
@@ -445,6 +447,7 @@ class PurchasesBloc extends Bloc<PurchasesEvent, PurchasesState> {
             barcode: purEl.barcode,
             quantity: purEl.quantity!,
             measuring: purEl.measuring == '' ? 'шт' : purEl.measuring ?? 'шт',
+            costPrice: purEl.priceOfPurchases,
             price: purEl.price,
           ),
         );

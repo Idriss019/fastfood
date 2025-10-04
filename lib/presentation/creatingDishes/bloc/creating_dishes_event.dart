@@ -17,15 +17,12 @@ class UpdataState extends CreatingDishesEvent {
 /* ingredient Line */
 class IngredientInput extends CreatingDishesEvent {
   final String ingredient;
-  const IngredientInput(
-    this.ingredient,
-  );
+  const IngredientInput(this.ingredient);
 
   @override
-  List<Object> get props => [
-    ingredient,
-  ];
+  List<Object> get props => [ingredient];
 }
+
 class PressDropIngredient extends CreatingDishesEvent {
   final String filterIngredient;
   const PressDropIngredient(this.filterIngredient);
@@ -37,15 +34,13 @@ class PressDropIngredient extends CreatingDishesEvent {
 /* Dishes Line */
 class DishesInput extends CreatingDishesEvent {
   final String dishes;
-  const DishesInput(
-    this.dishes,
-  );
+  final String path;
+  const DishesInput(this.dishes, this.path);
 
   @override
-  List<Object> get props => [
-    dishes,
-  ];
+  List<Object> get props => [dishes, path];
 }
+
 class PressDropDishes extends CreatingDishesEvent {
   final String filterDishes;
   const PressDropDishes(this.filterDishes);
@@ -70,11 +65,16 @@ class ButtonCreateDishes extends CreatingDishesEvent {
 }
 
 class UpdateTotal extends CreatingDishesEvent {}
+
 class UpdataStorageData extends CreatingDishesEvent {}
+
+class PressMenuItem extends CreatingDishesEvent {}
+
+class UpdataDishesData extends CreatingDishesEvent {}
 
 /* Dishes Table */
 class UpdateIngredientList extends CreatingDishesEvent {
-  final IngredientData newData;
+  final DishesData newData;
   final int index;
   const UpdateIngredientList({required this.index, required this.newData});
   @override
@@ -82,7 +82,7 @@ class UpdateIngredientList extends CreatingDishesEvent {
 }
 
 class RemoveFromList extends CreatingDishesEvent {
-  final IngredientData data;
+  final DishesData data;
   const RemoveFromList({required this.data});
   @override
   List<Object> get props => [data];

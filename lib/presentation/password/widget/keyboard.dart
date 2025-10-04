@@ -13,11 +13,13 @@ class KeyboardPassword extends StatefulWidget {
 
 class _KeyboardPasswordState extends State<KeyboardPassword> {
   final passwordController = TextEditingController();
+  late PasswordCubit passwordBloc;
   var _isObscured = true;
 
   @override
   void initState() {
     super.initState();
+    passwordBloc = context.read<PasswordCubit>();
     // context.read<ThemeCubit>().loadTheme();
     _isObscured = true;
   }
@@ -29,8 +31,32 @@ class _KeyboardPasswordState extends State<KeyboardPassword> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final passwordBlocWatch = context.watch<PasswordCubit>();
+    print('WWW');
+
+    // final purchasesBloc = context.watch<PurchasesBloc>();
+    // // Обновляем контроллер при изменении состояния
+    final String password = passwordBlocWatch.state.inputPassword;
+    print(password);
+    print(passwordController.text);
+    if (passwordController.text != password) {
+      print('QQQ');
+      passwordController.value = TextEditingValue(
+        text: password,
+        selection: TextSelection.collapsed(offset: password.length),
+      );
+      // if (passwordBlocWatch.changePasswordToStart(passwordController.text)) {
+      //   context.go('/home');
+      //   passwordController.text = '';
+      // }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final bloc = context.read<PasswordCubit>();
+    // final bloc = context.read<PasswordCubit>();
 
     return Flexible(
       flex: 1,
@@ -270,10 +296,15 @@ class _KeyboardPasswordState extends State<KeyboardPassword> {
                         child: SizedBox(
                           child: TextButton(
                             onPressed: () {
-                              setState(() {
-                                // ограничить до 12 символов!
-                                passwordController.text += '1';
-                              });
+                              // setState(() {
+                              // ограничить до 12 символов!
+                              // passwordController.text += '1';
+                              passwordBloc.inputPassword(
+                                '${passwordBloc.state.inputPassword}1',
+                              );
+                              print(passwordBloc.state.inputPassword);
+                              print(passwordController.text);
+                              // });
                             },
                             child: Text('1', style: TextStyle(fontSize: 40)),
                           ),
@@ -283,9 +314,22 @@ class _KeyboardPasswordState extends State<KeyboardPassword> {
                         child: SizedBox(
                           child: TextButton(
                             onPressed: () {
-                              setState(() {
-                                passwordController.text += '2';
-                              });
+                              // setState(() {
+                              passwordBloc.inputPassword(
+                                '${passwordBloc.state.inputPassword}2',
+                                // passwordController.text += '2',
+                              );
+                              context.go('/home');
+                              //   passwordController.text = '';
+                              // passwordBloc.changePasswordToStart('123');
+                              // passwordController.text += '2';
+                              // });
+                              // if (bloc.changePasswordToStart(
+                              //   passwordController.text,
+                              // )) {
+                              //   context.go('/home');
+                              //   passwordController.text = '';
+                              // }
                             },
                             child: Text('2', style: TextStyle(fontSize: 40)),
                           ),
@@ -295,9 +339,14 @@ class _KeyboardPasswordState extends State<KeyboardPassword> {
                         child: SizedBox(
                           child: TextButton(
                             onPressed: () {
-                              setState(() {
-                                passwordController.text += '3';
-                              });
+                              // setState(() {
+                              passwordBloc.inputPassword(
+                                '${passwordBloc.state.inputPassword}3',
+                                // passwordController.text += '3',
+                              );
+                              // passwordController.text += '3';
+                              // }
+                              // );
                             },
                             child: Text('3', style: TextStyle(fontSize: 40)),
                           ),
@@ -338,13 +387,13 @@ class _KeyboardPasswordState extends State<KeyboardPassword> {
                               setState(() {
                                 passwordController.text += '6';
                               });
-                              print(passwordController.text);
-                              if (bloc.changePasswordToStart(
-                                passwordController.text,
-                              )) {
-                                context.go('/home');
-                                passwordController.text = '';
-                              }
+                              // print(passwordController.text);
+                              // if (bloc.changePasswordToStart(
+                              //   passwordController.text,
+                              // )) {
+                              //   context.go('/home');
+                              //   passwordController.text = '';
+                              // }
                             },
                             child: Text('6', style: TextStyle(fontSize: 40)),
                           ),
@@ -426,7 +475,7 @@ class _KeyboardPasswordState extends State<KeyboardPassword> {
                         child: SizedBox(
                           child: IconButton(
                             onPressed: () {
-                              if (passwordController.text.length > 0) {
+                              if (passwordController.text.isNotEmpty) {
                                 setState(() {
                                   passwordController.text = passwordController
                                       .text

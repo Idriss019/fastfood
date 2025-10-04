@@ -38,6 +38,10 @@ class CreatingDishesBloc
       );
     });
 
+    on<UpdataDishesData>((event, emit) async {
+      List<DishesData> newDishesList = await dishesSQL.getAll();
+      emit(state.copyWith(dishesListSQL: newDishesList));
+    });
     // /* DishesInput Line */
     // on<DishesInput>((event, emit) {
     //   if (event.dishes != '') {
@@ -68,6 +72,33 @@ class CreatingDishesBloc
     //     ),
     //   );
     // });
+    /* Dishes Line */
+    on<DishesInput>((event, emit) {
+      if (event.dishes != '') {
+        List<DishesData> newIngredientList = [];
+        // List<DishesData> newIngredientList = state.dishesListSQL
+        //     .where((toElement) => toElement.nameDishes == event.dishes)
+        //     .toList();
+        for (DishesData i in state.dishesListSQL) {
+          if (i.nameDishes == event.dishes.toLowerCase()) {
+            newIngredientList.add(i);
+          }
+        }
+        if (newIngredientList.isNotEmpty) {
+          emit(
+            state.copyWith(
+              dishes: event.dishes,
+              pathMenu: event.path,
+              ingredientsList: newIngredientList,
+              price: newIngredientList[0].priceDishes.toString(),
+            ),
+          );
+          add(UpdateTotal());
+        } else {
+          emit(state.copyWith(dishes: event.dishes, pathMenu: event.path));
+        }
+      }
+    });
 
     /* ingredient Line */
     on<IngredientInput>(
@@ -124,13 +155,15 @@ class CreatingDishesBloc
           final CreatingDishesState newState = state.copyWith(
             ingredientsList: List.from(state.ingredientsList)
               ..add(
-                IngredientData(
+                DishesData(
+                  nameDishes: state.dishes,
                   product: state.ingredientTitle,
-                  barcode: state.storageMapSQL[state.ingredientTitle]?.barcode,
+                  // barcode: state.storageMapSQL[state.ingredientTitle]?.barcode,
                   quantity: int.parse(state.quantity),
                   measuring: state.measuring == '' ? 'шт' : state.measuring,
                   // costPrice: double.parse(state.costPrice),
-                  costPrice: state.storageMapSQL[state.ingredientTitle]?.price,
+                  costPriceProduct:
+                      state.storageMapSQL[state.ingredientTitle]?.costPrice,
                 ),
               ),
             ingredientTitle: '',
@@ -145,7 +178,7 @@ class CreatingDishesBloc
     on<UpdateTotal>((event, emit) {
       double total = 0;
       state.ingredientsList.forEach((el) {
-        total += el.quantity! * el.costPrice!;
+        total += el.quantity! * el.costPriceProduct!;
       });
       emit(state.copyWith(costPrice: total.toString()));
     });
@@ -153,18 +186,23 @@ class CreatingDishesBloc
     on<UpdateIngredientList>((event, emit) {
       int index = event.index;
       // Создаем копию списка
-      List<IngredientData> copyIngredientList = List.from(
-        state.ingredientsList,
-      );
+      List<DishesData> copyIngredientList = List.from(state.ingredientsList);
       // Обновляем только нужное поле
       copyIngredientList[index] = event.newData;
       emit(state.copyWith(ingredientsList: copyIngredientList));
     });
 
     on<RemoveFromList>((event, emit) {
-      List<IngredientData> newIngredientsList = List.from(state.ingredientsList)
+      List<DishesData> newIngredientsList = List.from(state.ingredientsList)
         ..remove(event.data);
       emit(state.copyWith(ingredientsList: newIngredientsList));
+      add(UpdateTotal());
+    });
+
+    on<PressMenuItem>((event, emit) async {
+      // List<DishesData> getDishesList = await dishesSQL.getAll();
+      // List<IngredientData> newIngredientsList = getDishesList.map((e) => ,).toList();
+      // emit(state.copyWith(ingredientsList: newIngredientsList));
       add(UpdateTotal());
     });
 
@@ -182,30 +220,36 @@ class CreatingDishesBloc
         //   );
         // }
         // else {
-        
-        List <DishesData> dishesList= [];
-        for(IngredientData i in state.ingredientsList){
-          dishesList.add(DishesData(
-            nameDishes: state.dishes,
-            product: i.product,
-            quantity: i.quantity,
-            measuring: i.measuring,
-            price: double.parse(state.price),
-            ));
-        }
+
+        // List<DishesData> dishesList = [];
+        // for(DishesData i in state.ingredientsList){
+        //   dishesList.add(DishesData(
+        //     nameDishes: state.dishes,
+        //     product: i.product,
+        //     quantity: i.quantity,
+        //     measuring: i.measuring,
+        //     price: double.parse(state.price),
+        //     ));
+        // }
+        // List<DishesData> dishesList = [];
+        // for (DishesData i in state.ingredientsList) {
+        //   dishesList.add(
+        //     i.copyWith(
+        //       nameDishes: state.dishes,
+        //       priceDishes: double.parse(state.price),
+        //     ),
+        //   );
+        // }
+        List<DishesData> dishesList = state.ingredientsList
+            .map(
+              (toElement) => toElement.copyWith(
+                nameDishes: state.dishes,
+                priceDishes: double.parse(state.price),
+              ),
+            )
+            .toList();
         dishesSQL.insertAllList(dishesList);
         final CreatingDishesState newState = state.copyWith(
-          // ingredientsList: List.from(state.ingredientsList)
-          //   ..add(
-          //     IngredientData(
-          //       product: state.ingredientTitle,
-          //       barcode: state.storageMapSQL[state.ingredientTitle]?.barcode,
-          //       quantity: int.parse(state.quantity),
-          //       measuring: state.measuring == '' ? 'шт' : state.measuring,
-          //       // costPrice: double.parse(state.costPrice),
-          //       costPrice: state.storageMapSQL[state.ingredientTitle]?.price,
-          //     ),
-          //   ),
           dishes: '',
           pathMenu: '',
           costPrice: '',
@@ -213,9 +257,8 @@ class CreatingDishesBloc
           ingredientsList: [],
         );
         emit(newState);
-        // add(UpdateTotal());
-        // }
       }
+      add(UpdataDishesData());
     });
   }
   String changeInput() {
@@ -269,11 +312,13 @@ class CreatingDishesBloc
   // }
 
   String changeDishes() {
-    /* */
+    /* проверка на пересоздание */
     if (state.dishes.trim().isEmpty) {
       return 'Выберите блюдо !';
     } else if (state.price.isEmpty) {
       return 'Введите цену !';
+    } else if (state.ingredientsList.isEmpty) {
+      return 'Введите ингредиенты !';
     } else {
       return '';
     }

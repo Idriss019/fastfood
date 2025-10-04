@@ -9,9 +9,9 @@ class CreatingDishesState extends Equatable {
   final String measuring;
   final String costPrice;
   final String price;
-  final List<DishesData>ingredients;
-  final List<IngredientData> ingredientsList;
-  final Map<String, DishesData> ingredientsMapSQL;
+  // final List<DishesData>ingredients;
+  final List<DishesData> ingredientsList;
+  final List<DishesData> dishesListSQL;
   final List<StorageData> storageListSQL;
   final Map<String, StorageData> storageMapSQL;
   final List<String> filterIngredient;
@@ -25,14 +25,14 @@ class CreatingDishesState extends Equatable {
     this.costPrice = '',
     this.price = '',
     this.ingredientTitle = '',
-    this.ingredients = const [],
+    // this.ingredients = const [],
     this.ingredientsList = const [],
-    this.ingredientsMapSQL = const {},
+    this.dishesListSQL = const [],
     this.storageListSQL = const [],
     this.storageMapSQL = const {},
     this.filterIngredient = const [],
     this.filterDishes = const [],
-});
+  });
 
   @override
   List<Object> get props => [
@@ -43,16 +43,16 @@ class CreatingDishesState extends Equatable {
     costPrice,
     price,
     ingredientTitle,
-    ingredients,
+    // ingredients,
     ingredientsList,
-    ingredientsMapSQL,
+    dishesListSQL,
     storageListSQL,
     storageMapSQL,
     filterIngredient,
     filterDishes,
   ];
 
-  
+
 
   CreatingDishesState copyWith({
     String? dishes,
@@ -62,8 +62,8 @@ class CreatingDishesState extends Equatable {
     String? measuring,
     String? costPrice,
     String? price,
-    List<IngredientData>? ingredientsList,
-    Map<String, DishesData>? ingredientsMapSQL,
+    List<DishesData>? ingredientsList,
+    List<DishesData>? dishesListSQL,
     List<StorageData>? storageListSQL,
     Map<String, StorageData>? storageMapSQL,
     List<String>? filterIngredient,
@@ -78,7 +78,7 @@ class CreatingDishesState extends Equatable {
       costPrice: costPrice ?? this.costPrice,
       price: price ?? this.price,
       ingredientsList: ingredientsList ?? this.ingredientsList,
-      ingredientsMapSQL: ingredientsMapSQL ?? this.ingredientsMapSQL,
+      dishesListSQL: dishesListSQL ?? this.dishesListSQL,
       storageListSQL: storageListSQL ?? this.storageListSQL,
       storageMapSQL: storageMapSQL ?? this.storageMapSQL,
       filterIngredient: filterIngredient ?? this.filterIngredient,

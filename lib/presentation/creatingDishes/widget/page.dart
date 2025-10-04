@@ -36,6 +36,7 @@ class _CreateDishesPageState extends State<CreateDishesPage> {
     _loadMenu();
     createDBloc = context.read<CreatingDishesBloc>();
     createDBloc.add(UpdataStorageData());
+    createDBloc.add(UpdataDishesData());
   }
 
   @override
@@ -60,6 +61,7 @@ class _CreateDishesPageState extends State<CreateDishesPage> {
         text: dishes,
         selection: TextSelection.collapsed(offset: dishes.length),
       );
+      // createDBloc.add(DishesInput(dishes));
     }
     final String price = createDBloc.state.price;
     if (price != '' && _priceCont.text != price) {
@@ -636,13 +638,13 @@ class _CreateDishesPageState extends State<CreateDishesPage> {
                         ),
                         dataRowHeight: 40,
                         columns: [
-                          customDataColumn(
-                            'Штрих-код',
-                            TextAlign.center,
-                            18,
-                            180,
-                            maxLine: 2,
-                          ),
+                          // customDataColumn(
+                          //   'Штрих-код',
+                          //   TextAlign.center,
+                          //   18,
+                          //   180,
+                          //   maxLine: 2,
+                          // ),
                           customDataColumn(
                             'Название',
                             TextAlign.center,
@@ -662,6 +664,12 @@ class _CreateDishesPageState extends State<CreateDishesPage> {
                           //   18,
                           //   100,
                           // ),
+                          customDataColumn(
+                            'себестоимость',
+                            TextAlign.center,
+                            13,
+                            80,
+                          ),
                           customDataColumn('шт/г/мл', TextAlign.center, 13, 80),
                           customDataColumn(
                             'измерение ',
@@ -771,7 +779,7 @@ class _CreateDishesPageState extends State<CreateDishesPage> {
 
   /* Функция для создание строк */
   List<DataRow> _createRows(
-    List<IngredientData> dataClass,
+    List<DishesData> dataClass,
     context,
     CreatingDishesBloc bloc,
     colorText,
@@ -780,15 +788,15 @@ class _CreateDishesPageState extends State<CreateDishesPage> {
     List<DataRow> dataR = [];
     // int number = 0;
 
-    for (IngredientData i in dataClass) {
+    for (DishesData i in dataClass) {
       // double sum = i.priceOfSom! * i.quantity!.toDouble();
       // number++;
       List<DataCell> dataC = [
-        /// barcode
-        DataCell(textCell(i.barcode ?? '', TextAlign.center)),
+        // /// barcode
+        // DataCell(textCell(i.barcode ?? '', TextAlign.center)),
 
         /// Название
-        DataCell(textCell(i.product, TextAlign.center)),
+        DataCell(textCell(i.product!, TextAlign.center)),
 
         // /// Цена в закупки
         // DataCell(
@@ -833,6 +841,14 @@ class _CreateDishesPageState extends State<CreateDishesPage> {
         //     separator: true,
         //   ),
         // ),
+        /// Себестоимость сумма
+        DataCell(
+          textCell(
+            (i.costPriceProduct! * i.quantity!).toString(),
+            TextAlign.center,
+            separator: true,
+          ),
+        ),
 
         /// Количество
         DataCell(

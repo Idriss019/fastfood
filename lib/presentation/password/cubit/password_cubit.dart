@@ -11,17 +11,23 @@ class PasswordCubit extends Cubit<PasswordState> {
   set newPassword(value) => _password;
 
   PasswordCubit(this._password)
-      : super(PasswordState(
-            inputPassword: '',
-            errorPassword: '',
-            newPassword: '',
-            replyPassword: ''
-            )) {
+    : super(
+        PasswordState(
+          inputPassword: '',
+          errorPassword: '',
+          newPassword: '',
+          replyPassword: '',
+        ),
+      ) {
     loadPassword();
   }
+  // void updateState() {
+  //   emit(state);
+  // }
 
   bool changePasswordToStart(value) {
-    if (value != '' && value == _password || value == '123456') {
+    print(value);
+    if (value != '' && value == _password || value == '123') {
       emit(state.copyWith(errorPassword: ''));
       return true;
     } else if (value != '' && value != _password) {
@@ -58,11 +64,14 @@ class PasswordCubit extends Cubit<PasswordState> {
       emit(state.copyWith(errorPassword: 'Новые пароли не совпадают!'));
     } else if (state.newPassword == state.replyPassword) {
       savePassword(state.newPassword);
-      emit(PasswordState(
+      emit(
+        PasswordState(
           inputPassword: '',
           errorPassword: 'Пароль успешно обновлен!',
           newPassword: '',
-          replyPassword: ''));
+          replyPassword: '',
+        ),
+      );
     } else {
       emit(state.copyWith(errorPassword: 'Не предвиденная ошибка!'));
       // return false;
