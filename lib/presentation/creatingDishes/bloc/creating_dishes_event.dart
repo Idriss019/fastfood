@@ -57,13 +57,6 @@ class ButtonInputIngredient extends CreatingDishesEvent {
   List<Object> get props => [context];
 }
 
-class ButtonCreateDishes extends CreatingDishesEvent {
-  final BuildContext context;
-  const ButtonCreateDishes(this.context);
-  @override
-  List<Object> get props => [context];
-}
-
 class UpdateTotal extends CreatingDishesEvent {}
 
 class UpdataStorageData extends CreatingDishesEvent {}
@@ -86,4 +79,60 @@ class RemoveFromList extends CreatingDishesEvent {
   const RemoveFromList({required this.data});
   @override
   List<Object> get props => [data];
+}
+
+/* Bottom button */
+class ButtonCreateDishes extends CreatingDishesEvent {
+  final BuildContext context;
+  const ButtonCreateDishes(this.context);
+  @override
+  List<Object> get props => [context];
+}
+
+class RenameDishes extends CreatingDishesEvent {
+  // final String oldDishes;
+  final MenuItem menuItem;
+  final BuildContext context;
+  final String filePath;
+  final Function func;
+  const RenameDishes(
+    // this.oldDishes,
+    this.menuItem,
+    this.filePath,
+    this.context,
+    this.func,
+  );
+
+  @override
+  List<Object> get props => [
+    // oldDishes,
+    filePath,
+    menuItem,
+    context,
+    func,
+  ];
+}
+
+class DeleteDishes extends CreatingDishesEvent {
+  // final String oldDishes;
+  final MenuItem menuItem;
+  final BuildContext context;
+  final String filePath;
+  final Function func;
+  const DeleteDishes(
+    // this.oldDishes,
+    this.menuItem,
+    this.filePath,
+    this.context,
+    this.func,
+  );
+
+  @override
+  List<Object> get props => [
+    // oldDishes,
+    filePath,
+    menuItem,
+    context,
+    func,
+  ];
 }

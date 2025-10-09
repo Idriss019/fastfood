@@ -106,6 +106,7 @@ class _CreateDishesPageState extends State<CreateDishesPage> {
       menu =
           loadedMenu ??
           MenuItem(''); // Предполагается, что menu объявлена в State
+      // print('Load');
     });
   }
 
@@ -732,7 +733,13 @@ class _CreateDishesPageState extends State<CreateDishesPage> {
                           borderRadius: BorderRadius.all(Radius.circular(5)),
                         ),
                         child: IconButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            createDBloc.add(
+                              DeleteDishes(menu, filename, context, () {
+                                setState(() {});
+                              }),
+                            );
+                          },
                           icon: Icon(Icons.delete, size: 40),
                         ),
                       ),
@@ -745,7 +752,15 @@ class _CreateDishesPageState extends State<CreateDishesPage> {
                           borderRadius: BorderRadius.all(Radius.circular(5)),
                         ),
                         child: IconButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            // menu.findByPath(createDBloc.state.pathMenu);
+                            createDBloc.add(
+                              RenameDishes(menu, filename, context, () {
+                                setState(() {});
+                              }),
+                            );
+                            // await _loadMenu();
+                          },
                           icon: Icon(Icons.create, size: 40),
                         ),
                       ),

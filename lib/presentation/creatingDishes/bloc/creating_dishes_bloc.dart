@@ -7,6 +7,7 @@ import 'package:fastfood/global_function.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:my_widgets/my_widgets.dart';
 import 'package:rxdart/rxdart.dart';
 
 part 'creating_dishes_event.dart';
@@ -95,7 +96,13 @@ class CreatingDishesBloc
           );
           add(UpdateTotal());
         } else {
-          emit(state.copyWith(dishes: event.dishes, pathMenu: event.path));
+          emit(
+            state.copyWith(
+              dishes: event.dishes,
+              pathMenu: event.path,
+              ingredientsList: [],
+            ),
+          );
         }
       }
     });
@@ -207,58 +214,189 @@ class CreatingDishesBloc
     });
 
     /*  << ButtonCreateDishes >> */
-    on<ButtonCreateDishes>((event, emit) {
-      String title = changeDishes();
+    on<ButtonCreateDishes>((event, emit) async {
+      bool createDishes =
+          await showDialog<bool>(
+            context: event.context,
+            builder: (context) {
+              return AlertDialog(
+                title: Text(
+                  'Это действие создаст блюдо и удалит все прошлые ингредиенты. Вы уверенны ?',
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context, false),
+                    child: Text('Отмена'),
+                  ),
+                  TextButton(
+                    onPressed: () => Navigator.pop(context, true),
+                    child: Text('ОК'),
+                  ),
+                ],
+              );
+            },
+          ) ??
+          false;
+      if (createDishes) {
+        String title = changeDishes();
+        if (title.isNotEmpty) {
+          showDialogOk(event.context, title, () {});
+        } else {
+          // if (searchElement(state.ingredientTitle) == false) {
+          //   return showDialogOk(
+          //     event.context,
+          //     'Нет такого блюда!',
+          //     () {},
+          //   );
+          // }
+          // else {
+
+          // List<DishesData> dishesList = [];
+          // for(DishesData i in state.ingredientsList){
+          //   dishesList.add(DishesData(
+          //     nameDishes: state.dishes,
+          //     product: i.product,
+          //     quantity: i.quantity,
+          //     measuring: i.measuring,
+          //     price: double.parse(state.price),
+          //     ));
+          // }
+          // List<DishesData> dishesList = [];
+          // for (DishesData i in state.ingredientsList) {
+          //   dishesList.add(
+          //     i.copyWith(
+          //       nameDishes: state.dishes,
+          //       priceDishes: double.parse(state.price),
+          //     ),
+          //   );/***************** */
+          // }
+          // удалить из базы !
+          dishesSQL.deleteByDishes(state.dishes.toLowerCase());
+          List<DishesData> dishesList = state.ingredientsList
+              .map(
+                (toElement) => toElement.copyWith(
+                  nameDishes: state.dishes,
+                  priceDishes: double.parse(state.price),
+                ),
+              )
+              .toList();
+          dishesSQL.insertAllList(dishesList);
+          final CreatingDishesState newState = state.copyWith(
+            dishes: '',
+            pathMenu: '',
+            costPrice: '',
+            price: '',
+            ingredientsList: [],
+          );
+          emit(newState);
+        }
+        add(UpdataDishesData());
+      }
+    });
+    /* Переименовать блюдо */
+    on<RenameDishes>((event, emit) async {
+      String title = changeDishesEasy();
       if (title.isNotEmpty) {
         showDialogOk(event.context, title, () {});
       } else {
-        // if (searchElement(state.ingredientTitle) == false) {
-        //   return showDialogOk(
-        //     event.context,
-        //     'Нет такого блюда!',
-        //     () {},
-        //   );
-        // }
-        // else {
-
-        // List<DishesData> dishesList = [];
-        // for(DishesData i in state.ingredientsList){
-        //   dishesList.add(DishesData(
-        //     nameDishes: state.dishes,
-        //     product: i.product,
-        //     quantity: i.quantity,
-        //     measuring: i.measuring,
-        //     price: double.parse(state.price),
-        //     ));
-        // }
-        // List<DishesData> dishesList = [];
-        // for (DishesData i in state.ingredientsList) {
-        //   dishesList.add(
-        //     i.copyWith(
-        //       nameDishes: state.dishes,
-        //       priceDishes: double.parse(state.price),
-        //     ),
-        //   );
-        // }
-        List<DishesData> dishesList = state.ingredientsList
-            .map(
-              (toElement) => toElement.copyWith(
-                nameDishes: state.dishes,
-                priceDishes: double.parse(state.price),
+        String? newName = await showDialog<String>(
+          context: event.context,
+          builder: (context) {
+            String tempName = state.dishes;
+            return AlertDialog(
+              title: Text('Переименовать : $tempName?'),
+              content: TextField(
+                autofocus: true,
+                decoration: InputDecoration(hintText: 'Новое имя'),
+                controller: TextEditingController(text: tempName),
+                onChanged: (value) => tempName = value,
               ),
-            )
-            .toList();
-        dishesSQL.insertAllList(dishesList);
-        final CreatingDishesState newState = state.copyWith(
-          dishes: '',
-          pathMenu: '',
-          costPrice: '',
-          price: '',
-          ingredientsList: [],
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context, null),
+                  child: Text('Отмена'),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.pop(context, tempName),
+                  child: Text('ОК'),
+                ),
+              ],
+            );
+          },
         );
-        emit(newState);
+        if (newName != null && newName.isNotEmpty) {
+          dishesSQL.renameDishes(
+            oldDishes: state.dishes.toLowerCase(),
+            newDishes: newName.toLowerCase(),
+          );
+          add(UpdataDishesData());
+          // переименовать в Json файле
+          event.menuItem.renameByPath(
+            state.pathMenu,
+            newName,
+            directory: false,
+          );
+          // Автоматическое сохранение после переименования
+          DirectoryFilesUtils.saveMenuToFile(event.menuItem, event.filePath);
+
+          emit(
+            state.copyWith(
+              ingredientsList: [],
+              dishes: '',
+              pathMenu: '',
+              price: '',
+            ),
+          );
+          event.func();
+          // print('Rename');
+        }
       }
-      add(UpdataDishesData());
+    });
+    /* Удалить блюдо */
+    on<DeleteDishes>((event, emit) async {
+      String title = changeDishesEasy();
+      if (title.isNotEmpty) {
+        showDialogOk(event.context, title, () {});
+      } else {
+        String dishesName = state.dishes;
+        bool deleteDishes =
+            await showDialog<bool>(
+              context: event.context,
+              builder: (context) {
+                return AlertDialog(
+                  title: Text('Удалить : $dishesName?'),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context, false),
+                      child: Text('Отмена'),
+                    ),
+                    TextButton(
+                      onPressed: () => Navigator.pop(context, true),
+                      child: Text('ОК'),
+                    ),
+                  ],
+                );
+              },
+            ) ??
+            false;
+        if (deleteDishes) {
+          dishesSQL.deleteByDishes(dishesName.toLowerCase());
+          add(UpdataDishesData());
+          // переименовать в Json файле
+          event.menuItem.deleteByPath(state.pathMenu);
+          // Автоматическое сохранение после переименования
+          DirectoryFilesUtils.saveMenuToFile(event.menuItem, event.filePath);
+          emit(
+            state.copyWith(
+              ingredientsList: [],
+              dishes: '',
+              pathMenu: '',
+              price: '',
+            ),
+          );
+          event.func();
+        }
+      }
     });
   }
   String changeInput() {
@@ -319,6 +457,15 @@ class CreatingDishesBloc
       return 'Введите цену !';
     } else if (state.ingredientsList.isEmpty) {
       return 'Введите ингредиенты !';
+    } else {
+      return '';
+    }
+  }
+
+  String changeDishesEasy() {
+    /* проверка на пересоздание */
+    if (state.dishes.trim().isEmpty) {
+      return 'Выберите блюдо !';
     } else {
       return '';
     }
