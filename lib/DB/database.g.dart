@@ -2866,6 +2866,359 @@ class StaffTableDBCompanion extends UpdateCompanion<StaffTableDBData> {
   }
 }
 
+class $OrderTableDBTable extends OrderTableDB
+    with TableInfo<$OrderTableDBTable, OrderTableDBData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $OrderTableDBTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _quantityMeta = const VerificationMeta(
+    'quantity',
+  );
+  @override
+  late final GeneratedColumn<int> quantity = GeneratedColumn<int>(
+    'quantity',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _productMeta = const VerificationMeta(
+    'product',
+  );
+  @override
+  late final GeneratedColumn<String> product = GeneratedColumn<String>(
+    'product',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _costPriceMeta = const VerificationMeta(
+    'costPrice',
+  );
+  @override
+  late final GeneratedColumn<double> costPrice = GeneratedColumn<double>(
+    'cost_price',
+    aliasedName,
+    true,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _priceMeta = const VerificationMeta('price');
+  @override
+  late final GeneratedColumn<double> price = GeneratedColumn<double>(
+    'price',
+    aliasedName,
+    true,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    quantity,
+    product,
+    costPrice,
+    price,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'order_table_d_b';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<OrderTableDBData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('quantity')) {
+      context.handle(
+        _quantityMeta,
+        quantity.isAcceptableOrUnknown(data['quantity']!, _quantityMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_quantityMeta);
+    }
+    if (data.containsKey('product')) {
+      context.handle(
+        _productMeta,
+        product.isAcceptableOrUnknown(data['product']!, _productMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_productMeta);
+    }
+    if (data.containsKey('cost_price')) {
+      context.handle(
+        _costPriceMeta,
+        costPrice.isAcceptableOrUnknown(data['cost_price']!, _costPriceMeta),
+      );
+    }
+    if (data.containsKey('price')) {
+      context.handle(
+        _priceMeta,
+        price.isAcceptableOrUnknown(data['price']!, _priceMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  OrderTableDBData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return OrderTableDBData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      quantity: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}quantity'],
+      )!,
+      product: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}product'],
+      )!,
+      costPrice: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}cost_price'],
+      ),
+      price: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}price'],
+      ),
+    );
+  }
+
+  @override
+  $OrderTableDBTable createAlias(String alias) {
+    return $OrderTableDBTable(attachedDatabase, alias);
+  }
+}
+
+class OrderTableDBData extends DataClass
+    implements Insertable<OrderTableDBData> {
+  final int id;
+  final int quantity;
+  final String product;
+  final double? costPrice;
+  final double? price;
+  const OrderTableDBData({
+    required this.id,
+    required this.quantity,
+    required this.product,
+    this.costPrice,
+    this.price,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['quantity'] = Variable<int>(quantity);
+    map['product'] = Variable<String>(product);
+    if (!nullToAbsent || costPrice != null) {
+      map['cost_price'] = Variable<double>(costPrice);
+    }
+    if (!nullToAbsent || price != null) {
+      map['price'] = Variable<double>(price);
+    }
+    return map;
+  }
+
+  OrderTableDBCompanion toCompanion(bool nullToAbsent) {
+    return OrderTableDBCompanion(
+      id: Value(id),
+      quantity: Value(quantity),
+      product: Value(product),
+      costPrice: costPrice == null && nullToAbsent
+          ? const Value.absent()
+          : Value(costPrice),
+      price: price == null && nullToAbsent
+          ? const Value.absent()
+          : Value(price),
+    );
+  }
+
+  factory OrderTableDBData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return OrderTableDBData(
+      id: serializer.fromJson<int>(json['id']),
+      quantity: serializer.fromJson<int>(json['quantity']),
+      product: serializer.fromJson<String>(json['product']),
+      costPrice: serializer.fromJson<double?>(json['costPrice']),
+      price: serializer.fromJson<double?>(json['price']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'quantity': serializer.toJson<int>(quantity),
+      'product': serializer.toJson<String>(product),
+      'costPrice': serializer.toJson<double?>(costPrice),
+      'price': serializer.toJson<double?>(price),
+    };
+  }
+
+  OrderTableDBData copyWith({
+    int? id,
+    int? quantity,
+    String? product,
+    Value<double?> costPrice = const Value.absent(),
+    Value<double?> price = const Value.absent(),
+  }) => OrderTableDBData(
+    id: id ?? this.id,
+    quantity: quantity ?? this.quantity,
+    product: product ?? this.product,
+    costPrice: costPrice.present ? costPrice.value : this.costPrice,
+    price: price.present ? price.value : this.price,
+  );
+  OrderTableDBData copyWithCompanion(OrderTableDBCompanion data) {
+    return OrderTableDBData(
+      id: data.id.present ? data.id.value : this.id,
+      quantity: data.quantity.present ? data.quantity.value : this.quantity,
+      product: data.product.present ? data.product.value : this.product,
+      costPrice: data.costPrice.present ? data.costPrice.value : this.costPrice,
+      price: data.price.present ? data.price.value : this.price,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('OrderTableDBData(')
+          ..write('id: $id, ')
+          ..write('quantity: $quantity, ')
+          ..write('product: $product, ')
+          ..write('costPrice: $costPrice, ')
+          ..write('price: $price')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, quantity, product, costPrice, price);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is OrderTableDBData &&
+          other.id == this.id &&
+          other.quantity == this.quantity &&
+          other.product == this.product &&
+          other.costPrice == this.costPrice &&
+          other.price == this.price);
+}
+
+class OrderTableDBCompanion extends UpdateCompanion<OrderTableDBData> {
+  final Value<int> id;
+  final Value<int> quantity;
+  final Value<String> product;
+  final Value<double?> costPrice;
+  final Value<double?> price;
+  const OrderTableDBCompanion({
+    this.id = const Value.absent(),
+    this.quantity = const Value.absent(),
+    this.product = const Value.absent(),
+    this.costPrice = const Value.absent(),
+    this.price = const Value.absent(),
+  });
+  OrderTableDBCompanion.insert({
+    this.id = const Value.absent(),
+    required int quantity,
+    required String product,
+    this.costPrice = const Value.absent(),
+    this.price = const Value.absent(),
+  }) : quantity = Value(quantity),
+       product = Value(product);
+  static Insertable<OrderTableDBData> custom({
+    Expression<int>? id,
+    Expression<int>? quantity,
+    Expression<String>? product,
+    Expression<double>? costPrice,
+    Expression<double>? price,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (quantity != null) 'quantity': quantity,
+      if (product != null) 'product': product,
+      if (costPrice != null) 'cost_price': costPrice,
+      if (price != null) 'price': price,
+    });
+  }
+
+  OrderTableDBCompanion copyWith({
+    Value<int>? id,
+    Value<int>? quantity,
+    Value<String>? product,
+    Value<double?>? costPrice,
+    Value<double?>? price,
+  }) {
+    return OrderTableDBCompanion(
+      id: id ?? this.id,
+      quantity: quantity ?? this.quantity,
+      product: product ?? this.product,
+      costPrice: costPrice ?? this.costPrice,
+      price: price ?? this.price,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (quantity.present) {
+      map['quantity'] = Variable<int>(quantity.value);
+    }
+    if (product.present) {
+      map['product'] = Variable<String>(product.value);
+    }
+    if (costPrice.present) {
+      map['cost_price'] = Variable<double>(costPrice.value);
+    }
+    if (price.present) {
+      map['price'] = Variable<double>(price.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('OrderTableDBCompanion(')
+          ..write('id: $id, ')
+          ..write('quantity: $quantity, ')
+          ..write('product: $product, ')
+          ..write('costPrice: $costPrice, ')
+          ..write('price: $price')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -2877,6 +3230,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $DishesTableDBTable dishesTableDB = $DishesTableDBTable(this);
   late final $HistoryTableDBTable historyTableDB = $HistoryTableDBTable(this);
   late final $StaffTableDBTable staffTableDB = $StaffTableDBTable(this);
+  late final $OrderTableDBTable orderTableDB = $OrderTableDBTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -2888,6 +3242,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     dishesTableDB,
     historyTableDB,
     staffTableDB,
+    orderTableDB,
   ];
 }
 
@@ -4355,6 +4710,200 @@ typedef $$StaffTableDBTableProcessedTableManager =
       StaffTableDBData,
       PrefetchHooks Function()
     >;
+typedef $$OrderTableDBTableCreateCompanionBuilder =
+    OrderTableDBCompanion Function({
+      Value<int> id,
+      required int quantity,
+      required String product,
+      Value<double?> costPrice,
+      Value<double?> price,
+    });
+typedef $$OrderTableDBTableUpdateCompanionBuilder =
+    OrderTableDBCompanion Function({
+      Value<int> id,
+      Value<int> quantity,
+      Value<String> product,
+      Value<double?> costPrice,
+      Value<double?> price,
+    });
+
+class $$OrderTableDBTableFilterComposer
+    extends Composer<_$AppDatabase, $OrderTableDBTable> {
+  $$OrderTableDBTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get quantity => $composableBuilder(
+    column: $table.quantity,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get product => $composableBuilder(
+    column: $table.product,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get costPrice => $composableBuilder(
+    column: $table.costPrice,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get price => $composableBuilder(
+    column: $table.price,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$OrderTableDBTableOrderingComposer
+    extends Composer<_$AppDatabase, $OrderTableDBTable> {
+  $$OrderTableDBTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get quantity => $composableBuilder(
+    column: $table.quantity,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get product => $composableBuilder(
+    column: $table.product,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get costPrice => $composableBuilder(
+    column: $table.costPrice,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get price => $composableBuilder(
+    column: $table.price,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$OrderTableDBTableAnnotationComposer
+    extends Composer<_$AppDatabase, $OrderTableDBTable> {
+  $$OrderTableDBTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<int> get quantity =>
+      $composableBuilder(column: $table.quantity, builder: (column) => column);
+
+  GeneratedColumn<String> get product =>
+      $composableBuilder(column: $table.product, builder: (column) => column);
+
+  GeneratedColumn<double> get costPrice =>
+      $composableBuilder(column: $table.costPrice, builder: (column) => column);
+
+  GeneratedColumn<double> get price =>
+      $composableBuilder(column: $table.price, builder: (column) => column);
+}
+
+class $$OrderTableDBTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $OrderTableDBTable,
+          OrderTableDBData,
+          $$OrderTableDBTableFilterComposer,
+          $$OrderTableDBTableOrderingComposer,
+          $$OrderTableDBTableAnnotationComposer,
+          $$OrderTableDBTableCreateCompanionBuilder,
+          $$OrderTableDBTableUpdateCompanionBuilder,
+          (
+            OrderTableDBData,
+            BaseReferences<_$AppDatabase, $OrderTableDBTable, OrderTableDBData>,
+          ),
+          OrderTableDBData,
+          PrefetchHooks Function()
+        > {
+  $$OrderTableDBTableTableManager(_$AppDatabase db, $OrderTableDBTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$OrderTableDBTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$OrderTableDBTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$OrderTableDBTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<int> quantity = const Value.absent(),
+                Value<String> product = const Value.absent(),
+                Value<double?> costPrice = const Value.absent(),
+                Value<double?> price = const Value.absent(),
+              }) => OrderTableDBCompanion(
+                id: id,
+                quantity: quantity,
+                product: product,
+                costPrice: costPrice,
+                price: price,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required int quantity,
+                required String product,
+                Value<double?> costPrice = const Value.absent(),
+                Value<double?> price = const Value.absent(),
+              }) => OrderTableDBCompanion.insert(
+                id: id,
+                quantity: quantity,
+                product: product,
+                costPrice: costPrice,
+                price: price,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$OrderTableDBTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $OrderTableDBTable,
+      OrderTableDBData,
+      $$OrderTableDBTableFilterComposer,
+      $$OrderTableDBTableOrderingComposer,
+      $$OrderTableDBTableAnnotationComposer,
+      $$OrderTableDBTableCreateCompanionBuilder,
+      $$OrderTableDBTableUpdateCompanionBuilder,
+      (
+        OrderTableDBData,
+        BaseReferences<_$AppDatabase, $OrderTableDBTable, OrderTableDBData>,
+      ),
+      OrderTableDBData,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -4371,4 +4920,6 @@ class $AppDatabaseManager {
       $$HistoryTableDBTableTableManager(_db, _db.historyTableDB);
   $$StaffTableDBTableTableManager get staffTableDB =>
       $$StaffTableDBTableTableManager(_db, _db.staffTableDB);
+  $$OrderTableDBTableTableManager get orderTableDB =>
+      $$OrderTableDBTableTableManager(_db, _db.orderTableDB);
 }

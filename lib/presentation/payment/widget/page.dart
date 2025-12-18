@@ -13,19 +13,11 @@ class PaymentPage extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Navbar(
-        child: Padding(
-          padding: const EdgeInsets.only(top: 8.0),
-          child: Row(
-            children: [
-              PaymentScreen(),
-              Keyboard(),
-            ],
-          ),
-        ),
+        // child: Padding(
+        //   padding: const EdgeInsets.only(top: 8.0),
+        child: Row(children: [PaymentScreen(), Keyboard()]),
       ),
+      // ),
     );
   }
 }
-
-
-

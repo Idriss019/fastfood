@@ -15,8 +15,10 @@ class OrderScreen extends StatelessWidget {
         decoration: BoxDecoration(color: Colors.amber),
         child: Column(
           children: [
-            Flexible(
-              flex: 3,
+            // Flexible(
+            //   flex: 3,
+            SizedBox(
+              height: 57,
               child: Padding(
                 padding: const EdgeInsets.only(left: 10.0, right: 10.0),
                 child: Row(
@@ -70,7 +72,7 @@ class OrderScreen extends StatelessWidget {
                     // ),
                     customDataColumn('Кол.', TextAlign.center, 13, 80),
                     customDataColumn('Продукт', TextAlign.center, null, null),
-                    customDataColumn('масса/объем', TextAlign.center, 13, 80),
+                    // customDataColumn('масса/объем', TextAlign.center, 13, 80),
                     customDataColumn('Цена', TextAlign.center, 18, 100),
                     customDataColumn('Сумма', TextAlign.center, 18, 100),
                     // customDataColumn('Кол', TextAlign.center, 15, 90),

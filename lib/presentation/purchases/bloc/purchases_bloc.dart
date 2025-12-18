@@ -151,6 +151,7 @@ class PurchasesBloc extends Bloc<PurchasesEvent, PurchasesState> {
               double.parse(event.purchasesSum) / double.parse(state.quantity);
           final newState = state.copyWith(
             purchasesSum: event.purchasesSum,
+            
             purchases: result.toString(),
           );
           emit(newState);
@@ -401,7 +402,7 @@ class PurchasesBloc extends Bloc<PurchasesEvent, PurchasesState> {
       return 'Ведите цену закупа !';
     } else if (state.price.isEmpty) {
       return 'Ведите цену продажи !';
-    } 
+    }
     // else if (int.tryParse(state.quantity) == null) {
     //   return 'Ведите цену закупа !';
     // }
@@ -426,6 +427,16 @@ class PurchasesBloc extends Bloc<PurchasesEvent, PurchasesState> {
     List<StorageData> updateElements = [];
     for (int index = 0; index < state.purchasesList.length; index++) {
       final purEl = state.purchasesList[index];
+      int purQuantity = purEl.quantity!;
+      String purMeasuring = 'шт';
+      if (purEl.measuring == 'кг') {
+        purMeasuring = 'г';
+        purQuantity = purQuantity * 1000;
+      }
+      if (purEl.measuring == 'л') {
+        purMeasuring = 'мл';
+        purQuantity = purQuantity * 1000;
+      }
       if (searchElement(purEl.product)) {
         updateElements.add(
           StorageData(
@@ -433,8 +444,8 @@ class PurchasesBloc extends Bloc<PurchasesEvent, PurchasesState> {
             product: purEl.product.toLowerCase(),
             barcode: purEl.barcode,
             quantity:
-                state.storageMapSQL[purEl.product]!.quantity + purEl.quantity!,
-            measuring: purEl.measuring == '' ? 'шт' : purEl.measuring ?? 'шт',
+                state.storageMapSQL[purEl.product]!.quantity + purQuantity,
+            measuring: purMeasuring,
             costPrice: purEl.priceOfPurchases,
             price: purEl.price,
           ),
@@ -445,8 +456,8 @@ class PurchasesBloc extends Bloc<PurchasesEvent, PurchasesState> {
             id: index,
             product: purEl.product.toLowerCase(),
             barcode: purEl.barcode,
-            quantity: purEl.quantity!,
-            measuring: purEl.measuring == '' ? 'шт' : purEl.measuring ?? 'шт',
+            quantity: purQuantity,
+            measuring: purMeasuring,
             costPrice: purEl.priceOfPurchases,
             price: purEl.price,
           ),

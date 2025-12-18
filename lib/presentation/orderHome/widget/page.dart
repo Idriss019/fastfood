@@ -21,9 +21,11 @@ class _OrderPageState extends State<OrderPage> {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Navbar(
-        child: Padding(
-          padding: const EdgeInsets.only(top: 8.0),
-          child: Row(
+        child: 
+        // Padding(
+          // padding: const EdgeInsets.only(top: 8.0),
+          // child: 
+          Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               OrderScreen(),
@@ -31,7 +33,7 @@ class _OrderPageState extends State<OrderPage> {
             ],
           ),
         ),
-      ),
+      // ),
     );
   }
 }
