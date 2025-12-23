@@ -21,9 +21,13 @@ class PasswordCubit extends Cubit<PasswordState> {
       ) {
     loadPassword();
   }
-  // void updateState() {
-  //   emit(state);
-  // }
+  void updateState(PasswordState state) {
+    emit(state);
+  }
+
+  void plusValueState(String value) {
+    emit(state.copyWith(inputPassword: state.inputPassword + value));
+  }
 
   bool changePasswordToStart(value) {
     print(value);

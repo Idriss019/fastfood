@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:fastfood/DB/database.dart';
 import 'package:fastfood/DB/table/dishesDB.dart';
 import 'package:fastfood/DB/table/purchasesDB.dart';
+import 'package:fastfood/DB/table/staffDB.dart';
 import 'package:fastfood/DB/table/storageBD.dart';
+import 'package:fastfood/data_class/staff_data.dart';
 import 'package:fastfood/presentation/creatingDishes/bloc/creating_dishes_bloc.dart';
 import 'package:fastfood/presentation/password/cubit/password_cubit.dart';
 import 'package:fastfood/presentation/purchases/bloc/purchases_bloc.dart';
@@ -20,6 +22,8 @@ import 'package:go_router/go_router.dart';
 import 'package:window_size/window_size.dart';
 
 void main() async {
+  // StaffSQL staffSQL = StaffSQL(database: AppDatabase());
+  // staffSQL.insertRoot();
   final exePath = '/proc/self/exe';
   if (File(exePath).existsSync()) {
     print('Executable path: ${File(exePath).resolveSymbolicLinksSync()}');
@@ -105,6 +109,10 @@ class MyApp extends StatelessWidget {
     final storageSql = StorageSQL(database: AppDatabase());
     final purchaseSql = PurchasesSql(database: AppDatabase());
     final dishesSQL = DishesSQL(database: AppDatabase());
+    // final staffSQL = StaffSQL(database: AppDatabase());
+    // // staffSQL.insertRoot();
+    // List<StaffData> staffList = staffSQL.getAllStaff();
+    // print(staffList[0].login);
 
     // final initialRecalculationState = RecalculationState();
     return MultiBlocProvider(
