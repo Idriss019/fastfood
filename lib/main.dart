@@ -109,6 +109,7 @@ class MyApp extends StatelessWidget {
     final storageSql = StorageSQL(database: AppDatabase());
     final purchaseSql = PurchasesSql(database: AppDatabase());
     final dishesSQL = DishesSQL(database: AppDatabase());
+    final staffSql = StaffSQL(database: AppDatabase());
     // final staffSQL = StaffSQL(database: AppDatabase());
     // // staffSQL.insertRoot();
     // List<StaffData> staffList = staffSQL.getAllStaff();
@@ -118,13 +119,14 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => ThemeCubit(context)),
-        BlocProvider(create: (context) => PasswordCubit('')),
+        BlocProvider(create: (context) => PasswordCubit(staffSQL:staffSql)),
         BlocProvider(
           create: (context) =>
               PurchasesBloc(purchasesSql: purchaseSql, storageSQL: storageSql),
         ),
         BlocProvider(
-          create: (context) => CreatingDishesBloc(storageSQL: storageSql, dishesSQL: dishesSQL),
+          create: (context) =>
+              CreatingDishesBloc(storageSQL: storageSql, dishesSQL: dishesSQL),
         ),
         // BlocProvider(
         //   lazy: true,

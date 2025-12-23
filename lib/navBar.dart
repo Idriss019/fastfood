@@ -1,3 +1,4 @@
+import 'package:fastfood/presentation/password/cubit/password_cubit.dart';
 import 'package:fastfood/presentation/theme/cubit/theme_cubit.dart';
 import 'package:fastfood/theme.dart';
 import 'package:flutter/material.dart';
@@ -170,13 +171,48 @@ class _NavbarState extends State<Navbar> {
                     },
                     child: Text('Оплата'),
                   ),
-                  IconButton(
-                    onPressed: () {},
-                    icon: Icon(
-                      // size: 50,
-                      Icons.lock_outline,
+
+                  // Text('Administrator'),
+                  SizedBox(
+                    child: Row(
+                      children: [
+                        BlocBuilder<PasswordCubit, PasswordState>(
+                          builder: (context, state) {
+                            return Text(
+                              context.read<PasswordCubit>().state.login,
+                              style: TextStyle(fontSize: 20),
+                            );
+                          },
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            context.go('/');
+                          },
+                          icon: Icon(
+                            // size: 50,
+                            Icons.lock_outline,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
+                  // BlocBuilder<PasswordCubit, PasswordState>(
+                  //   builder: (context, state) {
+                  //     return Text(
+                  //       context.read<PasswordCubit>().state.login,
+                  //       style: TextStyle(fontSize: 20),
+                  //     );
+                  //   },
+                  // ),
+                  // IconButton(
+                  //   onPressed: () {
+                  //     context.go('/');
+                  //   },
+                  //   icon: Icon(
+                  //     // size: 50,
+                  //     Icons.lock_outline,
+                  //   ),
+                  // ),
                 ],
               ),
             ),

@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 import 'package:fastfood/DB/database.dart';
 import 'package:fastfood/data_class/staff_data.dart';
+import 'package:string_capitalize/string_capitalize.dart';
 
 class StaffTableDB extends Table {
   IntColumn get id => integer().autoIncrement()();
@@ -22,39 +23,32 @@ class StaffSQL {
         .into(database.staffTableDB)
         .insert(
           StaffTableDBCompanion(
-            login: Value('ROOT'),
-            password: Value('12'),
-            position: Value('Администратор'),
+            login: Value('aня'),
+            password: Value('2222'),
+            position: Value('администратор'),
             powers: Value('1111111111111111111111111111111111111111'),
           ),
         );
   }
+
+
   // Получить всех сотрудника
   Future<List<StaffData>> getAllStaff() async {
     final queryResult = await database.select(database.staffTableDB).get();
     return queryResult.map((row) {
       final powersString = row.powers ?? '';
       final powersMap = <String, bool>{};
-      final powerKeys = [
-        'страница_заказы',
-        'страница_оплата',
-        'совершать_возврат',
-        'страница_склад',
-        'страница_закупки',
-        'страница_персонал',
-        'страница_таблицы',
-        'страница_создание_блюда',
-        'страница_отчет',
-        'страница_настройки',
-      ];
+      final powerKeys = powersData.keys.toList();
+
       for (int i = 0; i < powerKeys.length; i++) {
-        powersMap[powerKeys[i]] = i < powersString.length && powersString[i] == '1' ? true : false;
+        powersMap[powerKeys[i]] =
+            i < powersString.length && powersString[i] == '1' ? true : false;
       }
       return StaffData(
         id: row.id,
-        login: row.login ?? '',
+        login: row.login!.capitalizeEach(),
         password: row.password ?? '',
-        position: row.position ?? '',
+        position: row.position != null ? row.position!.capitalizeEach() : '',
         powers: powersMap,
       );
     }).toList();

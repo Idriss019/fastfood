@@ -22,9 +22,14 @@ class _KeyboardPasswordState extends State<KeyboardPassword> {
   @override
   void initState() {
     super.initState();
+
     passwordBloc = context.read<PasswordCubit>();
-    // context.read<ThemeCubit>().loadTheme();
     _isObscured = true;
+
+    Future.microtask(() async {
+      await passwordBloc.loadPasswordData();
+      // await passwordBloc.staffSQL.insertRoot();
+    });
   }
 
   // @override
@@ -109,19 +114,11 @@ class _KeyboardPasswordState extends State<KeyboardPassword> {
                           listenWhen: (previous, current) =>
                               previous.inputPassword != current.inputPassword,
                           listener: (context, state) async {
-                            if (passwordBloc.changePasswordToStart(
-                              state.inputPassword,
-                            )) {
+                            if (passwordBloc.changePasswordToStart()) {
                               // задержка 2 секунды
                               await Future.delayed(const Duration(seconds: 2));
-
                               if (!context.mounted) return;
-
                               context.go('/home');
-
-                              passwordBloc.updateState(
-                                state.copyWith(inputPassword: ''),
-                              );
                             }
                           },
                           buildWhen: (previous, current) =>

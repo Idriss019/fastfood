@@ -86,6 +86,4 @@ class PurchasesState extends Equatable {
   }
 }
 
-final class PurchasesInitial extends PurchasesState {
-  
-}
+final class PurchasesInitial extends PurchasesState {}

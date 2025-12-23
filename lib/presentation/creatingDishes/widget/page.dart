@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_widgets/my_widgets.dart';
+import 'package:string_capitalize/string_capitalize.dart';
 
 class CreateDishesPage extends StatefulWidget {
   const CreateDishesPage({super.key});
@@ -153,14 +154,55 @@ class _CreateDishesPageState extends State<CreateDishesPage> {
                           );
                         },
                       );
+                      /* исправить ошибку !!!*/
                       if (newName != null && newName.isNotEmpty) {
-                        setState(() {
-                          menu.children.add(
-                            MenuItem(newName, parentPath: menu.path),
+                        List<String> fullPath = [...menu.path, newName.capitalize()];
+                        if (menu.findByPath(fullPath) != false) {
+                          debugPrint('Элемент с таким именем уже существует');
+                          // Элемент с таким путем уже существует
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Элемент с таким именем уже существует!'),
+                            ),
                           );
-                        });
-                        // Автоматическое сохранение после добавления
-                        DirectoryFilesUtils.saveMenuToFile(menu, filename);
+                          return;
+                        } else {
+                          setState(() {
+                            menu.children.add(
+                              MenuItem(
+                                newName.toLowerCase(),
+                                parentPath: menu.path,
+                              ),
+                            );
+                          });
+                          // Автоматическое сохранение после добавления
+                          DirectoryFilesUtils.saveMenuToFile(menu, filename);
+                        }
+                        // fullPath.add('/' + newName.toLowerCase());
+                        // List<String> fullPath = menu.path.add('/' + newName.toLowerCase());
+                        // '/' + newName.toLowerCase();
+                        // if (MenuItem.findByPath(menu.to) == null) {
+                        //   setState(() {
+                        //   menu.children.add(
+                        //     MenuItem(
+                        //       newName.toLowerCase(),
+                        //       parentPath: menu.path,
+                        //     ),
+                        //   );
+                        // });
+                        // // Автоматическое сохранение после добавления
+                        // DirectoryFilesUtils.saveMenuToFile(menu, filename);
+                        // }
+                        // setState(() {
+                        //   menu.children.add(
+                        //     MenuItem(
+                        //       newName.toLowerCase(),
+                        //       parentPath: menu.path,
+                        //     ),
+                        //   );
+                        // });
+                        // // Автоматическое сохранение после добавления
+                        // DirectoryFilesUtils.saveMenuToFile(menu, filename);
                       }
                     },
                     child: Text(
