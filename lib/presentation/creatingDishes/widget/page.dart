@@ -156,28 +156,20 @@ class _CreateDishesPageState extends State<CreateDishesPage> {
                       );
                       /* исправить ошибку !!!*/
                       if (newName != null && newName.isNotEmpty) {
-                        List<String> fullPath = [...menu.path, newName.capitalize()];
-                        if (menu.findByPath(fullPath) != false) {
-                          debugPrint('Элемент с таким именем уже существует');
-                          // Элемент с таким путем уже существует
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('Элемент с таким именем уже существует!'),
-                            ),
-                          );
-                          return;
+                        if (menu.changeElementByPath(newName.toLowerCase())) {
+                          const String message =
+                              'Папка с таким именем уже существует! Дайте другое имя';
+                          return showDialogOk(context, message, () {});
                         } else {
                           setState(() {
                             menu.children.add(
-                              MenuItem(
-                                newName.toLowerCase(),
-                                parentPath: menu.path,
-                              ),
+                              MenuItem(newName, parentPath: menu.path),
                             );
                           });
                           // Автоматическое сохранение после добавления
                           DirectoryFilesUtils.saveMenuToFile(menu, filename);
                         }
+
                         // fullPath.add('/' + newName.toLowerCase());
                         // List<String> fullPath = menu.path.add('/' + newName.toLowerCase());
                         // '/' + newName.toLowerCase();

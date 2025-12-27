@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_widgets/my_widgets.dart';
+import 'package:string_capitalize/string_capitalize.dart';
 
 class MenuScreen extends StatefulWidget {
   const MenuScreen({super.key});
@@ -181,12 +182,12 @@ class MenuItemWidget extends StatefulWidget {
   final MenuItem menu;
   // final int indexMenu;
 
-  const MenuItemWidget({
-    required this.title,
+  MenuItemWidget({
+    required String title,
     required this.menu,
     // required this.indexMenu,
     super.key,
-  });
+  }):title = title.capitalize();
 
   @override
   MenuItemWidgetState createState() => MenuItemWidgetState();

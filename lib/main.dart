@@ -10,6 +10,7 @@ import 'package:fastfood/presentation/creatingDishes/bloc/creating_dishes_bloc.d
 import 'package:fastfood/presentation/password/cubit/password_cubit.dart';
 import 'package:fastfood/presentation/purchases/bloc/purchases_bloc.dart';
 import 'package:fastfood/presentation/recalculation/bloc/recalculation_bloc.dart';
+import 'package:fastfood/presentation/staff/bloc/staff_bloc.dart';
 import 'package:fastfood/presentation/theme/cubit/theme_cubit.dart';
 import 'package:fastfood/routers.dart';
 import 'package:fastfood/theme.dart';
@@ -120,6 +121,9 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider(create: (context) => ThemeCubit(context)),
         BlocProvider(create: (context) => PasswordCubit(staffSQL:staffSql)),
+        BlocProvider(
+          create: (context) => StaffBloc(staffSql),
+        ),
         BlocProvider(
           create: (context) =>
               PurchasesBloc(purchasesSql: purchaseSql, storageSQL: storageSql),

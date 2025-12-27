@@ -1,11 +1,27 @@
 import 'package:data_table_2/data_table_2.dart';
 import 'package:fastfood/global_function.dart';
 import 'package:fastfood/navBar.dart';
+import 'package:fastfood/presentation/staff/widget/inputNewStaffDialog.dart';
 import 'package:fastfood/theme.dart';
 import 'package:flutter/material.dart';
 
-class Staff extends StatelessWidget {
+class Staff extends StatefulWidget {
   const Staff({super.key});
+
+  @override
+  State<Staff> createState() => _StaffState();
+}
+
+class _StaffState extends State<Staff> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,15 +35,24 @@ class Staff extends StatelessWidget {
             children: [
               Container(
                 margin: EdgeInsets.only(bottom: 8),
-                child: Center(
-                  child: Text(
-                    'Список пользователей',
-                    style: TextStyle(fontSize: 30),
-                  ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    SizedBox(),
+                    Text(
+                      'Список пользователей',
+                      style: TextStyle(fontSize: 30),
+                    ),
+
+                    Padding(
+                      padding: const EdgeInsets.only(right: 5.0),
+                      child: InputNewStaffDialog(),
+                    ),
+                  ],
                 ),
               ),
               Container(
-                height: 300,
+                height: 270,
                 margin: EdgeInsets.only(bottom: 8),
                 color: Colors.cyan,
                 child: DataTable2(
@@ -162,7 +187,7 @@ class Permission {
 }
 
 class PermissionsTableWidget extends StatefulWidget {
-  const PermissionsTableWidget({Key? key}) : super(key: key);
+  const PermissionsTableWidget({super.key});
 
   @override
   State<PermissionsTableWidget> createState() => _PermissionsTableWidgetState();

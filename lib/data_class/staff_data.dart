@@ -5,38 +5,37 @@ class StaffData {
   String position; // должность
   Map<String, bool>? powers; // полномочия
 
+  static Map<String, bool> transformationPowers(String? numberPowers) {
+    Map<String, bool> transformedPowers = {};
+    if (numberPowers == null || numberPowers.isEmpty) {
+      transformedPowers = powersData;
+    }
+    final powerKeys = powersData.keys.toList();
+    for (int i = 0; i < powerKeys.length; i++) {
+      transformedPowers[powerKeys[i]] =
+          numberPowers!.length > i && numberPowers[i] == '1' ? true : false;
+    }
+    return transformedPowers;
+  }
+
   StaffData({
-    required this.id,
+    this.id = 0,
     required this.login,
     required this.password,
     required this.position,
     Map<String, bool>? powers,
   }) : powers = powersData;
-          //  {
-          //    'страница_заказы': false, // 1
-          //    'страница_оплата': false, // 2
-          //    'совершать_возврат': false, // 3
-          //    'страница_склад': false, // 4
-          //    'страница_закупки': false, // 5
-          //    'страница_персонал': false, // 6
-          //    'страница_таблицы': false, // 7
-          //    'страница_создание_блюда': false, // 8
-          //    'страница_отчет': false, // 9
-          //    'страница_настройки': false, // 10
-          //  };
 }
 
-const Map<String, bool> powersData = 
-  {
-  'страница_заказы': false, // 1
-  'страница_оплата': false, // 2
-  'совершать_возврат': false, // 3
-  'страница_склад': false, // 4
-  'страница_закупки': false, // 5
-  'страница_персонал': false, // 6
-  'страница_таблицы': false, // 7
-  'страница_создание_блюда': false, // 8
-  'страница_отчет': false, // 9
-  'страница_настройки': false, // 10
-  };
-
+const Map<String, bool> powersData = {
+  'страница заказы': false, // 0
+  'страница оплата': false, // 1
+  'совершать возврат': false, // 2
+  'страница склад': false, // 3
+  'страница закупки': false, // 4
+  'страница персонал': false, // 5
+  'страница таблицы': false, // 6
+  'страница создание_блюда': false, // 7
+  'страница отчет': false, // 8
+  'страница настройки': false, // 9
+};

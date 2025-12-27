@@ -18,8 +18,8 @@ class StaffSQL {
   StaffSQL({required this.database});
 
   // Добавить рут (админа)
-  Future<int> insertRoot() {
-    return database
+  Future<int> insertRoot() async{
+    return await database
         .into(database.staffTableDB)
         .insert(
           StaffTableDBCompanion(
@@ -31,6 +31,28 @@ class StaffSQL {
         );
   }
 
+  // Добавить сотрудника
+  Future<int> insertStaff(StaffData staffData) async{
+    // if(staffData.powers == null || staffData.powers!.isEmpty) {
+    //   staffData.powers = powersData;
+    // }
+    if(staffData.position.isEmpty) {
+      staffData.position = 'сотрудник';
+    }
+    String powersString = '';
+    final powerKeys = powersData.keys.toList();
+    for (int i = 0; i < powerKeys.length; i++) {
+      powersString += (staffData.powers![powerKeys[i]] == true) ? '1' : '0';
+    }
+    return await database.into(database.staffTableDB).insert(
+          StaffTableDBCompanion(
+            login: Value(staffData.login),
+            password: Value(staffData.password),
+            position: Value(staffData.position),
+            powers: Value(powersString),
+          ),
+        );
+  }
 
   // Получить всех сотрудника
   Future<List<StaffData>> getAllStaff() async {

@@ -17,7 +17,7 @@ class _KeyboardPasswordState extends State<KeyboardPassword> {
   // late TextEditingController inputController;
   // final passwordController = TextEditingController();
   late PasswordCubit passwordBloc;
-  var _isObscured = true;
+  bool _isObscured = true;
 
   @override
   void initState() {
