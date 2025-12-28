@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:fastfood/DB/table/staffDB.dart';
 import 'package:fastfood/data_class/staff_data.dart';
+import 'package:fastfood/global_function.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:string_capitalize/string_capitalize.dart';
@@ -25,25 +27,71 @@ class StaffBloc extends Bloc<StaffEvent, StaffState> {
 
     // получать всех сотрудников при изменении в БД
     on<ListenerDataDB>((event, emit) async {
-      
       // final staffList = await staffSQL.getAllStaff();
       // for (var staff in staffList) {
       //   // print('Сотрудник из БД: Логин: ${staff.login}, \nПолномочия: ${staff.powers}');
-      
+
       // }
       emit(state.copyWith(staffDataList: event.staffDataList));
     });
 
-    // Получить всех сотрудников listener
+    // Изменение пароля сотрудника
     on<UpdatePasswordEvent>((event, emit) async {
-      // if
-      // emit(state.copyWith(staffDataList: staffList));
+      String message = changeInputNewPassword(
+        event.oldPassword,
+        event.retryOldPassword,
+        event.newPassword,
+      );
+      if (message == '0') {
+        message = changeInputOldPassword(
+          event.staffData,
+          event.oldPassword,
+        );
+        if (message == '0') {
+          message = await identityCheckPassword(event.newPassword);
+          if (message == '0') {
+            updateStaffData(event.staffData.copyWith(password: event.newPassword));
+            event.func();
+          } else {
+            ScaffoldMessenger.of(event.context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  message,
+                  style: TextStyle(fontSize: 18),
+                  textAlign: TextAlign.center,
+                ),
+                duration: Duration(seconds: 2),
+              ),
+            );
+            // showDialogOk(event.context, message, () {});
+          }
+        } else {
+          ScaffoldMessenger.of(event.context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  message,
+                  style: TextStyle(fontSize: 18),
+                  textAlign: TextAlign.center,
+                ),
+                duration: Duration(seconds: 2),
+              ),
+            );
+          // showDialogOk(event.context, message, () {});
+        }
+      } else {
+        ScaffoldMessenger.of(event.context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  message,
+                  style: TextStyle(fontSize: 18),
+                  textAlign: TextAlign.center,
+                ),
+                duration: Duration(seconds: 2),
+              ),
+            );
+        // showDialogOk(event.context, message, () {});
+      }
     });
-    // обновление списка сотрудников
-    // on<StaffEvent>((event, emit) async {
-    //   final staffList = await staffSQL.getAllStaff();
-    //   emit(state.copyWith(staffDataList: staffList));
-    // });
   }
 
   /* Функции */
@@ -84,7 +132,8 @@ class StaffBloc extends Bloc<StaffEvent, StaffState> {
   String changeInputNewPassword(
     String oldPassword,
     String retryOldPassword,
-    String newPassword) {
+    String newPassword,
+  ) {
     if (oldPassword.isEmpty) {
       return 'Введите старый пароль!';
     }
@@ -99,8 +148,18 @@ class StaffBloc extends Bloc<StaffEvent, StaffState> {
     }
     if (retryOldPassword != newPassword) {
       return 'Новый пароль не совпадает!';
+    } else {
+      return '0';
     }
-    else {
+  }
+  // Проверка ввода старого пароля
+  String changeInputOldPassword(
+    StaffData staffData,
+    String oldPassword,
+  ) {
+    if (oldPassword != staffData.password) {
+      return 'Старый пароль введён неверно!';
+    } else {
       return '0';
     }
   }

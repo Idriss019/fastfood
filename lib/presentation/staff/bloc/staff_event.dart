@@ -27,12 +27,16 @@ class UpdatePasswordEvent extends StaffEvent {
   final String oldPassword;
   final String retryOldPassword;
   final String newPassword;
+  final BuildContext context;
+  final Function func;
 
   const UpdatePasswordEvent({
     required this.staffData,
     required this.oldPassword,
     required this.retryOldPassword,
-    required this.newPassword
+    required this.newPassword,
+    required this.context,
+    required this.func
   });
 
   @override
@@ -40,7 +44,9 @@ class UpdatePasswordEvent extends StaffEvent {
     staffData,
     oldPassword,
     retryOldPassword,
-    newPassword
+    newPassword,
+    context,
+    func,
     ];
 }
 

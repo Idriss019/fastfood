@@ -2,6 +2,7 @@ import 'package:data_table_2/data_table_2.dart';
 import 'package:fastfood/data_class/staff_data.dart';
 import 'package:fastfood/global_function.dart';
 import 'package:fastfood/presentation/staff/bloc/staff_bloc.dart';
+import 'package:fastfood/presentation/staff/widget/password_cell.dart';
 // import 'package:fastfood/presentation/staff/widget/page.dart';
 import 'package:fastfood/theme.dart';
 import 'package:fastfood/widgetMetod.dart' hide customDataColumn;
@@ -20,11 +21,11 @@ class TableStaffWidget extends StatefulWidget {
 class _TableStaffWidgetState extends State<TableStaffWidget> {
   late StaffBloc staffBloc;
 
-  final oldPasswordController = TextEditingController();
-  final retryOldPasswordController = TextEditingController();
-  final newPasswordController = TextEditingController();
-  bool isObscuredOld = true;
-  bool isObscuredNew = true;
+  // final oldPasswordController = TextEditingController();
+  // final retryOldPasswordController = TextEditingController();
+  // final newPasswordController = TextEditingController();
+  // bool isObscuredOld = true;
+  // bool isObscuredNew = true;
 
   @override
   void initState() {
@@ -36,17 +37,17 @@ class _TableStaffWidgetState extends State<TableStaffWidget> {
   @override
   void dispose() {
     staffBloc.stopListening();
-    oldPasswordController.dispose();
-    retryOldPasswordController.dispose();
-    newPasswordController.dispose();
+    // oldPasswordController.dispose();
+    // retryOldPasswordController.dispose();
+    // newPasswordController.dispose();
     super.dispose();
   }
 
-  void clearInputControllers() {
-    oldPasswordController.clear();
-    retryOldPasswordController.clear();
-    newPasswordController.clear();
-  }
+  // void clearInputControllers() {
+  //   oldPasswordController.clear();
+  //   retryOldPasswordController.clear();
+  //   newPasswordController.clear();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -178,248 +179,8 @@ class _TableStaffWidgetState extends State<TableStaffWidget> {
 
         /// Пароль
         DataCell(
-          textFieldCellWithReg3(
-            '•' * i.password.length,
-            context,
-            bloc,
-            TextAlign.center,
-            () async{
-              await showDialog(
-                context: context,
-                builder: (context) {
-                  return StatefulBuilder(
-                    builder: (context, setState) {
-                      return AlertDialog(
-                        content: Text(
-                          'Изменить пароль для ${i.login}',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 24),
-                        ),
-                        actions: [
-                          Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              SizedBox(
-                                width: 300,
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      'Старый пароль :',
-                                      style: TextStyle(fontSize: 18),
-                                    ),
-                                    SizedBox.fromSize(size: Size(10, 0)),
-                                    Expanded(
-                                      child: TextField(
-                                        obscureText: isObscuredOld,
-                                        controller: oldPasswordController,
-                                        textAlign: TextAlign.center,
-                                        keyboardType: TextInputType.number,
-                                        inputFormatters: <TextInputFormatter>[
-                                          FilteringTextInputFormatter
-                                              .digitsOnly,
-                                        ], // С таким фильтром могут быть введены только числа
-                                        decoration: InputDecoration(
-                                          suffixIcon: IconButton(
-                                            icon: Icon(
-                                              isObscuredOld
-                                                  ? Icons.visibility_off
-                                                  : Icons.visibility,
-                                            ),
-                                            onPressed: () {
-                                              setState(() {
-                                                isObscuredOld = !isObscuredOld;
-                                              });
-                                            },
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              SizedBox(
-                                width: 300,
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      'Повторить :',
-                                      style: TextStyle(fontSize: 18),
-                                    ),
-                                    SizedBox.fromSize(size: Size(10, 0)),
-                                    Expanded(
-                                      child: TextField(
-                                        obscureText: isObscuredOld,
-                                        controller: retryOldPasswordController,
-                                        textAlign: TextAlign.center,
-                                        keyboardType: TextInputType.number,
-                                        inputFormatters: <TextInputFormatter>[
-                                          FilteringTextInputFormatter
-                                              .digitsOnly,
-                                        ], // С таким фильтром могут быть введены только числа
-                                        decoration: InputDecoration(
-                                          suffixIcon: IconButton(
-                                            icon: Icon(
-                                              isObscuredOld
-                                                  ? Icons.visibility_off
-                                                  : Icons.visibility,
-                                            ),
-                                            onPressed: () {
-                                              setState(() {
-                                                isObscuredOld = !isObscuredOld;
-                                              });
-                                            },
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              SizedBox(
-                                width: 300,
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      'Новый пароль :',
-                                      style: TextStyle(fontSize: 18),
-                                    ),
-                                    SizedBox.fromSize(size: Size(10, 0)),
-                                    Expanded(
-                                      child: TextField(
-                                        obscureText: isObscuredNew,
-                                        controller: newPasswordController,
-                                        textAlign: TextAlign.center,
-                                        keyboardType: TextInputType.number,
-                                        inputFormatters: <TextInputFormatter>[
-                                          FilteringTextInputFormatter
-                                              .digitsOnly,
-                                        ], // С таким фильтром могут быть введены только числа
-                                        decoration: InputDecoration(
-                                          suffixIcon: IconButton(
-                                            icon: Icon(
-                                              isObscuredNew
-                                                  ? Icons.visibility_off
-                                                  : Icons.visibility,
-                                            ),
-                                            onPressed: () {
-                                              setState(() {
-                                                isObscuredNew = !isObscuredNew;
-                                              });
-                                            },
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              SizedBox(height: 20),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  /* кнопка отмены */
-                                  TextButton(
-                                    onPressed: () {
-                                      clearInputControllers();
-                                      Navigator.pop(context);
-                                    },
-                                    child: Text(
-                                      'Отмена',
-                                      style: TextStyle(
-                                        color: colorText,
-                                        fontSize: 20,
-                                      ),
-                                    ),
-                                  ),
-                                  /*  кнопка принятия */
-                                  TextButton(
-                                    onPressed: () async {
-                                      // String login =
-                                      //     inputLoginController.text.saveText();
-                                      // String password =
-                                      //     inputPasswordController.text.saveText();
-
-                                      // String message = staffBloc.changeInput(
-                                      //   inputLoginController.text,
-                                      //   inputPasswordController.text,
-                                      // );
-                                      // if (message == '0') {
-                                      //   message = await staffBloc.identityCheck(
-                                      //     login, password
-                                      //   );
-                                      //   if(message == '0'){
-                                      //     staffBloc.add(
-                                      //     InsertStaffEvent(
-                                      //       staffData: StaffData(
-                                      //         login: login,
-                                      //         password: password,
-                                      //         position: inputPotionController.text
-                                      //             .saveText(),
-                                      //         powers: StaffData.transformationPowersToMap(
-                                      //           inputPowerController.text,
-                                      //         ),
-                                      //       ),
-                                      //     ),
-                                      //   );
-                                      //   clearInputControllers();
-                                      //   } else {
-                                      //     ScaffoldMessenger.of(context).showSnackBar(
-                                      //       SnackBar(
-                                      //         content: Text(
-                                      //           message,
-                                      //           style: TextStyle(fontSize: 18),
-                                      //           textAlign: TextAlign.center,
-                                      //         ),
-                                      //         duration: Duration(seconds: 2),
-                                      //       ),
-                                      //     );
-                                      //     return;
-                                      //   }
-                                      // } else {
-                                      //   ScaffoldMessenger.of(context).showSnackBar(
-                                      //     SnackBar(
-                                      //       content: Text(
-                                      //         message,
-                                      //         style: TextStyle(fontSize: 18),
-                                      //         textAlign: TextAlign.center,
-                                      //       ),
-                                      //       duration: Duration(seconds: 2),
-                                      //     ),
-                                      //   );
-                                      //   return;
-                                      // }
-                                      Navigator.pop(context);
-                                    },
-                                    child: Text(
-                                      'Добавить',
-                                      style: TextStyle(
-                                        color: colorText,
-                                        fontSize: 20,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                },
-              );
-              // (String title) {
-              //   bloc.updateStaffData(
-              //     i.copyWith(powers: StaffData.transformationPowersToMap(title)),
-              //   );
-              // Navigator.pop(context);
-            },
-            FilteringTextInputFormatter
-                .digitsOnly, // С таким фильтром могут быть введены только числа
-            1,
-            colorText,
-          ),
+          PasswordCellWidget(i:i)
+          // passwordCell(i, context, bloc, colorText),
         ),
 
         /// Код полномочий
@@ -435,7 +196,7 @@ class _TableStaffWidgetState extends State<TableStaffWidget> {
               );
               Navigator.pop(context);
             },
-            FilteringTextInputFormatter.allow(RegExp(r'[01]+')),
+            FilteringTextInputFormatter.allow(RegExp(r'[01]+')), // Только 0 и 1
             1,
             colorText,
           ),
@@ -577,4 +338,212 @@ class _TableStaffWidgetState extends State<TableStaffWidget> {
     }
     return dataR;
   }
+
+  // TextButton passwordCell(StaffData i, context, StaffBloc bloc, colorText) {
+  //   return textFieldCellWithReg3(
+  //         '•' * i.password.length,
+  //         context,
+  //         bloc,
+  //         TextAlign.center,
+  //         () async {
+  //           await showDialog(
+  //             context: context,
+  //             builder: (context) {
+  //               return StatefulBuilder(
+  //                 builder: (context, setState) {
+  //                   return AlertDialog(
+  //                     content: Text(
+  //                       'Изменить пароль для ${i.login}',
+  //                       textAlign: TextAlign.center,
+  //                       style: TextStyle(fontSize: 24),
+  //                     ),
+  //                     actions: [
+  //                       Column(
+  //                         mainAxisSize: MainAxisSize.min,
+  //                         children: [
+  //                           SizedBox(
+  //                             width: 300,
+  //                             child: Row(
+  //                               children: [
+  //                                 Text(
+  //                                   'Старый пароль :',
+  //                                   style: TextStyle(fontSize: 18),
+  //                                 ),
+  //                                 SizedBox.fromSize(size: Size(10, 0)),
+  //                                 Expanded(
+  //                                   child: TextField(
+  //                                     obscureText: isObscuredOld,
+  //                                     controller: oldPasswordController,
+  //                                     textAlign: TextAlign.center,
+  //                                     keyboardType: TextInputType.number,
+  //                                     inputFormatters: <TextInputFormatter>[
+  //                                       FilteringTextInputFormatter
+  //                                           .digitsOnly,
+  //                                     ], // С таким фильтром могут быть введены только числа
+  //                                     decoration: InputDecoration(
+  //                                       suffixIcon: IconButton(
+  //                                         icon: Icon(
+  //                                           isObscuredOld
+  //                                               ? Icons.visibility_off
+  //                                               : Icons.visibility,
+  //                                         ),
+  //                                         onPressed: () {
+  //                                           setState(() {
+  //                                             isObscuredOld = !isObscuredOld;
+  //                                           });
+  //                                         },
+  //                                       ),
+  //                                     ),
+  //                                   ),
+  //                                 ),
+  //                               ],
+  //                             ),
+  //                           ),
+  //                           SizedBox(
+  //                             width: 300,
+  //                             child: Row(
+  //                               children: [
+  //                                 Text(
+  //                                   'Новый пароль :',
+  //                                   style: TextStyle(fontSize: 18),
+  //                                 ),
+  //                                 SizedBox.fromSize(size: Size(10, 0)),
+  //                                 Expanded(
+  //                                   child: TextField(
+  //                                     obscureText: isObscuredNew,
+  //                                     controller: newPasswordController,
+  //                                     textAlign: TextAlign.center,
+  //                                     keyboardType: TextInputType.number,
+  //                                     inputFormatters: <TextInputFormatter>[
+  //                                       FilteringTextInputFormatter
+  //                                           .digitsOnly,
+  //                                     ], // С таким фильтром могут быть введены только числа
+  //                                     decoration: InputDecoration(
+  //                                       suffixIcon: IconButton(
+  //                                         icon: Icon(
+  //                                           isObscuredNew
+  //                                               ? Icons.visibility_off
+  //                                               : Icons.visibility,
+  //                                         ),
+  //                                         onPressed: () {
+  //                                           setState(() {
+  //                                             isObscuredNew = !isObscuredNew;
+  //                                           });
+  //                                         },
+  //                                       ),
+  //                                     ),
+  //                                   ),
+  //                                 ),
+  //                               ],
+  //                             ),
+  //                           ),
+  //                           SizedBox(
+  //                             width: 300,
+  //                             child: Row(
+  //                               children: [
+  //                                 Text(
+  //                                   'Повторить :',
+  //                                   style: TextStyle(fontSize: 18),
+  //                                 ),
+  //                                 SizedBox.fromSize(size: Size(10, 0)),
+  //                                 Expanded(
+  //                                   child: TextField(
+  //                                     obscureText: isObscuredOld,
+  //                                     controller: retryOldPasswordController,
+  //                                     textAlign: TextAlign.center,
+  //                                     keyboardType: TextInputType.number,
+  //                                     inputFormatters: <TextInputFormatter>[
+  //                                       FilteringTextInputFormatter
+  //                                           .digitsOnly,
+  //                                     ], // С таким фильтром могут быть введены только числа
+  //                                     decoration: InputDecoration(
+  //                                       suffixIcon: IconButton(
+  //                                         icon: Icon(
+  //                                           isObscuredOld
+  //                                               ? Icons.visibility_off
+  //                                               : Icons.visibility,
+  //                                         ),
+  //                                         onPressed: () {
+  //                                           setState(() {
+  //                                             isObscuredOld = !isObscuredOld;
+  //                                           });
+  //                                         },
+  //                                       ),
+  //                                     ),
+  //                                   ),
+  //                                 ),
+  //                               ],
+  //                             ),
+  //                           ),
+  //                           SizedBox(height: 20),
+  //                           Row(
+  //                             mainAxisAlignment:
+  //                                 MainAxisAlignment.spaceBetween,
+  //                             children: [
+  //                               /* кнопка отмены */
+  //                               TextButton(
+  //                                 onPressed: () {
+  //                                   clearInputControllers();
+  //                                   Navigator.pop(context);
+  //                                 },
+  //                                 child: Text(
+  //                                   'Отмена',
+  //                                   style: TextStyle(
+  //                                     color: colorText,
+  //                                     fontSize: 20,
+  //                                   ),
+  //                                 ),
+  //                               ),
+  //                               /*  кнопка принятия */
+  //                               TextButton(
+  //                                 onPressed: () async {
+  //                                   staffBloc.add(
+  //                                     UpdatePasswordEvent(
+  //                                       staffData: i,
+  //                                       oldPassword:
+  //                                           oldPasswordController.text,
+  //                                       retryOldPassword:
+  //                                           retryOldPasswordController.text,
+  //                                       newPassword:
+  //                                           newPasswordController.text,
+  //                                       context: context,
+  //                                       func: () {
+  //                                         clearInputControllers();
+  //                                         Navigator.pop(context);
+  //                                       },
+  //                                     ),
+  //                                   );
+  //                                   // clearInputControllers();
+  //                                   // Navigator.pop(context);
+  //                                 },
+  //                                 child: Text(
+  //                                   'Изменить',
+  //                                   style: TextStyle(
+  //                                     color: colorText,
+  //                                     fontSize: 20,
+  //                                   ),
+  //                                 ),
+  //                               ),
+  //                             ],
+  //                           ),
+  //                         ],
+  //                       ),
+  //                     ],
+  //                   );
+  //                 },
+  //               );
+  //             },
+  //           );
+  //           // (String title) {
+  //           //   bloc.updateStaffData(
+  //           //     i.copyWith(powers: StaffData.transformationPowersToMap(title)),
+  //           //   );
+  //           // Navigator.pop(context);
+  //         },
+  //         FilteringTextInputFormatter
+  //             .digitsOnly, // С таким фильтром могут быть введены только числа
+  //         1,
+  //         colorText,
+  //       );
+  // }
 }
