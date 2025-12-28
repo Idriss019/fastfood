@@ -1,3 +1,4 @@
+import 'package:dart_helper_method/string_helper.dart';
 import 'package:drift/drift.dart';
 import 'package:fastfood/DB/database.dart';
 import 'package:fastfood/data_class/staff_data.dart';
@@ -18,7 +19,7 @@ class StaffSQL {
   StaffSQL({required this.database});
 
   // Добавить рут (админа)
-  Future<int> insertRoot() async{
+  Future<int> insertRoot() async {
     return await database
         .into(database.staffTableDB)
         .insert(
@@ -32,19 +33,21 @@ class StaffSQL {
   }
 
   // Добавить сотрудника
-  Future<int> insertStaff(StaffData staffData) async{
+  Future<int> insertStaff(StaffData staffData) async {
     // if(staffData.powers == null || staffData.powers!.isEmpty) {
     //   staffData.powers = powersData;
     // }
-    if(staffData.position.isEmpty) {
-      staffData.position = 'сотрудник';
+    if (staffData.position.isEmpty) {
+      staffData = staffData.copyWith(position: 'сотрудник');
     }
     String powersString = '';
     final powerKeys = powersData.keys.toList();
     for (int i = 0; i < powerKeys.length; i++) {
       powersString += (staffData.powers![powerKeys[i]] == true) ? '1' : '0';
     }
-    return await database.into(database.staffTableDB).insert(
+    return await database
+        .into(database.staffTableDB)
+        .insert(
           StaffTableDBCompanion(
             login: Value(staffData.login),
             password: Value(staffData.password),
@@ -54,25 +57,128 @@ class StaffSQL {
         );
   }
 
-  // Получить всех сотрудника
+  // Получить всех сотрудников
   Future<List<StaffData>> getAllStaff() async {
     final queryResult = await database.select(database.staffTableDB).get();
     return queryResult.map((row) {
-      final powersString = row.powers ?? '';
-      final powersMap = <String, bool>{};
-      final powerKeys = powersData.keys.toList();
+      // final powersString = row.powers ?? '';
+      // final powersMap = <String, bool>{};
+      // final powerKeys = powersData.keys.toList();
 
-      for (int i = 0; i < powerKeys.length; i++) {
-        powersMap[powerKeys[i]] =
-            i < powersString.length && powersString[i] == '1' ? true : false;
-      }
+      // for (int i = 0; i < powerKeys.length; i++) {
+      //   powersMap[powerKeys[i]] =
+      //       i < powersString.length && powersString[i] == '1' ? true : false;
+      // }
       return StaffData(
         id: row.id,
         login: row.login!.capitalizeEach(),
         password: row.password ?? '',
         position: row.position != null ? row.position!.capitalizeEach() : '',
-        powers: powersMap,
+        powers: StaffData.transformationPowersToMap(
+          row.powers ?? '',
+        ), //powersMap,
       );
     }).toList();
   }
+
+  // Получить всех сотрудников listener
+  Stream<List<StaffData>> watchAllStaff() {
+    final query = database.select(database.staffTableDB);
+    return query.watch().map((rows) {
+      return rows.map((row) {
+        // print('Проверка получения сотрудника из БД: ${row.powers}');
+        // final powersString = row.powers ?? '';
+        // final powersMap = <String, bool>{};
+        // final powerKeys = powersData.keys.toList();
+
+        // for (int i = 0; i < powerKeys.length; i++) {
+        //   powersMap[powerKeys[i]] = powersString[i] == '1' ? true : false;
+        // }
+        // print(
+        //   'Проверка получения полномочий сотрудника!!: ${StaffData.transformationPowersToMap(row.powers ?? '')}',
+        // );
+        return StaffData(
+          id: row.id,
+          login: row.login!.capitalizeEach(),
+          password: row.password ?? '',
+          position: row.position != null ? row.position!.capitalizeEach() : '',
+          powers: StaffData.transformationPowersToMap(
+            row.powers ?? '',
+          ), //powersMap,
+        );
+      }).toList();
+    });
+  }
+
+  // // Обновить сотрудника по login
+  // Future<bool> updateStaffByLogin(StaffData staffData) async {
+  //   // String powersString = '';
+  //   // final powerKeys = powersData.keys.toList();
+  //   // for (int i = 0; i < powerKeys.length; i++) {
+  //   //   powersString += (staffData.powers![powerKeys[i]] == true) ? '1' : '0';
+  //   // }
+  //   final updateCompanion = StaffTableDBCompanion(
+  //     login: Value(staffData.login.saveText()),
+  //     password: Value(staffData.password),
+  //     position: Value(staffData.position),
+  //     powers: Value(StaffData.transformationPowersToString(staffData.powers)),
+  //   );
+  //   final rowsAffected =
+  //       await (database.update(database.staffTableDB)
+  //             ..where((tbl) => tbl.login.equals(staffData.login)))
+  //           .write(updateCompanion);
+  //   return rowsAffected > 0;
+  // }
+
+  // Изменить по login
+  Future<void> updateStaffByLogin2(StaffData staffData) async {
+    await (database.update(
+      database.staffTableDB,
+    )..where((tbl) => tbl.login.equals(staffData.login.toLowerCase()))).write(
+      StaffTableDBCompanion(
+        login: Value(staffData.login.toLowerCase()),
+        password: Value(staffData.password),
+        position: Value(staffData.position.toLowerCase()),
+        powers: Value(StaffData.transformationPowersToString(staffData.powers)),
+      ),
+    );
+  }
+
+  // Изменить по login
+  Future<void> updateById(StaffData staffData) async {
+    await (database.update(
+      database.staffTableDB,
+    )..where((tbl) => tbl.id.equals(staffData.id))).write(
+      StaffTableDBCompanion(
+        login: Value(staffData.login.toLowerCase()),
+        password: Value(staffData.password),
+        position: Value(staffData.position.toLowerCase()),
+        powers: Value(StaffData.transformationPowersToString(staffData.powers)),
+      ),
+    );
+  }
+
+  Future<void> deleteById(StaffData staffData) async {
+    await (database.delete(database.staffTableDB)
+          ..where((tbl) => tbl.id.equals(staffData.id)))
+        .go();
+  }
+
+  // Future<bool> updateStaff(StaffData staffData) async {
+  //   String powersString = '';
+  //   final powerKeys = powersData.keys.toList();
+  //   for (int i = 0; i < powerKeys.length; i++) {
+  //     powersString += (staffData.powers![powerKeys[i]] == true) ? '1' : '0';
+  //   }
+  //   final updateCompanion = StaffTableDBCompanion(
+  //     login: Value(staffData.login),
+  //     password: Value(staffData.password),
+  //     position: Value(staffData.position),
+  //     powers: Value(powersString),
+  //   );
+  //   final rowsAffected = await (database.update(
+  //     database.staffTableDB,
+  //   )..where((tbl) => tbl.id.equals(staffData.id))).write(updateCompanion);
+  //   return rowsAffected > 0;
+  // }
 }

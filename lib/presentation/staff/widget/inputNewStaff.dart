@@ -8,14 +8,14 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fastfood/theme.dart';
 
-class InputNewStaffDialog extends StatefulWidget {
-  const InputNewStaffDialog({super.key});
+class InputNewStaffDialogWidget extends StatefulWidget {
+  const InputNewStaffDialogWidget({super.key});
 
   @override
-  State<InputNewStaffDialog> createState() => _StateInputNewStaffDialog();
+  State<InputNewStaffDialogWidget> createState() => _StateInputNewStaffDialog();
 }
 
-class _StateInputNewStaffDialog extends State<InputNewStaffDialog> {
+class _StateInputNewStaffDialog extends State<InputNewStaffDialogWidget> {
   late StaffBloc staffBloc;
   final inputPotionController = TextEditingController();
   final inputLoginController = TextEditingController();
@@ -174,21 +174,61 @@ class _StateInputNewStaffDialog extends State<InputNewStaffDialog> {
                             ),
                             /*  кнопка принятия */
                             TextButton(
-                              onPressed: () {
-                                staffBloc.add(
-                                  InsertStaffEvent(
-                                    staffData: StaffData(
-                                      login: inputLoginController.text
-                                          .saveText(),
-                                      password: inputPasswordController.text
-                                          .saveText(),
-                                      position: inputPotionController.text
-                                          .saveText(),
-                                      powers: StaffData.transformationPowers(inputPowerController.text),
-                                    ),
-                                  ),
+                              onPressed: () async{
+                                String login =
+                                    inputLoginController.text.saveText();
+                                String password =
+                                    inputPasswordController.text.saveText();
+                                
+                                String message = staffBloc.changeInput(
+                                  inputLoginController.text,
+                                  inputPasswordController.text,
                                 );
-                                clearInputControllers();
+                                if (message == '0') {
+                                  message = await staffBloc.identityCheck(
+                                    login, password
+                                  );
+                                  if(message == '0'){
+                                    staffBloc.add(
+                                    InsertStaffEvent(
+                                      staffData: StaffData(
+                                        login: login,
+                                        password: password,
+                                        position: inputPotionController.text
+                                            .saveText(),
+                                        powers: StaffData.transformationPowersToMap(
+                                          inputPowerController.text,
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                  clearInputControllers();
+                                  } else {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          message,
+                                          style: TextStyle(fontSize: 18),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                        duration: Duration(seconds: 2),
+                                      ),
+                                    );
+                                    return;
+                                  }
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        message,
+                                        style: TextStyle(fontSize: 18),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                      duration: Duration(seconds: 2),
+                                    ),
+                                  );
+                                  return;
+                                }
                                 Navigator.pop(context);
                               },
                               child: Text(

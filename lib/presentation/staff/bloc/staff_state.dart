@@ -1,6 +1,7 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 part of 'staff_bloc.dart';
 
-sealed class StaffState extends Equatable {
+class StaffState extends Equatable {
   // final String position;
   // final String inputPower;
   // final String inputLogin;
@@ -23,6 +24,14 @@ sealed class StaffState extends Equatable {
         // inputPassword,
         staffDataList,
   ];
+
+  StaffState copyWith({
+    List<StaffData>? staffDataList,
+  }) {
+    return StaffState(
+      staffDataList: staffDataList ?? this.staffDataList,
+    );
+  }
 }
 
 final class StaffInitial extends StaffState {

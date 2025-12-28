@@ -550,6 +550,42 @@ TextButton textFieldCellWithReg2(
   );
 }
 
+TextButton textFieldCellWithReg3(
+  String title,
+  BuildContext context,
+  bloc,
+  TextAlign textAlign,
+  Function func,
+  TextInputFormatter? formatInput,
+  int? maxLine,
+  Color colorText, {
+  bool separator = false,
+}) {
+  String funcSeparator(String number) {
+    if (separator) {
+      return digitSeparator(number);
+    } else {
+      return number;
+    }
+  }
+
+  return TextButton(
+    style: TextButton.styleFrom(padding: EdgeInsets.zero),
+    child: SizedBox(
+      width: double.infinity,
+      child: Text(
+        funcSeparator(title.capitalizeEach()),
+        textAlign: textAlign,
+        maxLines: maxLine ?? 1,
+        style: TextStyle(color: colorText),
+      ),
+    ),
+    onPressed: () async{
+      await func();
+    },
+  );
+}
+
 /* Разделитель разрядов */
 String digitSeparator(String number, {String separator = ' '}) {
   String result = '';

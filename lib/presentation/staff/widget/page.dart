@@ -1,9 +1,11 @@
 import 'package:data_table_2/data_table_2.dart';
-import 'package:fastfood/global_function.dart';
 import 'package:fastfood/navBar.dart';
-import 'package:fastfood/presentation/staff/widget/inputNewStaffDialog.dart';
+import 'package:fastfood/presentation/password/cubit/password_cubit.dart';
+import 'package:fastfood/presentation/staff/widget/inputNewStaff.dart';
+import 'package:fastfood/presentation/staff/widget/table_staff.dart';
 import 'package:fastfood/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class Staff extends StatefulWidget {
   const Staff({super.key});
@@ -46,7 +48,7 @@ class _StaffState extends State<Staff> {
 
                     Padding(
                       padding: const EdgeInsets.only(right: 5.0),
-                      child: InputNewStaffDialog(),
+                      child: InputNewStaffDialogWidget(),
                     ),
                   ],
                 ),
@@ -55,102 +57,20 @@ class _StaffState extends State<Staff> {
                 height: 270,
                 margin: EdgeInsets.only(bottom: 8),
                 color: Colors.cyan,
-                child: DataTable2(
-                  // scrollController:
-                  //     yourScrollController, ~d#CpHm97~EF  KhkqAd%RTqo9
-                  columnSpacing: 5,
-                  horizontalMargin: 10,
-                  headingTextStyle: TextStyle(
-                    fontWeight: FontWeight.w500,
-                    fontSize: 20,
-                  ),
-                  dataTextStyle: TextStyle(
-                    // color: invertColor,
-                    fontWeight: FontWeight.w500,
-                    // fontSize: 25,
-                  ),
-                  // border: TableBorder.all(
-                  //     // color: Colors.grey,
-                  //     // borderRadius: BorderRadius.only(
-                  //     //     bottomLeft: Radius.circular(20),
-                  //     //     bottomRight: Radius.circular(20))
-                  //     ),
-                  headingRowColor: WidgetStateProperty.all(Colors.blueGrey),
-                  dataRowHeight: 40,
-                  columns: [
-                    customDataColumn(
-                      'Должность',
-                      TextAlign.center,
-                      18,
-                      180,
-                      maxLine: 2,
-                    ),
-                    customDataColumn('Логин', TextAlign.center, null, null),
-                    customDataColumn(
-                      'Пароль',
-                      TextAlign.center,
-                      18,
-                      180,
-                      maxLine: 2,
-                    ),
-                    customDataColumn(
-                      'Код полномочий',
-                      TextAlign.center,
-                      16,
-                      180,
-                      maxLine: 2,
-                    ),
-                    customDataColumn('Удалить', TextAlign.center, 13, 50),
-                    // customDataColumn(
-                    //   'масса мл/г',
-                    //   TextAlign.center,
-                    //   13,
-                    //   80,
-                    // ),
-                    // customDataColumn(
-                    //   'Цена',
-                    //   TextAlign.center,
-                    //   18,
-                    //   100,
-                    // ),
-                    // customDataColumn('шт/г/мл', TextAlign.center, 13, 80),
-                    // customDataColumn('измерение ', TextAlign.center, 13, 80),
-                    // customDataColumn('Количество', TextAlign.center, 18, 100),
-
-                    // customDataColumn('Удалить', TextAlign.center, 13, 50),
-                    // customDataColumn('Кол', TextAlign.center, 15, 90),
-                    // customDataColumn(
-                    //   'Цена в с',
-                    //   TextAlign.center,
-                    //   18,
-                    //   100,
-                    // ),
-                    // customDataColumn(
-                    //   'Сумма в с.',
-                    //   TextAlign.center,
-                    //   18,
-                    //   150,
-                    // ),
-                  ],
-                  rows: //listTable
-                      [],
-                  // ),
-                  // _createRows(
-                  //     // state.purchasesListSQL,
-                  //     // _bloc.switchableList.listPosition(),
-                  //     // _bloc.state.listPosition(),
-
-                  //     swichList.listPosition(),
-                  //     context,
-                  //     _bloc,
-                  //     invertColor),
-                ),
+                child: TableStaffWidget(),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   Text('Таблица полномочий ↓', style: TextStyle(fontSize: 30)),
-                  Text('Логин: Администратор', style: TextStyle(fontSize: 30)),
+                  BlocBuilder<PasswordCubit, PasswordState>(
+                    builder: (context, state) {
+                      return Text(
+                        'Логин: ${state.login}',
+                        style: TextStyle(fontSize: 30),
+                      );
+                    },
+                  ),
                 ],
               ),
               Container(
@@ -171,6 +91,8 @@ class _StaffState extends State<Staff> {
     );
   }
 }
+
+
 
 class Permission {
   final String name; // Название полномочия

@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:fastfood/DB/table/staffDB.dart';
 import 'package:fastfood/data_class/staff_data.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:string_capitalize/string_capitalize.dart';
 
 part 'staff_event.dart';
 part 'staff_state.dart';
@@ -9,9 +12,186 @@ part 'staff_state.dart';
 class StaffBloc extends Bloc<StaffEvent, StaffState> {
   final StaffSQL staffSQL;
   StaffBloc(this.staffSQL) : super(StaffInitial()) {
-    on<InsertStaffEvent>((event, emit) async{
+    /* События */
+    on<InsertStaffEvent>((event, emit) async {
       await staffSQL.insertStaff(event.staffData);
-      // TODO: implement event handler
+    });
+
+    // Получить всех сотрудников listener
+    on<StaffEvent>((event, emit) async {
+      final staffList = await staffSQL.getAllStaff();
+      emit(state.copyWith(staffDataList: staffList));
+    });
+
+    // получать всех сотрудников при изменении в БД
+    on<ListenerDataDB>((event, emit) async {
+      
+      // final staffList = await staffSQL.getAllStaff();
+      // for (var staff in staffList) {
+      //   // print('Сотрудник из БД: Логин: ${staff.login}, \nПолномочия: ${staff.powers}');
+      
+      // }
+      emit(state.copyWith(staffDataList: event.staffDataList));
+    });
+
+    // Получить всех сотрудников listener
+    on<UpdatePasswordEvent>((event, emit) async {
+      // if
+      // emit(state.copyWith(staffDataList: staffList));
+    });
+    // обновление списка сотрудников
+    // on<StaffEvent>((event, emit) async {
+    //   final staffList = await staffSQL.getAllStaff();
+    //   emit(state.copyWith(staffDataList: staffList));
+    // });
+  }
+
+  /* Функции */
+  StreamSubscription? _staffSubscription;
+  // Проверка ввода логина и пароля
+  String changeInput(String login, String password) {
+    if (login.isEmpty) {
+      return 'Введите логин!';
+    }
+    if (password.isEmpty) {
+      return 'Введите пароль!';
+    }
+    if (password.length < 4) {
+      return 'Введите пароль не менее 4 символов!';
+    } else {
+      return '0';
+    }
+  }
+
+  // Проверка на уникальность логина и пароля
+  Future<String> identityCheck(String login, String password) async {
+    String result = '0';
+
+    await staffSQL.getAllStaff().then((staffList) {
+      for (var staff in staffList) {
+        if (staff.login == login.toLowerCase().capitalize()) {
+          return result = 'Этот логин занят!';
+        }
+        if (staff.password == password) {
+          return result = 'Этот пароль занят!';
+        }
+      }
+    });
+    return result;
+  }
+
+  // Проверка ввода нового пароля
+  String changeInputNewPassword(
+    String oldPassword,
+    String retryOldPassword,
+    String newPassword) {
+    if (oldPassword.isEmpty) {
+      return 'Введите старый пароль!';
+    }
+    if (retryOldPassword.isEmpty) {
+      return 'Повторите старый пароль!';
+    }
+    if (newPassword.isEmpty) {
+      return 'Введите новый пароль!';
+    }
+    if (newPassword.length < 4) {
+      return 'Введите новый пароль не менее 4 символов!';
+    }
+    if (retryOldPassword != newPassword) {
+      return 'Новый пароль не совпадает!';
+    }
+    else {
+      return '0';
+    }
+  }
+
+  // Проверка на уникальность пароля
+  Future<String> identityCheckPassword(String password) async {
+    String result = '0';
+
+    await staffSQL.getAllStaff().then((staffList) {
+      for (var staff in staffList) {
+        if (staff.password == password) {
+          return result = 'Этот пароль занят!';
+        }
+      }
+    });
+    return result;
+  }
+
+  // Обновить список сотрудников в DB
+  Future<void> updateStaffData(StaffData staffData) async {
+    // await staffSQL.updateStaffByLogin2(staffData);
+    await staffSQL.updateById(staffData);
+  }
+
+  // удалить сотрудника из DB
+  Future<void> deleteStaffData(StaffData staffData) async {
+    await staffSQL.deleteById(staffData);
+  }
+
+  // Начать слушать изменения в БД сотрудников
+  void startListening() {
+    _staffSubscription = staffSQL.watchAllStaff().listen((newStaffList) {
+      add(ListenerDataDB(newStaffList));
     });
   }
+
+  // Остановить прослушивание (обязательно!)
+  void stopListening() {
+    _staffSubscription?.cancel();
+    _staffSubscription = null;
+  }
+
+  // void startListening({String sort = 'found'}) {
+  //   switch (sort) {
+  //     case 'found':
+  //       {
+  //         _storageSubscription =
+  //             storageSql.watchAllStorage().listen((newStorageListSQL) {
+  //           add(UpdateTableRecalculation(
+  //               newList:
+  //                   quickSortReversed(newStorageListSQL, (getKey) => getKey.found)));
+  //         });
+  //       }
+  //     case 'barcode':
+  //       {
+  //         _storageSubscription =
+  //             storageSql.watchAllStorage().listen((newStorageListSQL) {
+  //           add(UpdateTableRecalculation(
+  //               newList:
+  //                   quickSort(newStorageListSQL, (getKey) => getKey.barcode)));
+  //         });
+  //       }
+  //     case 'product':
+  //       {
+  //         _storageSubscription =
+  //             storageSql.watchAllStorage().listen((newStorageListSQL) {
+  //           add(UpdateTableRecalculation(
+  //               newList:
+  //                   quickSort(newStorageListSQL, (getKey) => (getKey.product))));
+  //         });
+  //       }
+  //     case 'remainder':
+  //       {
+  //         _storageSubscription =
+  //             storageSql.watchAllStorage().listen((newStorageListSQL) {
+  //           add(UpdateTableRecalculation(
+  //               newList:
+  //                   quickSortByRemainder(newStorageListSQL)));
+  //         });
+  //       }
+  //     // _storageSubscription =
+  //     //     storageSql.watchAllStorage().listen((newStorageListSQL) {
+  //     //   add(UpdateTableRecalculation(newList: newStorageListSQL));
+  //     // });
+  //   }
+  // }
 }
+
+
+// final updatedList = state.staffDataList
+//     .map((e) => e.id == updated.id ? updated : e)
+//     .toList();
+
+// emit(state.copyWith(staffDataList: updatedList));
