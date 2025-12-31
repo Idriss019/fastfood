@@ -106,11 +106,12 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
+    AppDatabase appDatabase = AppDatabase();
     Map choiceTheme = {'light': lightTheme, 'dark': darkTheme};
-    final storageSql = StorageSQL(database: AppDatabase());
-    final purchaseSql = PurchasesSql(database: AppDatabase());
-    final dishesSQL = DishesSQL(database: AppDatabase());
-    final staffSql = StaffSQL(database: AppDatabase());
+    final storageSql = StorageSQL(database: appDatabase);
+    final purchaseSql = PurchasesSql(database: appDatabase);
+    final dishesSQL = DishesSQL(database: appDatabase);
+    final staffSql = StaffSQL(database: appDatabase);
     // final staffSQL = StaffSQL(database: AppDatabase());
     // // staffSQL.insertRoot();
     // List<StaffData> staffList = staffSQL.getAllStaff();
@@ -120,10 +121,8 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => ThemeCubit(context)),
-        BlocProvider(create: (context) => PasswordCubit(staffSQL:staffSql)),
-        BlocProvider(
-          create: (context) => StaffBloc(staffSql),
-        ),
+        BlocProvider(create: (context) => PasswordCubit(staffSQL: staffSql)),
+        BlocProvider(create: (context) => StaffBloc(staffSql)),
         BlocProvider(
           create: (context) =>
               PurchasesBloc(purchasesSql: purchaseSql, storageSQL: storageSql),

@@ -26,12 +26,16 @@ class _KeyboardPasswordState extends State<KeyboardPassword> {
     passwordBloc = context.read<PasswordCubit>();
     _isObscured = true;
 
-    Future.microtask(() async {
-      await passwordBloc.loadPasswordData();
-      // await passwordBloc.staffSQL.insertRoot();
-    });
+    loadPass();
+    // Future.microtask(() async {
+    //   await passwordBloc.loadPasswordData();
+    //   // await passwordBloc.staffSQL.insertRoot();
+    // });
   }
 
+  Future<void> loadPass() async {
+    await passwordBloc.loadPasswordData();
+  }
   // @override
   // void dispose() {
   //   super.dispose();

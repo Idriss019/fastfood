@@ -1,6 +1,7 @@
 import 'package:data_table_2/data_table_2.dart';
 import 'package:fastfood/navBar.dart';
 import 'package:fastfood/presentation/password/cubit/password_cubit.dart';
+import 'package:fastfood/presentation/staff/widget/bottom_table.dart';
 import 'package:fastfood/presentation/staff/widget/inputNewStaff.dart';
 import 'package:fastfood/presentation/staff/widget/table_staff.dart';
 import 'package:fastfood/theme.dart';
@@ -82,7 +83,7 @@ class _StaffState extends State<Staff> {
                   border: Border.all(color: invertColor, width: 2),
                   borderRadius: BorderRadius.all(Radius.circular(5)),
                 ),
-                child: PermissionsTableWidget(),
+                child: BottomTableWidget(),
               ),
             ],
           ),
@@ -94,136 +95,3 @@ class _StaffState extends State<Staff> {
 
 
 
-class Permission {
-  final String name; // Название полномочия
-  bool allowed; // Разрешение (может меняться)
-  final String page; // Полное описание
-  final String description; // Полное описание
-
-  Permission({
-    required this.name,
-    this.allowed = false,
-    required this.page,
-    required this.description,
-  });
-}
-
-class PermissionsTableWidget extends StatefulWidget {
-  const PermissionsTableWidget({super.key});
-
-  @override
-  State<PermissionsTableWidget> createState() => _PermissionsTableWidgetState();
-}
-
-class _PermissionsTableWidgetState extends State<PermissionsTableWidget> {
-  // Список полномочий с разрешениями и описаниями
-  final List<Permission> _permissions = [
-    Permission(
-      name: 'Отмена заказа',
-      allowed: false,
-      page: 'Заказ',
-      description: 'Позволяет отменять заказы клиентов',
-    ),
-    Permission(
-      name: 'Изменение цен',
-      allowed: true,
-      page: 'Заказ',
-      description: 'Дает возможность редактировать цены товаров',
-    ),
-    Permission(
-      name: 'Закуп товара',
-      allowed: false,
-      page: 'Закуп',
-      description: 'Разрешает создание и подтверждение заказов на закуп',
-    ),
-    Permission(
-      name: 'Отмена заказа',
-      allowed: false,
-      page: 'Заказ',
-      description: 'Позволяет отменять заказы клиентов',
-    ),
-    Permission(
-      name: 'Изменение цен',
-      allowed: true,
-      page: 'Заказ',
-      description: 'Дает возможность редактировать цены товаров',
-    ),
-    Permission(
-      name: 'Закуп товара',
-      allowed: false,
-      page: 'Закуп',
-      description: 'Разрешает создание и подтверждение заказов на закуп',
-    ),
-
-    // Можно добавить другие полномочия
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    Color invertColor = CustomTheme(context: context).white;
-    return DataTable2(
-      isVerticalScrollBarVisible: false,
-      // checkboxHorizontalMargin: 51,
-      // dividerThickness: 0,
-      headingRowColor:
-          WidgetStateProperty<Color?>.fromMap(<WidgetStatesConstraint, Color?>{
-            WidgetState.error: Colors.red,
-            WidgetState.hovered & WidgetState.focused: Colors.blueAccent,
-            WidgetState.focused: Colors.blue,
-            ~WidgetState.disabled: CustomTheme(context: context).colorText,
-          }),
-      columns: [
-        DataColumn(
-          label: Text('Полномочия', style: TextStyle(color: invertColor)),
-        ),
-        DataColumn(
-          label: Text('Разрешение', style: TextStyle(color: invertColor)),
-        ),
-        DataColumn(
-          label: Text('Страница', style: TextStyle(color: invertColor)),
-        ),
-        DataColumn(
-          label: Text('Полное описание', style: TextStyle(color: invertColor)),
-        ),
-      ],
-      rows: _permissions.map((perm) {
-        return DataRow(
-          cells: [
-            DataCell(Text(perm.name)),
-            DataCell(
-              Checkbox(
-                value: perm.allowed,
-                onChanged: (bool? value) {
-                  setState(() {
-                    perm.allowed = value ?? false;
-                  });
-                },
-              ),
-            ),
-            DataCell(Text(perm.page)),
-            DataCell(
-              TextButton(
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                      title: Text('Полное описание'),
-                      content: Text(perm.description),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.pop(context),
-                          child: Text('OK'),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-                child: Text(perm.description, overflow: TextOverflow.ellipsis),
-              ),
-            ),
-          ],
-        );
-      }).toList(),
-    );
-  }
-}

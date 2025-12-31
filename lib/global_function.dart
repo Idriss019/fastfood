@@ -29,7 +29,13 @@ int conversionToMilliseconds(String dateString) {
 }
 
 DataColumn2 customDataColumn(
-    title, TextAlign textAlign, double? fontSize, double? width, {int?maxLine}) {
+  String title,
+  TextAlign textAlign,
+  double? fontSize,
+  double? width, {
+  int? maxLine,
+  Color? colorText,
+}) {
   return DataColumn2(
     label: SizedBox(
       width: double.infinity,
@@ -40,6 +46,7 @@ DataColumn2 customDataColumn(
         style: TextStyle(
           overflow: TextOverflow.ellipsis,
           fontSize: fontSize,
+          color: colorText,
         ),
       ),
     ),
@@ -50,7 +57,12 @@ DataColumn2 customDataColumn(
 }
 
 DataColumn2 customDataColumnFunc(
-    title, TextAlign textAlign, double? fontSize, double? width, func) {
+  title,
+  TextAlign textAlign,
+  double? fontSize,
+  double? width,
+  func,
+) {
   return DataColumn2(
     label: SizedBox(
       width: double.infinity,
@@ -59,10 +71,7 @@ DataColumn2 customDataColumnFunc(
         child: Text(
           title,
           textAlign: textAlign,
-          style: TextStyle(
-            overflow: TextOverflow.ellipsis,
-            fontSize: fontSize,
-          ),
+          style: TextStyle(overflow: TextOverflow.ellipsis, fontSize: fontSize),
         ),
       ),
     ),
@@ -77,7 +86,7 @@ class CustomColorButton extends WidgetStateColor {
   final Color buttonColor;
   final Color onPressColor;
   CustomColorButton(this.buttonColor, this.onPressColor)
-      : super(_defaultColor) {
+    : super(_defaultColor) {
     // this.color = color;
   }
 
@@ -117,75 +126,82 @@ class DoubleTextInputFormatter extends TextInputFormatter {
 void showDialogOk(BuildContext context, String message, Function func) {
   final myColor = CustomTheme(context: context);
   showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-            content: Text(message),
-            actions: [
-              TextButton(
-                  onPressed: () {
-                    // print('----');
-                    func();
-                    // print('***');
-                    Navigator.pop(context);
-                  },
-                  child: Text(
-                    'да',
-                    style: TextStyle(color: myColor.colorText),
-                  ))
-            ],
-          ));
+    context: context,
+    builder: (context) => AlertDialog(
+      content: Text(message),
+      actions: [
+        TextButton(
+          onPressed: () {
+            // print('----');
+            func();
+            // print('***');
+            Navigator.pop(context);
+          },
+          child: Text('да', style: TextStyle(color: myColor.colorText)),
+        ),
+      ],
+    ),
+  );
 }
 
 Future<void> showDialogYesNo(
-    BuildContext context, String message, Function func) async {
+  BuildContext context,
+  String message,
+  Function func,
+) async {
   final myColor = CustomTheme(context: context);
   await showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-            content: Text(message),
-            actions: [
-              // Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              //   /*  кнопка принятия */
-              //   TextButton(
-              //     onPressed: () async {
-              //       // await func(title);
-              //     },
-              //     child: Text(
-              //       'OK',
-              //       style: TextStyle(color: myColor.colorText),
-              //     ),
-              //   ),
-              //   /* кнопка отмены */
-              //   TextButton(
-              //     onPressed: () => Navigator.pop(context),
-              //     child: Text(
-              //       'Cancel',
-              //       style: TextStyle(color: myColor.colorText),
-              //     ),
-              //   ),
-              // ])
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  TextButton(
-                      onPressed: () {
-                        func();
-                        Navigator.pop(context);
-                      },
-                      child: Text(
-                        'да',
-                        style: TextStyle(color: myColor.colorText),
-                      )),
-                  TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: Text(
-                        'нет',
-                        style: TextStyle(color: myColor.colorText),
-                      )),
-                ],
-              ),
-            ],
-          ));
+    context: context,
+    builder: (context) => AlertDialog(
+      content: Text(message),
+      actions: [
+        // Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+        //   /*  кнопка принятия */
+        //   TextButton(
+        //     onPressed: () async {
+        //       // await func(title);
+        //     },
+        //     child: Text(
+        //       'OK',
+        //       style: TextStyle(color: myColor.colorText),
+        //     ),
+        //   ),
+        //   /* кнопка отмены */
+        //   TextButton(
+        //     onPressed: () => Navigator.pop(context),
+        //     child: Text(
+        //       'Cancel',
+        //       style: TextStyle(color: myColor.colorText),
+        //     ),
+        //   ),
+        // ])
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            TextButton(
+              onPressed: () {
+                func();
+                Navigator.pop(context);
+              },
+              child: Text('да', style: TextStyle(color: myColor.colorText)),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('нет', style: TextStyle(color: myColor.colorText)),
+            ),
+          ],
+        ),
+      ],
+    ),
+  );
+}
+
+// Преобразование цвета в int вручную, используя компоненты ARGB
+int convertColorToIntManually1(Color color) {
+  return ((color.a * 255).toInt() << 24) |
+      ((color.r * 255).toInt() << 16) |
+      ((color.g * 255).toInt() << 8) |
+      (color.b * 255).toInt();
 }

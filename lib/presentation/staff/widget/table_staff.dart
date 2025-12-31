@@ -20,6 +20,8 @@ class TableStaffWidget extends StatefulWidget {
 
 class _TableStaffWidgetState extends State<TableStaffWidget> {
   late StaffBloc staffBloc;
+  // Set<int> selectedIndices = <int>{};
+  int? selectedIndices;
 
   // final oldPasswordController = TextEditingController();
   // final retryOldPasswordController = TextEditingController();
@@ -31,6 +33,7 @@ class _TableStaffWidgetState extends State<TableStaffWidget> {
   void initState() {
     super.initState();
     staffBloc = context.read<StaffBloc>();
+    // staffBloc.add(StaffEvent());
     staffBloc.startListening();
   }
 
@@ -51,11 +54,12 @@ class _TableStaffWidgetState extends State<TableStaffWidget> {
 
   @override
   Widget build(BuildContext context) {
+    CustomTheme myColor = CustomTheme(context: context);
     return BlocBuilder<StaffBloc, StaffState>(
       builder: (context, state) {
         return DataTable2(
           // scrollController:
-          //     yourScrollController, ~d#CpHm97~EF  KhkqAd%RTqo9
+          //     yourScrollController, ~d#CpHm97~EF  
           columnSpacing: 5,
           horizontalMargin: 10,
           headingTextStyle: TextStyle(
@@ -81,7 +85,7 @@ class _TableStaffWidgetState extends State<TableStaffWidget> {
               TextAlign.center,
               18,
               180,
-              maxLine: 2,
+              maxLine: 1,
             ),
             customDataColumn('Логин', TextAlign.center, null, null),
             customDataColumn('Пароль', TextAlign.center, 18, 180, maxLine: 2),
@@ -128,7 +132,8 @@ class _TableStaffWidgetState extends State<TableStaffWidget> {
             state.staffDataList,
             context,
             staffBloc,
-            CustomTheme(context: context).colorText,
+            myColor,
+            // selectedIndices,
           ),
         ); //listTable
         //[]);
@@ -148,17 +153,21 @@ class _TableStaffWidgetState extends State<TableStaffWidget> {
   }
 
   /* Функция для создание строк */
-  List<DataRow> _createRows(
+  List<DataRow2> _createRows(
     List<StaffData> dataClass,
     context,
     StaffBloc bloc,
-    colorText,
+    CustomTheme myColor,
+    // int? selectedIndices,
   ) {
     // final bloc = context.read<PurchasesCubit>();
-    List<DataRow> dataR = [];
-    // int number = 0;
+    List<DataRow2> dataR = [];
+    // int index = 0;
 
     for (StaffData i in dataClass) {
+      // print('i.powers:: ${i.powers}');
+      // index += 1;
+
       // double sum = i.priceOfSom! * i.quantity!.toDouble();
       // number++;
       List<DataCell> dataC = [
@@ -171,15 +180,34 @@ class _TableStaffWidgetState extends State<TableStaffWidget> {
           ) {
             bloc.updateStaffData(i.copyWith(position: title.saveText()));
             Navigator.pop(context);
-          }, colorText),
+          }, myColor.colorText),
         ),
 
         /// Логин
-        DataCell(textCell(i.login, TextAlign.center)),
+        DataCell(
+          textButtonCell(context, i.login, () {
+            // print(
+            //   'Выбрана строка: ${i.position}, ${i.login}\nid = ${i.id}  selectedIndices = $selectedIndices',
+            // );
+            // selectedIndices = index;
+            selectedIndices = i.id;
+            setState(() {
+              bloc.add(UpdateState(bloc.state.copyWith(powersMap: i.powers, staffPowers: i)));
+            });
+            // setState(() {
+            //   print(
+            //     'Выбрана строка: ${i.position}, ${i.login}\nid = ${i.id}selectedIndices = $selectedIndices',
+            //   );
+            //   // selectedIndices = index;
+            //   selectedIndices = i.id;
+            //   bloc.add(UpdateState(bloc.state.copyWith(colorRow: 0xFF172C63)));
+            // });
+          }),
+        ),
 
         /// Пароль
         DataCell(
-          PasswordCellWidget(i:i)
+          PasswordCellWidget(i: i),
           // passwordCell(i, context, bloc, colorText),
         ),
 
@@ -198,7 +226,7 @@ class _TableStaffWidgetState extends State<TableStaffWidget> {
             },
             FilteringTextInputFormatter.allow(RegExp(r'[01]+')), // Только 0 и 1
             1,
-            colorText,
+            myColor.colorText,
           ),
         ),
 
@@ -334,9 +362,55 @@ class _TableStaffWidgetState extends State<TableStaffWidget> {
         //   // /// Штрих-код
         //   // DataCell(textCell((i.barcode ?? ''), TextAlign.center)),
       ];
-      dataR.add(DataRow(cells: dataC));
+      // DataRow2 dataRow = DataRow2(cells: dataC);
+      // dataR.add(
+      //   DataRow2(
+      //     cells: dataC,
+      //     selected: selectedIndices == index,
+      //     onSelectChanged: (selected) {
+      //       setState(() {
+      //         selectedIndices = selected == true ? index : null;
+      //       });
+      //       index+=1;
+      //     },
+      //   ),
+      // );
+      // Добавляем строку и контролируем выбор
+      dataR.add(
+        DataRow2(
+          cells: dataC,
+
+          // selected: selectedIndices == index, // устанавливаем выделение
+          // onSelectChanged: (selected) {
+          //   setState(() {
+          //     selectedIndices = selected == true
+          //         ? index
+          //         : null; // изменяем индекс выбранной строки
+          //   });
+
+          //   // Вызываем дополнительную функцию при нажатии
+          //   if (selected == true) {
+          //     // Ваша дополнительная логика
+          //     _onRowSelected(i);
+          //   }
+          //   index += 1;
+          // },
+          color: selectedIndices == i.id
+              ? WidgetStateProperty.all(Colors.yellow)
+              : null,
+          //bloc.state.colorRow != 0? WidgetStateProperty.all(Color(bloc.state.colorRow)): null, //WidgetStateProperty.all(Colors.yellow), //selectedIndices == index? WidgetStateProperty.all(Colors.yellow): null, // меняем цвет строки на желтый
+        ),
+      );
     }
     return dataR;
+  }
+
+  // Дополнительная функция, которая вызывается при нажатии на строку
+  void _onRowSelected(StaffData staffData) {
+    // Ваш код для выполнения действий при выборе строки
+    print('Выбрана строка: ${staffData.position}, ${staffData.login}');
+    // Можно вызвать другие функции, например:
+    // Navigator.push(context, MaterialPageRoute(builder: (context) => DetailPage(staffData)));
   }
 
   // TextButton passwordCell(StaffData i, context, StaffBloc bloc, colorText) {

@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:fastfood/DB/table/staffDB.dart';
 import 'package:fastfood/data_class/staff_data.dart';
-import 'package:fastfood/global_function.dart';
+// import 'package:fastfood/global_function.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
@@ -22,7 +22,14 @@ class StaffBloc extends Bloc<StaffEvent, StaffState> {
     // Получить всех сотрудников listener
     on<StaffEvent>((event, emit) async {
       final staffList = await staffSQL.getAllStaff();
+      // print('/////////');
+      // print(staffList);
       emit(state.copyWith(staffDataList: staffList));
+    });
+
+    // Обновить стейт
+    on<UpdateState>((event, emit) async {
+      emit(event.state);
     });
 
     // получать всех сотрудников при изменении в БД
@@ -32,6 +39,8 @@ class StaffBloc extends Bloc<StaffEvent, StaffState> {
       //   // print('Сотрудник из БД: Логин: ${staff.login}, \nПолномочия: ${staff.powers}');
 
       // }
+      // print('****');
+      // print(event.staffDataList);
       emit(state.copyWith(staffDataList: event.staffDataList));
     });
 
@@ -43,14 +52,13 @@ class StaffBloc extends Bloc<StaffEvent, StaffState> {
         event.newPassword,
       );
       if (message == '0') {
-        message = changeInputOldPassword(
-          event.staffData,
-          event.oldPassword,
-        );
+        message = changeInputOldPassword(event.staffData, event.oldPassword);
         if (message == '0') {
           message = await identityCheckPassword(event.newPassword);
           if (message == '0') {
-            updateStaffData(event.staffData.copyWith(password: event.newPassword));
+            updateStaffData(
+              event.staffData.copyWith(password: event.newPassword),
+            );
             event.func();
           } else {
             ScaffoldMessenger.of(event.context).showSnackBar(
@@ -67,28 +75,28 @@ class StaffBloc extends Bloc<StaffEvent, StaffState> {
           }
         } else {
           ScaffoldMessenger.of(event.context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  message,
-                  style: TextStyle(fontSize: 18),
-                  textAlign: TextAlign.center,
-                ),
-                duration: Duration(seconds: 2),
+            SnackBar(
+              content: Text(
+                message,
+                style: TextStyle(fontSize: 18),
+                textAlign: TextAlign.center,
               ),
-            );
+              duration: Duration(seconds: 2),
+            ),
+          );
           // showDialogOk(event.context, message, () {});
         }
       } else {
         ScaffoldMessenger.of(event.context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  message,
-                  style: TextStyle(fontSize: 18),
-                  textAlign: TextAlign.center,
-                ),
-                duration: Duration(seconds: 2),
-              ),
-            );
+          SnackBar(
+            content: Text(
+              message,
+              style: TextStyle(fontSize: 18),
+              textAlign: TextAlign.center,
+            ),
+            duration: Duration(seconds: 2),
+          ),
+        );
         // showDialogOk(event.context, message, () {});
       }
     });
@@ -152,11 +160,9 @@ class StaffBloc extends Bloc<StaffEvent, StaffState> {
       return '0';
     }
   }
+
   // Проверка ввода старого пароля
-  String changeInputOldPassword(
-    StaffData staffData,
-    String oldPassword,
-  ) {
+  String changeInputOldPassword(StaffData staffData, String oldPassword) {
     if (oldPassword != staffData.password) {
       return 'Старый пароль введён неверно!';
     } else {
@@ -192,6 +198,8 @@ class StaffBloc extends Bloc<StaffEvent, StaffState> {
   // Начать слушать изменения в БД сотрудников
   void startListening() {
     _staffSubscription = staffSQL.watchAllStaff().listen((newStaffList) {
+      // print('****');
+      // print(newStaffList);
       add(ListenerDataDB(newStaffList));
     });
   }

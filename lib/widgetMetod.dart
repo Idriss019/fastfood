@@ -148,7 +148,12 @@ TextButton textFieldCell(
   );
 }
 
-SizedBox messageCell(BuildContext context, String title, String message) {
+SizedBox messageCell(
+  BuildContext context,
+  String title,
+  String message, {
+  TextAlign? textAlign,
+}) {
   return SizedBox(
     width: double.infinity,
     child: TextButton(
@@ -158,7 +163,7 @@ SizedBox messageCell(BuildContext context, String title, String message) {
           builder: (context) {
             // final myColor = CustomTheme(context: context);
             return AlertDialog(
-              title: Text(message),
+              title: Text(message.capitalizeEach()),
               actions: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -190,8 +195,33 @@ SizedBox messageCell(BuildContext context, String title, String message) {
           },
         );
       },
+      child: SizedBox(
+        width: double.infinity,
+        child: Text(
+          title.capitalizeEach(),
+          textAlign: textAlign,
+          style: TextStyle(color: CustomTheme(context: context).colorText),
+        ),
+      ),
+    ),
+  );
+}
+
+SizedBox textButtonCell(
+  BuildContext context,
+  String text,
+  Function func, {
+  TextAlign? textAlign,
+}) {
+  return SizedBox(
+    width: double.infinity,
+    child: TextButton(
+      onPressed: () {
+        func();
+      },
       child: Text(
-        title,
+        text,
+        textAlign: textAlign,
         style: TextStyle(color: CustomTheme(context: context).colorText),
       ),
     ),
@@ -580,7 +610,7 @@ TextButton textFieldCellWithReg3(
         style: TextStyle(color: colorText),
       ),
     ),
-    onPressed: () async{
+    onPressed: () async {
       await func();
     },
   );

@@ -60,25 +60,53 @@ class StaffSQL {
   // Получить всех сотрудников
   Future<List<StaffData>> getAllStaff() async {
     final queryResult = await database.select(database.staffTableDB).get();
-    return queryResult.map((row) {
-      // final powersString = row.powers ?? '';
-      // final powersMap = <String, bool>{};
-      // final powerKeys = powersData.keys.toList();
-
-      // for (int i = 0; i < powerKeys.length; i++) {
-      //   powersMap[powerKeys[i]] =
-      //       i < powersString.length && powersString[i] == '1' ? true : false;
-      // }
-      return StaffData(
-        id: row.id,
-        login: row.login!.capitalizeEach(),
-        password: row.password ?? '',
-        position: row.position != null ? row.position!.capitalizeEach() : '',
-        powers: StaffData.transformationPowersToMap(
-          row.powers ?? '',
-        ), //powersMap,
+    // print('start');
+    // print(queryResult.length);
+    List<StaffData> newList = [];
+    for (var i in queryResult) {
+      newList.add(
+        StaffData(
+          id: i.id,
+          login: i.login!,
+          password: i.password!,
+          position: i.position!,
+          powers: StaffData.transformationPowersToMap(i.powers!),
+          ),
       );
-    }).toList();
+      // print('${i.login} : ${StaffData.transformationPowersToMap(i.powers!)}');
+      // print('++++++'); Map<String, List<dynamic>>.from(powersData);
+      // print(StaffData.transformationPowersToMap(i.powers!));
+    }
+
+    //   print(StaffData.transformationPowersToMap(
+    //       row.powers!,
+    //     ),);
+    // newList.forEach((element) => print(element));
+    // print('newList  = $newList');
+    return newList;
+    // return queryResult.map((row) {
+    //   // final powersString = row.powers ?? '';
+    //   // final powersMap = <String, bool>{};
+    //   // final powerKeys = powersData.keys.toList();
+
+    //   // for (int i = 0; i < powerKeys.length; i++) {
+    //   //   powersMap[powerKeys[i]] =
+    //   //       i < powersString.length && powersString[i] == '1' ? true : false;
+    //   // }
+    //   print('--------');
+    //   print(StaffData.transformationPowersToMap(
+    //       row.powers!,
+    //     ),);
+    //   return StaffData(
+    //     id: row.id,
+    //     login: row.login!.capitalizeEach(),
+    //     password: row.password ?? '',
+    //     position: row.position != null ? row.position!.capitalizeEach() : '',
+    //     powers: StaffData.transformationPowersToMap(
+    //       row.powers!,
+    //     ), //powersMap,
+    //   );
+    // }).toList();
   }
 
   // Получить всех сотрудников listener
@@ -97,6 +125,7 @@ class StaffSQL {
         // print(
         //   'Проверка получения полномочий сотрудника!!: ${StaffData.transformationPowersToMap(row.powers ?? '')}',
         // );
+        // print('row.powers : ${row.powers}');
         return StaffData(
           id: row.id,
           login: row.login!.capitalizeEach(),
@@ -159,9 +188,9 @@ class StaffSQL {
   }
 
   Future<void> deleteById(StaffData staffData) async {
-    await (database.delete(database.staffTableDB)
-          ..where((tbl) => tbl.id.equals(staffData.id)))
-        .go();
+    await (database.delete(
+      database.staffTableDB,
+    )..where((tbl) => tbl.id.equals(staffData.id))).go();
   }
 
   // Future<bool> updateStaff(StaffData staffData) async {

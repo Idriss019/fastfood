@@ -22,6 +22,7 @@ class ListenerDataDB extends StaffEvent {
   @override
   List<Object> get props => [staffDataList];
 }
+
 class UpdatePasswordEvent extends StaffEvent {
   final StaffData staffData;
   final String oldPassword;
@@ -36,7 +37,7 @@ class UpdatePasswordEvent extends StaffEvent {
     required this.retryOldPassword,
     required this.newPassword,
     required this.context,
-    required this.func
+    required this.func,
   });
 
   @override
@@ -47,9 +48,15 @@ class UpdatePasswordEvent extends StaffEvent {
     newPassword,
     context,
     func,
-    ];
+  ];
 }
 
+class UpdateState extends StaffEvent {
+  final StaffState state;
+  const UpdateState(this.state);
+  @override
+  List<Object> get props => [state];
+}
 // class ChangeInputEvent extends StaffEvent {
 //   final String login;
 //   final String password;
