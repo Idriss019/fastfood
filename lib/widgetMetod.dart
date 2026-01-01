@@ -10,7 +10,7 @@ import 'dart:ui';
 // import 'package:vitamin_opt_5/theme.dart';
 
 DataColumn2 customDataColumn(
-  title,
+  String title,
   TextAlign textAlign,
   double? fontSize,
   double? width, {
@@ -33,7 +33,7 @@ DataColumn2 customDataColumn(
 }
 
 DataColumn2 customDataColumnFunc(
-  title,
+  String title,
   TextAlign textAlign,
   double? fontSize,
   double? width,

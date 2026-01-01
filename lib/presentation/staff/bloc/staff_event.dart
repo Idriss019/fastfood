@@ -57,6 +57,8 @@ class UpdateState extends StaffEvent {
   @override
   List<Object> get props => [state];
 }
+
+class ChangePermission extends StaffEvent{}
 // class ChangeInputEvent extends StaffEvent {
 //   final String login;
 //   final String password;

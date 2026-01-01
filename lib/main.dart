@@ -142,10 +142,12 @@ class MyApp extends StatelessWidget {
       ],
       child: BlocBuilder<ThemeCubit, ThemeState>(
         builder: (context, state) {
+          StaffBloc staffBloc = context.read<StaffBloc>();
+          staffBloc.add(StaffEvent());
           return MaterialApp.router(
             debugShowCheckedModeBanner: false,
             theme: choiceTheme[state.theme],
-            routerConfig: router,
+            routerConfig: router(staffBloc),
           );
         },
       ),

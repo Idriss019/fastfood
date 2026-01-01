@@ -1,4 +1,6 @@
 import 'package:fastfood/main.dart';
+import 'package:fastfood/presentation/permissin_denied/permissin_denied.dart';
+import 'package:fastfood/presentation/staff/bloc/staff_bloc.dart';
 import 'package:fastfood/presentation/storage_page/widget/page.dart';
 import 'package:fastfood/presentation/cleanForStorage/widget/page.dart';
 import 'package:fastfood/presentation/creatingDishes/widget/page.dart';
@@ -16,9 +18,10 @@ import 'package:fastfood/presentation/recalculation/widget/page.dart';
 import 'package:fastfood/presentation/tables/widget/salesTable.dart';
 import 'package:fastfood/presentation/tables/widget/staffTable.dart';
 import 'package:fastfood/presentation/tables/widget/storageTable.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-final router = GoRouter(
+GoRouter router(StaffBloc staffBloc) => GoRouter(
   routes: [
     GoRoute(
       path: '/',
@@ -154,6 +157,16 @@ final router = GoRouter(
         ),
         GoRoute(
           path: 'Staff',
+          redirect: (context, state) {
+            // StaffBloc staffBloc = context.read<StaffBloc>();
+            // final staffBloc = BlocProvider.of<StaffBloc>(context, listen: false);
+            // ** print(staffBloc.changePermission('страница персонал'));
+            // print(changePermission(state.  'страница персонал'));
+            // if (!staffBloc.changePermission('страница персонал')) {
+            //   return '/permission_denied';
+            // }
+            return '/permission_denied';
+          },
           pageBuilder: (context, state) => buildPageWithDefaultTransition<void>(
             context: context,
             state: state,
@@ -168,7 +181,18 @@ final router = GoRouter(
             child: Report(),
           ),
         ),
+        GoRoute(
+          path: 'permission_denied',
+          pageBuilder: (context, state) => buildPageWithDefaultTransition<void>(
+            context: context,
+            state: state,
+            child: PermissionDenied(),
+          ),
+        ),
       ],
     ),
   ],
 );
+bool changePermission(var statet, String power) {
+  return statet.powersMap[power]![0];
+}

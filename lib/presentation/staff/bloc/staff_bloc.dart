@@ -210,6 +210,10 @@ class StaffBloc extends Bloc<StaffEvent, StaffState> {
     _staffSubscription = null;
   }
 
+  bool changePermission(String power) {
+    return state.powersMap[power]![0];
+  }
+
   // void startListening({String sort = 'found'}) {
   //   switch (sort) {
   //     case 'found':
