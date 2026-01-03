@@ -104,7 +104,7 @@ class _JobsDataState extends State<JobsData> {
                           return SizedBox(
                             height: 100,
                             child: Text(
-                              state.power,
+                              state.position,
                               style: TextStyle(
                                 fontSize: 35,
                                 fontStyle: FontStyle.italic,

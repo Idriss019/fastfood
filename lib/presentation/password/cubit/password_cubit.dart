@@ -42,7 +42,8 @@ class PasswordCubit extends Cubit<PasswordState> {
             errorPassword: '',
             inputPassword: '',
             login: staff.login,
-            power: staff.position,
+            position: staff.position,
+            powers: staff.powers,
             ));
           return true;
         }else if (password.length >= 4) {
@@ -55,6 +56,10 @@ class PasswordCubit extends Cubit<PasswordState> {
       emit(state.copyWith(errorPassword: ''));
       return false;
     }
+  }
+
+  bool changePermission(String power) {
+    return state.powers[power]![0];
   }
 
   // bool changePasswordToStart(value) {

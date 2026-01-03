@@ -7,7 +7,8 @@ class PasswordState extends Equatable {
   final String inputPassword;
   final String errorPassword;
   final String login;
-  final String power;
+  final String position;
+  final Map<String, List<dynamic>> powers;
   // final String newPassword;
   // final String replyPassword;
   final List<StaffData> passwordData;
@@ -16,7 +17,8 @@ class PasswordState extends Equatable {
     this.inputPassword = '',
     this.errorPassword = '',
     this.login = '',
-    this.power = '',
+    this.position = '',
+    this.powers=const {},
     // this.newPassword = '',
     // this.replyPassword = '',
     this.passwordData = const [],
@@ -27,7 +29,8 @@ class PasswordState extends Equatable {
     errorPassword,
     inputPassword,
     login,
-    power,
+    position,
+    powers,
     // newPassword,
     // replyPassword,
     passwordData,
@@ -37,7 +40,8 @@ class PasswordState extends Equatable {
     String? inputPassword,
     String? errorPassword,
     String? login,
-    String? power,
+    String? position,
+    Map<String, List<dynamic>>? powers,
     // String? newPassword,
     // String? replyPassword,
     List<StaffData>? passwordData,
@@ -46,7 +50,8 @@ class PasswordState extends Equatable {
       inputPassword: inputPassword ?? this.inputPassword,
       errorPassword: errorPassword ?? this.errorPassword,
       login: login ?? this.login,
-      power: power ?? this.power,
+      position: position ?? this.position,
+      powers: powers ?? this.powers,
       // newPassword: newPassword ?? this.newPassword,
       // replyPassword: replyPassword ?? this.replyPassword,
       passwordData: passwordData ?? this.passwordData,

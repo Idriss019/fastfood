@@ -1,6 +1,7 @@
 import 'package:data_table_2/data_table_2.dart';
 // import 'package:fastfood/data_class/staff_data.dart';
 import 'package:fastfood/global_function.dart';
+import 'package:fastfood/presentation/password/cubit/password_cubit.dart';
 import 'package:fastfood/presentation/staff/bloc/staff_bloc.dart';
 import 'package:fastfood/theme.dart';
 import 'package:fastfood/widgetMetod.dart' hide customDataColumn;
@@ -16,12 +17,14 @@ class BottomTableWidget extends StatefulWidget {
 
 class _BottomTableWidgetState extends State<BottomTableWidget> {
   late StaffBloc staffBloc;
+  late PasswordCubit passwordCubit;
 
   // Set<int> selectedIndices = <int>{};
 
   @override
   void initState() {
     staffBloc = context.read<StaffBloc>();
+    passwordCubit = context.read<PasswordCubit>();
     super.initState();
   }
 
@@ -126,7 +129,13 @@ class _BottomTableWidgetState extends State<BottomTableWidget> {
             //   label: Text('Полное описание', style: TextStyle(color: invertColor)),
             // ),
           ],
-          rows: _createRows(state.powersMap, context, staffBloc, customTheme),
+          rows: _createRows(
+            state.powersMap,
+            context,
+            staffBloc,
+            passwordCubit,
+            customTheme,
+          ),
           //[]
 
           // _permissions.map((perm) {
@@ -177,6 +186,7 @@ class _BottomTableWidgetState extends State<BottomTableWidget> {
     Map<String, List<dynamic>> powersMap2,
     context,
     StaffBloc bloc,
+    PasswordCubit pBloc,
     CustomTheme customTheme,
     //   {
     //   Set<int>? selected,
@@ -207,9 +217,12 @@ class _BottomTableWidgetState extends State<BottomTableWidget> {
                 Map<String, List<dynamic>>? sPowers =
                     bloc.state.staffPowers.powers;
                 sPowers![key]![0] = value[0];
+
                 bloc.staffSQL.updateById(
                   bloc.state.staffPowers.copyWith(powers: sPowers),
                 );
+                pBloc.loadPasswordData();
+                // pBloc.updateState(pBloc.state.copyWith(powers: sPowers));
                 //  <----------------------
                 // perm.allowed = value ?? false;
               });

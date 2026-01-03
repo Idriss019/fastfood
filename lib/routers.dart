@@ -1,4 +1,5 @@
 import 'package:fastfood/main.dart';
+import 'package:fastfood/presentation/password/cubit/password_cubit.dart';
 import 'package:fastfood/presentation/permissin_denied/permissin_denied.dart';
 import 'package:fastfood/presentation/staff/bloc/staff_bloc.dart';
 import 'package:fastfood/presentation/storage_page/widget/page.dart';
@@ -158,14 +159,11 @@ GoRouter router(StaffBloc staffBloc) => GoRouter(
         GoRoute(
           path: 'Staff',
           redirect: (context, state) {
-            // StaffBloc staffBloc = context.read<StaffBloc>();
-            // final staffBloc = BlocProvider.of<StaffBloc>(context, listen: false);
-            // ** print(staffBloc.changePermission('страница персонал'));
-            // print(changePermission(state.  'страница персонал'));
-            // if (!staffBloc.changePermission('страница персонал')) {
-            //   return '/permission_denied';
-            // }
-            return '/permission_denied';
+            PasswordCubit passCubit = context.read<PasswordCubit>();
+            if (!passCubit.changePermission('страница персонал')) {
+              return '/permission_denied';
+            }
+            return null;
           },
           pageBuilder: (context, state) => buildPageWithDefaultTransition<void>(
             context: context,
@@ -193,6 +191,6 @@ GoRouter router(StaffBloc staffBloc) => GoRouter(
     ),
   ],
 );
-bool changePermission(var statet, String power) {
-  return statet.powersMap[power]![0];
-}
+// bool changePermission(var statet, String power) {
+//   return statet.powersMap[power]![0];
+// }
