@@ -22,8 +22,10 @@ import 'package:fastfood/presentation/tables/widget/storageTable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-GoRouter router(StaffBloc staffBloc) => GoRouter(
-  routes: [
+// GoRouter router(StaffBloc staffBloc) => GoRouter(
+final router = GoRouter(
+  routes: 
+  [
     GoRoute(
       path: '/',
       pageBuilder: (context, state) => buildPageWithDefaultTransition<void>(
@@ -189,8 +191,9 @@ GoRouter router(StaffBloc staffBloc) => GoRouter(
         ),
       ],
     ),
-  ],
+  ]
 );
+// );
 // bool changePermission(var statet, String power) {
 //   return statet.powersMap[power]![0];
 // }

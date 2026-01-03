@@ -11,6 +11,7 @@ import 'package:fastfood/presentation/password/cubit/password_cubit.dart';
 import 'package:fastfood/presentation/purchases/bloc/purchases_bloc.dart';
 // import 'package:fastfood/presentation/recalculation/bloc/recalculation_bloc.dart';
 import 'package:fastfood/presentation/staff/bloc/staff_bloc.dart';
+import 'package:fastfood/presentation/storage_page/bloc/storage_bloc.dart';
 import 'package:fastfood/presentation/theme/cubit/theme_cubit.dart';
 import 'package:fastfood/routers.dart';
 import 'package:fastfood/theme.dart';
@@ -131,6 +132,8 @@ class MyApp extends StatelessWidget {
           create: (context) =>
               CreatingDishesBloc(storageSQL: storageSql, dishesSQL: dishesSQL),
         ),
+        BlocProvider(
+          create: (context) =>StorageBloc(storageSQL: storageSql),),
         // BlocProvider(
         //   lazy: true,
         //   create: (context) => RecalculationBloc(
@@ -147,7 +150,7 @@ class MyApp extends StatelessWidget {
           return MaterialApp.router(
             debugShowCheckedModeBanner: false,
             theme: choiceTheme[state.theme],
-            routerConfig: router(staffBloc),
+            routerConfig: router,
           );
         },
       ),

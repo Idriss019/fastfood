@@ -173,7 +173,7 @@ class StaffSQL {
     );
   }
 
-  // Изменить по login
+  // Изменить по ID
   Future<void> updateById(StaffData staffData) async {
     await (database.update(
       database.staffTableDB,

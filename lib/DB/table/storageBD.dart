@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 import 'package:fastfood/DB/database.dart';
 import 'package:fastfood/data_class/storage_data.dart';
+import 'package:string_capitalize/string_capitalize.dart';
 
 class StorageTableDB extends Table {
   IntColumn get id => integer().autoIncrement()();
@@ -93,7 +94,51 @@ class StorageSQL {
           .write(companion);
     }
   });
-}
+
+  
+  }
+  // Получить всех сотрудников listener
+  Stream<List<StorageData>> watchAllStorage() {
+    final query = database.select(database.storageTableDB);
+    return query.watch().map((rows) {
+      return rows.map((row) {
+        return StorageData(
+          id: row.id,
+          inDishes: row.inDishes,
+          barcode: row.barcode,
+          product: row.product.capitalizeEach(),
+          quantity: row.quantity,
+          measuring: row.measuring,
+          costPrice: row.costPrice,
+          price: row.price,
+        );
+      }).toList();
+    });
+  }
+
+  /// Изменить по ID
+  Future<void> updateById(StorageData storageData) async {
+    await (database.update(
+      database.storageTableDB,
+    )..where((tbl) => tbl.id.equals(storageData.id))).write(
+      StorageTableDBCompanion(
+        id: Value(storageData.id),
+        inDishes: Value(storageData.inDishes),
+        barcode: Value(storageData.barcode),
+        product: Value(storageData.product.toLowerCase()),
+        quantity: Value(storageData.quantity),
+        measuring: Value(storageData.measuring),
+        costPrice: Value(storageData.costPrice),
+        price: Value(storageData.price),
+      ),
+    );
+  }
+
+  Future<void> deleteById(StorageData storageData) async {
+    await (database.delete(
+      database.storageTableDB,
+    )..where((tbl) => tbl.id.equals(storageData.id))).go();
+  }
 
   /// Обновить по названию продукта
   // Future<void> updateByProduct({

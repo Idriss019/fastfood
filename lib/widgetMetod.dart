@@ -219,10 +219,13 @@ SizedBox textButtonCell(
       onPressed: () {
         func();
       },
-      child: Text(
-        text,
-        textAlign: textAlign,
-        style: TextStyle(color: CustomTheme(context: context).colorText),
+      child: SizedBox(
+        width: double.infinity,
+        child: Text(
+          text,
+          textAlign: textAlign,
+          style: TextStyle(color: CustomTheme(context: context).colorText),
+        ),
       ),
     ),
   );

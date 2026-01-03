@@ -406,12 +406,12 @@ class _TableStaffWidgetState extends State<TableStaffWidget> {
   }
 
   // Дополнительная функция, которая вызывается при нажатии на строку
-  void _onRowSelected(StaffData staffData) {
-    // Ваш код для выполнения действий при выборе строки
-    print('Выбрана строка: ${staffData.position}, ${staffData.login}');
-    // Можно вызвать другие функции, например:
-    // Navigator.push(context, MaterialPageRoute(builder: (context) => DetailPage(staffData)));
-  }
+  // void _onRowSelected(StaffData staffData) {
+  //   // Ваш код для выполнения действий при выборе строки
+  //   print('Выбрана строка: ${staffData.position}, ${staffData.login}');
+  //   // Можно вызвать другие функции, например:
+  //   // Navigator.push(context, MaterialPageRoute(builder: (context) => DetailPage(staffData)));
+  // }
 
   // TextButton passwordCell(StaffData i, context, StaffBloc bloc, colorText) {
   //   return textFieldCellWithReg3(

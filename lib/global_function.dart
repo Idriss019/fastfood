@@ -123,6 +123,32 @@ class DoubleTextInputFormatter extends TextInputFormatter {
   }
 }
 
+class DoubleTextInputFormatter2 extends TextInputFormatter {
+  /* в начале ноль то за ней можно только точку иначе можно все числа. в итоге если введена точка то за ней можно только два числа  0.12, 5.12*/
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    final text = newValue.text;
+
+    // разрешаем очистку поля
+    if (text.isEmpty) return newValue;
+
+    final regExp = RegExp(
+      r'^(0(\.[0-9]{0,2})?|[1-9][0-9]*(\.[0-9]{0,2})?)$',
+    );
+
+    // если соответствует — принимаем
+    if (regExp.hasMatch(text)) {
+      return newValue;
+    }
+
+    // ❌ если не соответствует — удаляем последний введённый символ
+    return oldValue;
+  }
+}
+
 void showDialogOk(BuildContext context, String message, Function func) {
   final myColor = CustomTheme(context: context);
   showDialog(
