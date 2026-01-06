@@ -6,6 +6,7 @@ import 'package:fastfood/presentation/storage_page/widget/table_method.dart';
 import 'package:fastfood/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_widgets/my_widgets.dart';
 
 class StoragePage extends StatefulWidget {
   const StoragePage({super.key});
@@ -16,6 +17,7 @@ class StoragePage extends StatefulWidget {
 
 class StoragePageState extends State<StoragePage> {
   late StorageBloc storageBloc;
+  final TextEditingController _searchCont = TextEditingController();
   // int selectedIndices = -1;
   Map<int, bool> checkedRows = {};
 
@@ -30,6 +32,20 @@ class StoragePageState extends State<StoragePage> {
   void dispose() {
     storageBloc.stopListening();
     super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final storageBloc2 = context.watch<StorageBloc>();
+    // Обновляем контроллер при изменении состояния
+    final String search = storageBloc2.state.search;
+    if (_searchCont.text != search) {
+      _searchCont.value = TextEditingValue(
+        text: search,
+        selection: TextSelection.collapsed(offset: search.length),
+      );
+    }
   }
 
   @override
@@ -56,23 +72,52 @@ class StoragePageState extends State<StoragePage> {
                       child: Text('Фильтр :', style: TextStyle(fontSize: 35)),
                     ),
                     Expanded(
-                      child: SizedBox(
-                        child: TextField(
-                          autofocus: true,
-                          decoration: InputDecoration(
-                            hintText: 'Штрих-код или название товара',
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide(
-                                color: Colors.black, // Не работает!
-                                width: 5,
-                              ),
+                      child: BlocBuilder<StorageBloc, StorageState>(
+                        builder: (context, state) {
+                          return Container(
+                            margin: const EdgeInsets.only(right: 45.0),
+                            /* Выпадающий список */
+                            child: DropDownList(
+                              onChangedTextField: (value) {
+                                storageBloc.add(SearchInput(value));
+                                // purchasesBloc.add(ProductInput(value));
+                              },
+                              onChangedDrop: (value) {
+                                storageBloc.startListeningSortByFound();
+                                // purchasesBloc.add(PressDropList(value));
+                              },
+                              filterList: state.filterList,
+                              // formatInput: FilteringTextInputFormatter.allow(
+                              //   RegExp(r'[^A-ZА-Я]'),
+                              // ),
+                              heightDropContainer: 40,
+                              myColor: myColor.colorText,
+                              controller: _searchCont,
+                              invertColor: myColor.colorText,
+                              countColumn: 3,
                             ),
-                          ),
-                          style: TextStyle(fontSize: 25),
-                        ),
+                          );
+                        },
                       ),
                     ),
+                    // Expanded(
+                    //   child: SizedBox(
+                    //     child: TextField(
+                    //       autofocus: true,
+                    //       decoration: InputDecoration(
+                    //         hintText: 'Штрих-код или название товара',
+                    //         border: OutlineInputBorder(
+                    //           borderRadius: BorderRadius.circular(10),
+                    //           borderSide: BorderSide(
+                    //             color: Colors.black, // Не работает!
+                    //             width: 5,
+                    //           ),
+                    //         ),
+                    //       ),
+                    //       style: TextStyle(fontSize: 25),
+                    //     ),
+                    //   ),
+                    // ),
                   ],
                 ),
               ),
@@ -122,11 +167,14 @@ class StoragePageState extends State<StoragePage> {
                             180,
                             maxLine: 2,
                           ),
-                          customDataColumn(
+                          customDataColumnFunc(
                             'Название',
                             TextAlign.left,
                             null,
                             null,
+                            () {
+                              storageBloc.startListeningSortByName();
+                            },
                           ),
 
                           // customDataColumn(
@@ -141,7 +189,15 @@ class StoragePageState extends State<StoragePage> {
                           //   18,
                           //   100,
                           // ),
-                          customDataColumn('шт/г/мл', TextAlign.left, 13, 80),
+                          customDataColumnFunc(
+                            'шт/г/мл',
+                            TextAlign.left,
+                            13,
+                            80,
+                            () {
+                              storageBloc.startListeningSortByQuantity();
+                            },
+                          ),
                           customDataColumn(
                             'измерение ',
                             TextAlign.left,

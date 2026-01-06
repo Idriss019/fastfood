@@ -57,7 +57,7 @@ DataColumn2 customDataColumn(
 }
 
 DataColumn2 customDataColumnFunc(
-  title,
+  String title,
   TextAlign textAlign,
   double? fontSize,
   double? width,
@@ -230,4 +230,109 @@ int convertColorToIntManually1(Color color) {
       ((color.r * 255).toInt() << 16) |
       ((color.g * 255).toInt() << 8) |
       (color.b * 255).toInt();
+}
+
+/// Универсальная быстрая сортировка
+List<T> quickSort<T>(List<T> oldList, dynamic Function(dynamic) getKey) {
+  // Swapping using a temp variable
+  void swap(List list, int i, int j) {
+    dynamic temp = list[i];
+    list[i] = list[j];
+    list[j] = temp;
+  }
+
+  int partition(List<T> list, int low, int high) {
+    // Base check
+    if (list.isEmpty) {
+      return 0;
+    }
+
+    // Take our last element as pivot
+    dynamic pivot = getKey(list[high]);
+
+    int i = low - 1;
+    for (int j = low; j < high; j++) {
+      // Compare the key of the current element with the pivot
+      if (pivot != null && getKey(list[j]) != null) {
+        if (getKey(list[j]).compareTo(pivot) < 0) {
+          i++;
+          swap(list, i, j);
+        }
+      }
+    }
+
+    // Swap the last element and place it in front of the i'th element
+    swap(list, i + 1, high);
+    return i + 1;
+  }
+
+  List<T> sort(List<T> list, int low, int high) {
+    if (low < high) {
+      int pi = partition(list, low, high);
+      sort(list, low, pi - 1);
+      sort(list, pi + 1, high);
+    }
+    return list;
+  }
+
+  int high = oldList.length - 1;
+  int low = 0;
+
+  List<T> result = sort(oldList, low, high);
+  {
+    return result;
+  }
+}
+
+/// Универсальная быстрая сортировка
+List<T> quickSortReversed<T>(
+    List<T> oldList, dynamic Function(dynamic) getKey) {
+  // Swapping using a temp variable
+  void swap(List list, int i, int j) {
+    dynamic temp = list[i];
+    list[i] = list[j];
+    list[j] = temp;
+  }
+
+  int partition(List<T> list, int low, int high) {
+    // Base check
+    if (list.isEmpty) {
+      return 0;
+    }
+
+    // Take our last element as pivot
+    dynamic pivot = getKey(list[high]);
+
+    int i = low - 1;
+    for (int j = low; j < high; j++) {
+      // Compare the key of the current element with the pivot
+      if (pivot != null && getKey(list[j]) != null) {
+        if (getKey(list[j]).compareTo(pivot) > 0) {
+          i++;
+          swap(list, i, j);
+        }
+      }
+    }
+
+    // Swap the last element and place it in front of the i'th element
+    swap(list, i + 1, high);
+    return i + 1;
+  }
+
+  List<T> sort(List<T> list, int low, int high) {
+    if (low < high) {
+      int pi = partition(list, low, high);
+      sort(list, low, pi - 1);
+      sort(list, pi + 1, high);
+    }
+    return list;
+  }
+
+  int high = oldList.length - 1;
+  int low = 0;
+
+  List<T> result = sort(oldList, low, high);
+  {
+    return result;
+  }
 }

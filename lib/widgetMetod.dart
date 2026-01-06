@@ -211,11 +211,13 @@ SizedBox textButtonCell(
   BuildContext context,
   String text,
   Function func, {
+  Function? longPress,
   TextAlign? textAlign,
 }) {
   return SizedBox(
     width: double.infinity,
     child: TextButton(
+      onLongPress: longPress != null ? () => longPress() : null,
       onPressed: () {
         func();
       },

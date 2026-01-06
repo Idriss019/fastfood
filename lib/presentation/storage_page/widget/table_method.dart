@@ -7,6 +7,7 @@ import 'package:fastfood/theme.dart';
 import 'package:fastfood/widgetMetod.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:string_capitalize/string_capitalize.dart';
 // import 'package:flutter_bloc/flutter_bloc.dart';
 
 /* Задачи
@@ -109,6 +110,9 @@ List<DataRow2> createStorageRows(
           // );
           // onSetChanged();
         }, textAlign: TextAlign.left),
+        onLongPress: () {
+          showDialogOk(context, i.product, () {});
+        },
         //   },
         // ),
       ),
@@ -126,8 +130,11 @@ List<DataRow2> createStorageRows(
             Navigator.pop(context);
           },
           FilteringTextInputFormatter.allow(
-            RegExp(r'^[1-9][0-9]*$'),
-          ), // регулярное выражение где можно записать первое число от 1 до 0 далее любые цифры
+            RegExp(r'^(0|[1-9]\d*)$'),
+            // можно вводить только цифры если введён ноль в начале, то после него ничего быть не должно
+          ),
+          //RegExp(r'^[1-9][0-9]*$'),
+          // регулярное выражение где можно записать первое число от 1 до 0 далее любые цифры
           1,
           myColor.colorText,
           separator: true,
@@ -135,7 +142,11 @@ List<DataRow2> createStorageRows(
       ),
 
       /// измерение
-      DataCell(textCell(i.measuring, TextAlign.left)),
+      DataCell(
+        messageCell2(context, i.measuring, (title) {
+          bloc.storageSQL.updateById(i.copyWith(measuring: title));
+        }, textAlign: TextAlign.left),
+      ),
 
       /// себестоимость
       // DataCell(textCell(i.costPrice.toString(), TextAlign.left)),
@@ -238,18 +249,22 @@ List<DataRow2> createStorageRows(
 
       /// Удалить
       DataCell(
-        deleteCell(
+        deleteCell2(
           context,
           i.product,
           () {
             if (i.quantity == 0) {
               bloc.deleteStorageById(i);
+              Navigator.pop(context);
             } else {
               showDialogOk(
                 context,
                 'С начала необходимо обнулить количество!',
-                () {},
+                () {
+                  Navigator.pop(context);
+                },
               );
+              // Navigator.pop(context);
             }
           },
           // i.product,
@@ -418,4 +433,159 @@ List<DataRow2> createStorageRows(
     );
   }
   return dataR;
+}
+
+SizedBox deleteCell2(BuildContext context, String title, Function func) {
+  return SizedBox(
+    width: double.infinity,
+    child: IconButton(
+      icon: Icon(Icons.delete),
+      alignment: Alignment.center,
+      onPressed: () {
+        showDialog(
+          context: context,
+          builder: (context) {
+            final myColor = CustomTheme(context: context);
+            return AlertDialog(
+              title: Text(
+                'Уверены что хотите удалить - \n${title.capitalizeEach()} ?',
+              ),
+              actions: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    /*  кнопка принятия */
+                    TextButton(
+                      onPressed: () {
+                        func();
+                        // Navigator.pop(context);
+                      },
+                      child: Text(
+                        'OK',
+                        style: TextStyle(color: myColor.colorText),
+                      ),
+                    ),
+                    /* кнопка отмены */
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: Text(
+                        'Cancel',
+                        style: TextStyle(color: myColor.colorText),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            );
+          },
+        );
+      },
+    ),
+  );
+}
+
+SizedBox messageCell2(
+  BuildContext context,
+  String title,
+  Function func, {
+
+  // String message,
+  TextAlign? textAlign,
+}) {
+  return SizedBox(
+    width: double.infinity,
+    child: TextButton(
+      onPressed: () {
+        showDialog(
+          context: context,
+          builder: (context) {
+            // final myColor = CustomTheme(context: context);
+            return AlertDialog(
+              title: Text(
+                'На что изменить метод исчисления <${title.toUpperCase()}> ?',
+              ),
+              actions: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    /*  кнопка принятия */
+                    TextButton(
+                      onPressed: () {
+                        func('шт');
+                        Navigator.pop(context);
+                      },
+                      child: Text(
+                        'ШТ',
+                        style: TextStyle(
+                          color: CustomTheme(context: context).colorText,
+                        ),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        func('г');
+                        Navigator.pop(context);
+                      },
+                      child: Text(
+                        'Г',
+                        style: TextStyle(
+                          color: CustomTheme(context: context).colorText,
+                        ),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        func('мл');
+                        Navigator.pop(context);
+                      },
+                      child: Text(
+                        'МЛ',
+                        style: TextStyle(
+                          color: CustomTheme(context: context).colorText,
+                        ),
+                      ),
+                    ),
+                    // /* кнопка отмены */
+                    // TextButton(
+                    //   onPressed: () => Navigator.pop(context),
+                    //   child: Text(
+                    //     'Cancel',
+                    //     style: TextStyle(color: myColor.colorText),
+                    //   ),
+                    // ),
+                  ],
+                ),
+                SizedBox.fromSize(size: Size(10, 20)),
+                Center(
+                  child: SizedBox.fromSize(
+                    size: Size(140, 40),
+                    child: TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text(
+                        'Отмена',
+                        style: TextStyle(
+                          fontSize: 24,
+                          color: CustomTheme(context: context).colorText,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      },
+      child: SizedBox(
+        width: double.infinity,
+        child: Text(
+          title.capitalizeEach(),
+          textAlign: textAlign,
+          style: TextStyle(color: CustomTheme(context: context).colorText),
+        ),
+      ),
+    ),
+  );
 }

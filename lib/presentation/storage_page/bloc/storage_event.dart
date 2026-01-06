@@ -13,3 +13,9 @@ class UpdateState extends StorageEvent {
   @override
   List<Object> get props => [state];
 }
+
+class SearchInput extends StorageEvent {
+  final String search;
+
+  const SearchInput(this.search);
+}
